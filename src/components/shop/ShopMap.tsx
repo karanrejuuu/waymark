@@ -64,16 +64,23 @@ export const ShopMap: React.FC<ShopMapProps> = ({
         zoomControl: false,
       });
 
-      // CartoDB Voyager / Positron - ultra-clean, minimal, high-contrast road aesthetic
-      L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
-        {
-          attribution:
-            '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-          subdomains: "abcd",
-          maxZoom: 20,
-        }
-      ).addTo(map);
+      // Single clean map provider: Esri World Street Map (or Mapbox if configured)
+      // Zero API key required, crisp road network, no watermarks
+      const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+      const tileUrl = mapboxToken
+        ? `https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/{z}/{x}/{y}?access_token=${mapboxToken}`
+        : "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}";
+
+      const attribution = mapboxToken
+        ? '&copy; <a href="https://www.mapbox.com/">Mapbox</a>'
+        : '&copy; <a href="https://www.esri.com/">Esri</a> &copy; OpenStreetMap';
+
+      L.tileLayer(tileUrl, {
+        attribution,
+        maxZoom: 19,
+        tileSize: mapboxToken ? 512 : 256,
+        zoomOffset: mapboxToken ? -1 : 0,
+      }).addTo(map);
 
       // Clean bottom-right zoom control
       L.control.zoom({ position: "bottomright" }).addTo(map);
@@ -164,7 +171,7 @@ export const ShopMap: React.FC<ShopMapProps> = ({
       } finally {
         setIsSearching(false);
       }
-    }, 280);
+    }, 300);
 
     return () => clearTimeout(timeout);
   }, [searchQuery, lat, lng]);
@@ -240,7 +247,7 @@ export const ShopMap: React.FC<ShopMapProps> = ({
 
   return (
     <div className="relative w-full rounded-lg overflow-hidden border border-border shadow-sm">
-      {/* Uber-style Clean Floating Search Bar (Active in editable mode) */}
+      {/* Clean Floating Search Bar (Active in editable mode) */}
       {editable && (
         <div className="absolute top-2.5 left-2.5 right-2.5 z-[400] max-w-sm">
           <div className="relative flex items-center bg-bg/95 backdrop-blur-md border border-border rounded-lg shadow-sm">
