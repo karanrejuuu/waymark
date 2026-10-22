@@ -38,3 +38,5 @@ next-env.d.ts
 
 # superpowers / scratch
 .superpowers/
+.agents/
+skills-lock.json
