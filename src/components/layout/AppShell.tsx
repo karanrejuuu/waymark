@@ -8,7 +8,7 @@ import { InstallPrompt } from "../ui/InstallPrompt";
 
 export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const pathname = usePathname();
-  const isLandingPage = pathname === "/welcome";
+  const isStandalonePage = pathname === "/welcome" || pathname === "/login";
 
   useEffect(() => {
     // Register service worker on mount in production/PWA mode
@@ -19,7 +19,7 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
     }
   }, []);
 
-  if (isLandingPage) {
+  if (isStandalonePage) {
     return (
       <div className="min-h-screen bg-bg">
         <InstallPrompt />

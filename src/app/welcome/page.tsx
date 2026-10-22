@@ -158,38 +158,48 @@ export default function WelcomePage() {
             </span>
           </Link>
 
-          {/* Language Toggle */}
-          <div className="flex items-center gap-1 bg-[#E6E9EF]/60 p-1 rounded-lg text-xs font-medium">
-            <button
-              type="button"
-              data-testid="lang-en"
-              onClick={() => setLang("en")}
-              className={`px-2.5 py-1 rounded-md transition-colors ${
-                lang === "en" ? "bg-white text-ink shadow-xs font-semibold" : "text-[#5C6B73] hover:text-ink"
-              }`}
+          {/* Right Header: Language Toggle & Login */}
+          <div className="flex items-center gap-3">
+            {/* Language Toggle */}
+            <div className="flex items-center gap-1 bg-[#E6E9EF]/60 p-1 rounded-lg text-xs font-medium">
+              <button
+                type="button"
+                data-testid="lang-en"
+                onClick={() => setLang("en")}
+                className={`px-2.5 py-1 rounded-md transition-colors ${
+                  lang === "en" ? "bg-white text-ink shadow-xs font-semibold" : "text-[#5C6B73] hover:text-ink"
+                }`}
+              >
+                English
+              </button>
+              <button
+                type="button"
+                data-testid="lang-ml"
+                onClick={() => setLang("ml")}
+                className={`px-2.5 py-1 rounded-md transition-colors ${
+                  lang === "ml" ? "bg-white text-ink shadow-xs font-semibold" : "text-[#5C6B73] hover:text-ink"
+                }`}
+              >
+                മലയാളം
+              </button>
+              <button
+                type="button"
+                data-testid="lang-hi"
+                onClick={() => setLang("hi")}
+                className={`px-2.5 py-1 rounded-md transition-colors ${
+                  lang === "hi" ? "bg-white text-ink shadow-xs font-semibold" : "text-[#5C6B73] hover:text-ink"
+                }`}
+              >
+                हिंदी
+              </button>
+            </div>
+
+            <Link
+              href="/login"
+              className="px-3 py-1.5 rounded-lg border border-[#E6E9EF] bg-white text-ink text-xs font-semibold hover:bg-[#E6E9EF]/40 transition-colors shadow-2xs"
             >
-              English
-            </button>
-            <button
-              type="button"
-              data-testid="lang-ml"
-              onClick={() => setLang("ml")}
-              className={`px-2.5 py-1 rounded-md transition-colors ${
-                lang === "ml" ? "bg-white text-ink shadow-xs font-semibold" : "text-[#5C6B73] hover:text-ink"
-              }`}
-            >
-              മലയാളം
-            </button>
-            <button
-              type="button"
-              data-testid="lang-hi"
-              onClick={() => setLang("hi")}
-              className={`px-2.5 py-1 rounded-md transition-colors ${
-                lang === "hi" ? "bg-white text-ink shadow-xs font-semibold" : "text-[#5C6B73] hover:text-ink"
-              }`}
-            >
-              हिंदी
-            </button>
+              Log in
+            </Link>
           </div>
         </div>
       </header>
