@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, DM_Sans } from "next/font/google";
 import { AppShell } from "@/components/layout/AppShell";
+import { AuthProvider } from "@/context/AuthContext";
 import "./globals.css";
 
 const bricolage = Bricolage_Grotesque({
@@ -47,7 +48,9 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body className="min-h-screen bg-bg text-ink antialiased selection:bg-accent/20">
-        <AppShell>{children}</AppShell>
+        <AuthProvider>
+          <AppShell>{children}</AppShell>
+        </AuthProvider>
       </body>
     </html>
   );

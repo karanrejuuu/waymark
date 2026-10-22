@@ -15,6 +15,7 @@ export default function TodayPage() {
   const [isOnline, setIsOnline] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
   const [hasInitialized, setHasInitialized] = useState(false);
+  const [totalShopCount, setTotalShopCount] = useState<number | null>(null);
   const [completedShopIds, setCompletedShopIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -29,21 +30,18 @@ export default function TodayPage() {
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
 
-    // Initial check: if database is completely empty, populate sample FMCG shops & products
-    async function checkSeedData() {
-      const shopCount = await db.shops.count();
-      if (shopCount === 0) {
-        await seedDemoData();
-      }
+    async function checkShopStats() {
+      const count = await db.shops.count();
+      setTotalShopCount(count);
       setHasInitialized(true);
     }
-    checkSeedData();
+    checkShopStats();
 
     return () => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };
-  }, []);
+  }, [todayItems]);
 
   const handleManualSync = async () => {
     if (isSyncing) return;
@@ -53,6 +51,12 @@ export default function TodayPage() {
     } finally {
       setIsSyncing(false);
     }
+  };
+
+  const handleLoadDemoData = async () => {
+    await seedDemoData();
+    const count = await db.shops.count();
+    setTotalShopCount(count);
   };
 
   const handleShopDelivered = (shopId: string) => {
@@ -150,6 +154,42 @@ export default function TodayPage() {
           <div className="py-16 text-center text-xs text-[#5C6B73]">
             <RefreshCw size={18} className="animate-spin text-[#F2A900] mx-auto mb-2" />
             Loading today's delivery stops...
+          </div>
+        ) : totalShopCount === 0 ? (
+          /* SaaS First-Run Clean State (Zero Mock Data) */
+          <div className="py-16 px-6 text-center max-w-md mx-auto">
+            <div className="w-12 h-12 rounded-2xl bg-[#F2A900]/15 text-ink flex items-center justify-center mx-auto mb-3">
+              <MapPin size={24} className="text-[#F2A900]" />
+            </div>
+            <div className="text-lg font-bold text-ink font-heading">
+              Ready to start your rounds?
+            </div>
+            <div className="text-xs text-[#5C6B73] mt-1.5 leading-relaxed">
+              Your account is clean with zero shops. Add your shops via rapid entry, paste an Excel sheet, or complete onboarding to build today's route.
+            </div>
+            <div className="mt-5 flex flex-col sm:flex-row justify-center gap-2.5">
+              <Link
+                href="/onboarding"
+                className="px-5 py-2.5 text-xs font-bold bg-[#F2A900] text-ink rounded-xl hover:opacity-90 transition-opacity shadow-sm"
+              >
+                Start Guided Setup →
+              </Link>
+              <Link
+                href="/shops/new"
+                className="px-4 py-2.5 text-xs font-semibold border border-[#E6E9EF] bg-white text-ink rounded-xl hover:bg-[#E6E9EF]/40"
+              >
+                + Add Single Shop
+              </Link>
+            </div>
+            <div className="mt-6 pt-4 border-t border-[#E6E9EF]/60">
+              <button
+                type="button"
+                onClick={handleLoadDemoData}
+                className="text-[11px] text-[#5C6B73] hover:text-ink underline decoration-dashed transition-colors"
+              >
+                Load 4 sample FMCG shops (for testing demo)
+              </button>
+            </div>
           </div>
         ) : activeItems.length === 0 ? (
           <div className="py-16 px-4 text-center">

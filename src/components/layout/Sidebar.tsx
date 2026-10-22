@@ -11,7 +11,9 @@ import {
   Users,
   Settings,
   PlusCircle,
+  LogOut,
 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 interface SidebarProps {
   userRole?: "owner" | "delivery";
@@ -19,6 +21,7 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ userRole = "owner" }) => {
   const pathname = usePathname();
+  const { user, signOut } = useAuth();
 
   const navItems = [
     { href: "/", label: "Today", icon: CalendarCheck },
@@ -80,10 +83,30 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole = "owner" }) => {
         </nav>
       </div>
 
-      {/* Footer Info */}
+      {/* Footer Info & Sign Out */}
       <div className="p-4 border-t border-border/80 text-[11px] text-text-tertiary">
-        <div className="truncate font-medium text-text-secondary">Distributor Mode</div>
-        <div>Offline PWA Enabled</div>
+        <div className="flex items-center justify-between mb-2">
+          <div className="truncate max-w-[130px]">
+            <div className="truncate font-semibold text-text-primary text-xs">
+              {user?.user_metadata?.name || user?.email?.split("@")[0] || "Distributor"}
+            </div>
+            <div className="truncate text-[10px] text-text-tertiary">
+              {user?.email || "Offline Account"}
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={signOut}
+            title="Sign out of account"
+            className="p-1.5 text-text-tertiary hover:text-[#D64545] rounded-md hover:bg-bg transition-colors"
+          >
+            <LogOut size={14} />
+          </button>
+        </div>
+        <div className="flex items-center justify-between text-[10px] text-text-tertiary pt-1 border-t border-border/50">
+          <span>PWA Sync Ready</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#1F9D6B]" />
+        </div>
       </div>
     </aside>
   );
