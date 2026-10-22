@@ -7,7 +7,7 @@ import { Plus, Bell, RefreshCw, CheckCircle2 } from "lucide-react";
 import { db, LocalGodown, LocalProduct } from "@/lib/db/dexie";
 import { enqueueWrite } from "@/lib/db/sync";
 
-const ShopMap = dynamic(() => import("@/components/shop/ShopMap").then((m) => m.ShopMap), {
+const ShopMap = dynamic(() => import("@/components/shop/ShopMap"), {
   ssr: false,
   loading: () => <div className="h-44 bg-bg-subtle rounded border border-border flex items-center justify-center text-xs text-text-tertiary">Loading godown map...</div>,
 });

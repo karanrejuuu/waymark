@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { db } from "@/lib/db/dexie";
@@ -19,8 +19,9 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
-const ShopMap = dynamic(() => import("@/components/shop/ShopMap").then((m) => m.ShopMap), {
+const ShopMap = dynamic(() => import("@/components/shop/ShopMap"), {
   ssr: false,
   loading: () => (
     <div className="h-56 bg-[#FBFBF9] rounded-xl border border-[#E6E9EF] flex items-center justify-center text-xs text-[#5C6B73]">
@@ -36,13 +37,33 @@ interface ProductConfig {
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState<number>(1);
   const totalSteps = 6;
 
-  // Step 1: Organisation & Auth
-  const [businessName, setBusinessName] = useState("Apex FMCG Distributors");
-  const [ownerName, setOwnerName] = useState("Rajesh Kumar");
+  // Step 1: Organisation & Auth (auto-populated with user's real signup info)
+  const [businessName, setBusinessName] = useState("");
+  const [ownerName, setOwnerName] = useState("");
   const [ownerRole, setOwnerRole] = useState<"Distributor / Owner" | "Wholesale Dealer">("Distributor / Owner");
+
+  useEffect(() => {
+    async function loadRegisteredProfile() {
+      // 1. From active Supabase auth session
+      if (user?.user_metadata?.name) {
+        setOwnerName(user.user_metadata.name);
+      }
+      if (user?.user_metadata?.business_name) {
+        setBusinessName(user.user_metadata.business_name);
+      }
+
+      // 2. From local profile if present
+      const profile = await db.profiles.toCollection().first();
+      if (profile?.name) {
+        setOwnerName((prev) => prev || profile.name);
+      }
+    }
+    loadRegisteredProfile();
+  }, [user]);
 
   // Step 2: Team Size
   const [teamSize, setTeamSize] = useState<"solo" | "team">("solo");
@@ -174,7 +195,7 @@ export default function OnboardingPage() {
                     type="text"
                     value={businessName}
                     onChange={(e) => setBusinessName(e.target.value)}
-                    placeholder="e.g. Apex FMCG Distributors"
+                    placeholder="e.g. Apex FMCG Agency"
                     className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-[#E6E9EF] focus:outline-none focus:border-[#F2A900]"
                   />
                 </div>
@@ -185,7 +206,7 @@ export default function OnboardingPage() {
                     type="text"
                     value={ownerName}
                     onChange={(e) => setOwnerName(e.target.value)}
-                    placeholder="e.g. Rajesh Kumar"
+                    placeholder="Your name"
                     className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-[#E6E9EF] focus:outline-none focus:border-[#F2A900]"
                   />
                 </div>

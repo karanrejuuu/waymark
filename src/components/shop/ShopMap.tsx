@@ -338,3 +338,5 @@ export const ShopMap: React.FC<ShopMapProps> = ({
     </div>
   );
 };
+
+export default ShopMap;

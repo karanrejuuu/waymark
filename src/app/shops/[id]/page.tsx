@@ -14,7 +14,7 @@ import { haversineKm, estimateFuelCost } from "@/lib/geo";
 import { isDueToday, isEscalated, parseDateOnly } from "@/lib/scheduling";
 
 // Dynamic import for Leaflet map with SSR disabled
-const ShopMap = dynamic(() => import("@/components/shop/ShopMap").then((m) => m.ShopMap), {
+const ShopMap = dynamic(() => import("@/components/shop/ShopMap"), {
   ssr: false,
   loading: () => <div className="h-56 bg-bg-subtle rounded border border-border flex items-center justify-center text-xs text-text-tertiary">Loading map...</div>,
 });
