@@ -6,6 +6,7 @@ import {
   formatDateOnly,
 } from "../scheduling";
 import { StockFeedback } from "../supabase/types";
+import { recordPayment } from "./paymentActions";
 
 export interface ProductDeliveryInput {
   productId: string;
@@ -13,15 +14,23 @@ export interface ProductDeliveryInput {
   feedback?: StockFeedback;
 }
 
+export interface MarkDeliveredOptions {
+  paymentCollected?: number;
+  paymentMode?: "cash" | "upi" | "cheque";
+  notes?: string;
+}
+
 /**
  * Mark a shop's products as delivered.
  * Updates intervals based on feedback, computes next due date,
- * records deliveries, and clears urgent status.
+ * clears snooze_until and urgent status, records deliveries,
+ * and optionally processes payment collection.
  */
 export async function markDelivered(
   shopId: string,
   productDeliveries: ProductDeliveryInput[],
-  deliveredBy: string | null = null
+  deliveredBy: string | null = null,
+  options?: MarkDeliveredOptions
 ): Promise<void> {
   const shop = await db.shops.get(shopId);
   if (!shop) {
@@ -30,6 +39,7 @@ export async function markDelivered(
 
   const now = new Date();
   const nowIso = now.toISOString();
+  const orgId = shop.organisation_id || "demo-org";
 
   for (const item of productDeliveries) {
     // 1. Get current shop-product configuration
@@ -41,7 +51,7 @@ export async function markDelivered(
     const remindOffset = shopProduct?.remind_offset_days ?? 0;
     const defaultQty = shopProduct?.default_qty ?? 1;
 
-    // Review Focus #3: fallback to default_qty if qty is NaN or <= 0
+    // Fallback to default_qty if qty is NaN or <= 0
     const qtyToRecord = Number.isFinite(item.qty) && item.qty > 0 ? item.qty : defaultQty;
 
     // 2. Self-correct interval
@@ -59,25 +69,28 @@ export async function markDelivered(
     const deliveryRecord = {
       id: clientId,
       client_id: clientId,
+      organisation_id: orgId,
       shop_id: shopId,
       product_id: item.productId,
       delivered_by: deliveredBy,
       qty: qtyToRecord,
       delivered_at: nowIso,
       stock_feedback: item.feedback || null,
-      notes: null,
+      notes: options?.notes || null,
+      skip_reason: null,
       synced: false,
       created_at: nowIso,
     };
 
     await enqueueWrite("deliveries", "upsert", deliveryRecord);
 
-    // 5. Update shop_products in Dexie and queue
+    // 5. Update shop_products in Dexie and queue (clear snooze_until)
     if (shopProduct) {
       const updatedShopProduct = {
         ...shopProduct,
         interval_days: newInterval,
         next_due_date: nextDueDateStr,
+        snooze_until: null, // Reset snooze on delivery
       };
       await enqueueWrite("shop_products", "upsert", updatedShopProduct);
     }
@@ -91,5 +104,16 @@ export async function markDelivered(
       updated_at: nowIso,
     };
     await enqueueWrite("shops", "upsert", updatedShop);
+  }
+
+  // 7. Optional simultaneous payment collection
+  if (options?.paymentCollected && options.paymentCollected > 0) {
+    await recordPayment({
+      shopId,
+      amount: options.paymentCollected,
+      paymentMode: options.paymentMode || "cash",
+      collectedBy: deliveredBy,
+      notes: "Collected at delivery",
+    });
   }
 }

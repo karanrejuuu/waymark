@@ -1,6 +1,6 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, LocalShop, LocalProduct, LocalShopProduct, LocalRegion } from "@/lib/db/dexie";
-import { isDueToday, isEscalated, sortTodayItems, parseDateOnly } from "@/lib/scheduling";
+import { isDueToday, isEscalated, daysOverdue, sortTodayItems, parseDateOnly } from "@/lib/scheduling";
 
 export interface TodayDueProduct {
   product: LocalProduct;
@@ -15,15 +15,21 @@ export interface TodayShopItem {
   allProducts: TodayDueProduct[];
   isUrgent: boolean;
   isEscalated: boolean;
+  daysOverdue: number;
   earliestDueDate: Date;
 }
 
-export function useTodayList(todayStr?: string) {
+export function useTodayList(todayStr?: string, orgId?: string) {
   return useLiveQuery(async () => {
     const today = todayStr ? parseDateOnly(todayStr) : parseDateOnly(new Date());
 
+    let shopQuery = db.shops.toCollection();
+    if (orgId) {
+      shopQuery = db.shops.where({ organisation_id: orgId });
+    }
+
     const [allShops, allProducts, allShopProducts, allRegions] = await Promise.all([
-      db.shops.toArray(),
+      shopQuery.toArray(),
       db.products.toArray(),
       db.shop_products.toArray(),
       db.regions.toArray(),
@@ -47,6 +53,9 @@ export function useTodayList(todayStr?: string) {
     const todayItems: TodayShopItem[] = [];
 
     for (const shop of allShops) {
+      // Archived shops never appear in active delivery rounds
+      if (shop.is_archived) continue;
+
       const spList = shopProductsByShop.get(shop.id) || [];
       const productsWithDetails: TodayDueProduct[] = [];
       const dueProducts: TodayDueProduct[] = [];
@@ -56,7 +65,8 @@ export function useTodayList(todayStr?: string) {
         const prod = productMap.get(sp.product_id);
         if (!prod) continue;
 
-        const due = isDueToday(sp.next_due_date, today);
+        // Check if due, respecting snooze_until
+        const due = isDueToday(sp.next_due_date, today, sp.snooze_until);
         const item: TodayDueProduct = {
           product: prod,
           shopProduct: sp,
@@ -76,7 +86,7 @@ export function useTodayList(todayStr?: string) {
 
       // A shop is due if:
       // 1. shop.is_urgent is true
-      // 2. OR any of its products is due today/overdue
+      // 2. OR any of its products is due today/overdue (and not snoozed)
       const shouldInclude = shop.is_urgent || dueProducts.length > 0;
 
       if (shouldInclude) {
@@ -90,12 +100,13 @@ export function useTodayList(todayStr?: string) {
           allProducts: productsWithDetails,
           isUrgent: shop.is_urgent,
           isEscalated: isEscalated(finalDueDate, today),
+          daysOverdue: daysOverdue(finalDueDate, today),
           earliestDueDate: finalDueDate,
         });
       }
     }
 
-    // Sort using scheduling rules
+    // Sort in vertical route priority order
     const sortable = todayItems.map((item) => ({
       ...item,
       shopId: item.shop.id,
@@ -104,5 +115,5 @@ export function useTodayList(todayStr?: string) {
     }));
 
     return sortTodayItems(sortable, today);
-  }, [todayStr]);
+  }, [todayStr, orgId]);
 }

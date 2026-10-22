@@ -17,6 +17,7 @@ describe("Region & Product Actions", () => {
     await db.shops.put({
       id: "shop-a",
       owner_id: "demo",
+      organisation_id: "org-1",
       region_id: rId,
       name: "Shop A",
       contact: null,
@@ -25,6 +26,8 @@ describe("Region & Product Actions", () => {
       notes: null,
       is_urgent: false,
       sort_order: 1,
+      balance_due: 0,
+      is_archived: false,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     });
@@ -32,6 +35,7 @@ describe("Region & Product Actions", () => {
     await db.shops.put({
       id: "shop-b",
       owner_id: "demo",
+      organisation_id: "org-1",
       region_id: rId,
       name: "Shop B",
       contact: null,
@@ -40,6 +44,8 @@ describe("Region & Product Actions", () => {
       notes: null,
       is_urgent: false,
       sort_order: 2,
+      balance_due: 0,
+      is_archived: false,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     });

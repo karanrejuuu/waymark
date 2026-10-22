@@ -1,11 +1,15 @@
 "use client";
 
 import React, { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { Sidebar } from "./Sidebar";
 import { BottomTabBar } from "./BottomTabBar";
 import { InstallPrompt } from "../ui/InstallPrompt";
 
 export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const pathname = usePathname();
+  const isLandingPage = pathname === "/welcome";
+
   useEffect(() => {
     // Register service worker on mount in production/PWA mode
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
@@ -14,6 +18,15 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
       });
     }
   }, []);
+
+  if (isLandingPage) {
+    return (
+      <div className="min-h-screen bg-bg">
+        <InstallPrompt />
+        <main className="min-w-0">{children}</main>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-bg">

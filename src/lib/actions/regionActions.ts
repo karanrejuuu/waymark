@@ -1,7 +1,12 @@
 import { db, LocalRegion, LocalShop, LocalProduct } from "@/lib/db/dexie";
 import { enqueueWrite } from "@/lib/db/sync";
 
-export async function saveRegion(name: string, id?: string, ownerId: string = "demo-user"): Promise<string> {
+export async function saveRegion(
+  name: string,
+  id?: string,
+  ownerId: string = "demo-user",
+  organisationId: string = "org-waymark-demo"
+): Promise<string> {
   const isNew = !id;
   const nowIso = new Date().toISOString();
   const regionId = id || (typeof crypto !== "undefined" && crypto.randomUUID
@@ -20,6 +25,7 @@ export async function saveRegion(name: string, id?: string, ownerId: string = "d
   const regionRecord: LocalRegion = {
     id: regionId,
     owner_id: ownerId,
+    organisation_id: organisationId,
     name: name.trim(),
     sort_order: sortOrder,
     created_at: nowIso,
@@ -49,7 +55,8 @@ export async function reorderShops(regionId: string, orderedIds: string[]): Prom
 
 export async function saveProduct(
   data: { id?: string; name: string; default_interval: number },
-  ownerId: string = "demo-user"
+  ownerId: string = "demo-user",
+  organisationId: string = "org-waymark-demo"
 ): Promise<string> {
   const nowIso = new Date().toISOString();
   const prodId = data.id || (typeof crypto !== "undefined" && crypto.randomUUID
@@ -59,6 +66,7 @@ export async function saveProduct(
   const prodRecord: LocalProduct = {
     id: prodId,
     owner_id: ownerId,
+    organisation_id: organisationId,
     name: data.name.trim(),
     default_interval: data.default_interval || 7,
     created_at: nowIso,

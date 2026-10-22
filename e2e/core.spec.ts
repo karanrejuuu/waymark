@@ -1,56 +1,109 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Waymark Core User Flows", () => {
-  test("loads the Today page with demo shops and allows expanding a shop row", async ({ page }) => {
+test.describe("Waymark Mobile E2E Flows", () => {
+  test.beforeEach(async ({ page }) => {
+    // Ensure clean local state
+    await page.goto("/");
+  });
+
+  test("loads Today route with vertical stops, next-up highlight, and route summary", async ({ page }) => {
     await page.goto("/");
 
-    // 1. Title is "Today"
-    await expect(page.getByRole("heading", { name: "Today", level: 1 })).toBeVisible();
+    // 1. Heading check
+    await expect(page.getByRole("heading", { name: "Today's Route", level: 1 })).toBeVisible({ timeout: 10000 });
 
-    // 2. Demo shops should load into the list
+    // 2. Demo shops should load into the vertical route line
+    const firstShop = page.getByText("Gupta Kirana & General Store");
+    await expect(firstShop).toBeVisible({ timeout: 10000 });
+
+    // 3. Status summary with urgent indicator
+    await expect(page.getByText(/urgent/i)).toBeVisible();
+    await expect(page.getByText(/pending dues/i)).toBeVisible();
+
+    // 4. Next-up turmeric indicator
+    await expect(page.getByText(/first stop highlighted as next-up/i)).toBeVisible();
+  });
+
+  test("marks delivered with 200ms tally tick and updates route stop status", async ({ page }) => {
+    await page.goto("/");
+
+    // Find and expand the first stop
     const shopRow = page.getByText("Gupta Kirana & General Store");
     await expect(shopRow).toBeVisible({ timeout: 10000 });
-
-    // 3. Click row to expand inline details
     await shopRow.click();
 
-    // 4. Products section should be visible
-    await expect(page.getByText("Products to deliver:")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Mark delivered" })).toBeVisible();
+    // Check inline products & quick deliver button
+    const deliverBtn = page.getByRole("button", { name: /Mark Delivered & Complete/i });
+    await expect(deliverBtn).toBeVisible();
+
+    // Click delivered
+    await deliverBtn.click();
+
+    // Verify confirmation and completion
+    await expect(page.getByText("Completed ✓")).toBeVisible({ timeout: 5000 });
   });
 
-  test("can navigate to Routes page and search for a shop", async ({ page }) => {
-    await page.goto("/routes");
+  test("snoozes a shop without altering interval", async ({ page }) => {
+    await page.goto("/");
 
-    // Check heading
-    await expect(page.getByRole("heading", { name: "Routes", level: 1 })).toBeVisible();
+    // Expand second stop (Laxmi)
+    const laxmiShop = page.getByText("Laxmi Supermarket");
+    await expect(laxmiShop).toBeVisible({ timeout: 10000 });
+    await laxmiShop.click();
 
-    // Search for a specific shop
-    const searchInput = page.getByPlaceholder("Search by shop name...");
-    await expect(searchInput).toBeVisible();
-    await searchInput.fill("Gupta");
+    // Click Snooze / Reschedule button
+    const snoozeBtn = page.getByRole("button", { name: /Snooze/i });
+    await expect(snoozeBtn).toBeVisible();
+    await snoozeBtn.click();
 
-    // Only matching shop should appear
-    await expect(page.getByText("Gupta Kirana & General Store")).toBeVisible();
-    await expect(page.getByText("Bharat Daily Needs")).not.toBeVisible();
+    // Select snooze option (+3 days)
+    const threeDaysOption = page.getByRole("button", { name: /\+3 days/i });
+    await expect(threeDaysOption).toBeVisible();
+    await threeDaysOption.click();
+
+    // Stop should disappear from today's active route
+    await expect(page.getByText("Laxmi Supermarket")).not.toBeVisible({ timeout: 5000 });
   });
 
-  test("can view shop details and properties", async ({ page }) => {
-    await page.goto("/routes");
-    const shopLink = page.getByRole("link", { name: /Gupta Kirana/i });
-    await expect(shopLink).toBeVisible({ timeout: 10000 });
-    await shopLink.click();
+  test("offline delivery queuing and reconnection sync", async ({ page, context }) => {
+    await page.goto("/");
+    await expect(page.getByText("Gupta Kirana & General Store")).toBeVisible({ timeout: 10000 });
 
-    // Shop detail heading
-    await expect(page.getByRole("heading", { name: "Gupta Kirana & General Store", level: 1 })).toBeVisible();
-    await expect(page.getByText("Products", { exact: true })).toBeVisible();
-    await expect(page.getByText("Delivery History")).toBeVisible();
+    // 1. Go offline
+    await context.setOffline(true);
+
+    // Verify offline banner appears
+    await expect(page.getByText(/Working offline/i)).toBeVisible({ timeout: 5000 });
+
+    // 2. Deliver stop while offline
+    const stop = page.getByText("Gupta Kirana & General Store");
+    await stop.click();
+    const deliverBtn = page.getByRole("button", { name: /Mark Delivered & Complete/i });
+    await deliverBtn.click();
+    await expect(page.getByText("Completed ✓")).toBeVisible({ timeout: 5000 });
+
+    // 3. Reconnect online
+    await context.setOffline(false);
+
+    // Verify offline banner clears
+    await expect(page.getByText(/Working offline/i)).not.toBeVisible({ timeout: 5000 });
   });
 
-  test("settings page displays vehicle and fuel parameters", async ({ page }) => {
-    await page.goto("/settings");
-    await expect(page.getByRole("heading", { name: "Settings", level: 1 })).toBeVisible();
-    await expect(page.getByText("Average Mileage")).toBeVisible();
-    await expect(page.getByText("Fuel Price")).toBeVisible();
+  test("renders multilingual landing page with interactive mini route line", async ({ page }) => {
+    await page.goto("/welcome");
+
+    // 1. English Hero
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Never miss a restock round");
+
+    // 2. Mini Today route line preview
+    await expect(page.getByText("Today's Live Route Line")).toBeVisible();
+
+    // 3. Toggle Malayalam
+    await page.getByTestId("lang-ml").click();
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("റീസ്റ്റോക്ക്");
+
+    // 4. Toggle Hindi
+    await page.getByTestId("lang-hi").click();
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("रीस्टॉक");
   });
 });

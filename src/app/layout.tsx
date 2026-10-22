@@ -1,13 +1,25 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Bricolage_Grotesque, DM_Sans } from "next/font/google";
 import { AppShell } from "@/components/layout/AppShell";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-heading",
+  display: "swap",
+  weight: ["500", "600", "700"],
+});
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
 
 export const metadata: Metadata = {
-  title: "Waymark",
-  description: "Field delivery round reminders for FMCG distribution",
+  title: "Waymark — Never Miss a Restock Round",
+  description: "Field delivery round reminders and payments for FMCG distribution.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -17,7 +29,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#2383E2",
+  themeColor: "#F2A900",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -30,14 +42,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${bricolage.variable} ${dmSans.variable}`}>
       <head>
         <link rel="manifest" href="/manifest.json" />
       </head>
-      <body className={inter.className}>
-        <div id="app-root" className="min-h-screen bg-bg text-text-primary antialiased selection:bg-accent/20">
-          <AppShell>{children}</AppShell>
-        </div>
+      <body className="min-h-screen bg-bg text-ink antialiased selection:bg-accent/20">
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

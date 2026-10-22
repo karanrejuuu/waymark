@@ -47,6 +47,7 @@ export default function SettingsPage() {
     const existing = godown || {
       id: "godown-1",
       owner_id: "demo-user",
+      organisation_id: "org-waymark-demo",
       lat: 19.076,
       lng: 72.8777,
       created_at: new Date().toISOString(),
@@ -67,6 +68,7 @@ export default function SettingsPage() {
     const existing = godown || {
       id: "godown-1",
       owner_id: "demo-user",
+      organisation_id: "org-waymark-demo",
       vehicle_mileage_kmpl: mileage,
       petrol_price_per_l: petrolPrice,
       created_at: new Date().toISOString(),

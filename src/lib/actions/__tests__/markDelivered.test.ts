@@ -18,6 +18,7 @@ describe("markDelivered Action", () => {
     await db.shops.put({
       id: "shop-1",
       owner_id: "owner-1",
+      organisation_id: "org-1",
       name: "Gupta General Store",
       contact: "9876543210",
       region_id: null,
@@ -26,6 +27,8 @@ describe("markDelivered Action", () => {
       notes: null,
       is_urgent: true,
       sort_order: 0,
+      balance_due: 0,
+      is_archived: false,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     });
@@ -34,6 +37,7 @@ describe("markDelivered Action", () => {
     await db.products.put({
       id: "prod-1",
       owner_id: "owner-1",
+      organisation_id: "org-1",
       name: "Parle-G 100g",
       default_interval: 7,
       created_at: new Date().toISOString(),
@@ -43,12 +47,14 @@ describe("markDelivered Action", () => {
     const todayStr = formatDateOnly(new Date());
     await db.shop_products.put({
       id: "sp-1",
+      organisation_id: "org-1",
       shop_id: "shop-1",
       product_id: "prod-1",
       default_qty: 10,
       interval_days: 7,
       remind_offset_days: 1,
       next_due_date: todayStr,
+      snooze_until: null,
       created_at: new Date().toISOString(),
     });
 
@@ -86,6 +92,7 @@ describe("markDelivered Action", () => {
     await db.shops.put({
       id: "shop-2",
       owner_id: "owner-1",
+      organisation_id: "org-1",
       name: "Sharma Kirana",
       contact: null,
       region_id: null,
@@ -94,18 +101,22 @@ describe("markDelivered Action", () => {
       notes: null,
       is_urgent: false,
       sort_order: 0,
+      balance_due: 0,
+      is_archived: false,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     });
 
     await db.shop_products.put({
       id: "sp-2",
+      organisation_id: "org-1",
       shop_id: "shop-2",
       product_id: "prod-2",
       default_qty: 5,
       interval_days: 5,
       remind_offset_days: 0,
       next_due_date: "2026-10-22",
+      snooze_until: null,
       created_at: new Date().toISOString(),
     });
 

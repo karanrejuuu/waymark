@@ -20,7 +20,11 @@ export interface SaveShopInput {
   products: ShopProductConfigInput[];
 }
 
-export async function saveShop(input: SaveShopInput, ownerId: string = "demo-user"): Promise<string> {
+export async function saveShop(
+  input: SaveShopInput,
+  ownerId: string = "demo-user",
+  organisationId: string = "org-waymark-demo"
+): Promise<string> {
   const isNew = !input.id;
   const now = new Date();
   const nowIso = now.toISOString();
@@ -33,6 +37,7 @@ export async function saveShop(input: SaveShopInput, ownerId: string = "demo-use
   const shopRecord: LocalShop = {
     id: shopId,
     owner_id: ownerId,
+    organisation_id: organisationId,
     region_id: input.regionId || null,
     name: input.name.trim(),
     contact: input.contact?.trim() || null,
@@ -41,6 +46,8 @@ export async function saveShop(input: SaveShopInput, ownerId: string = "demo-use
     notes: input.notes?.trim() || null,
     is_urgent: false,
     sort_order: 0,
+    balance_due: 0,
+    is_archived: false,
     created_at: nowIso,
     updated_at: nowIso,
   };
@@ -52,6 +59,9 @@ export async function saveShop(input: SaveShopInput, ownerId: string = "demo-use
       shopRecord.created_at = existing.created_at;
       shopRecord.sort_order = existing.sort_order;
       shopRecord.is_urgent = existing.is_urgent;
+      shopRecord.balance_due = existing.balance_due ?? 0;
+      shopRecord.is_archived = existing.is_archived ?? false;
+      shopRecord.organisation_id = existing.organisation_id ?? organisationId;
     }
   }
 
@@ -72,12 +82,14 @@ export async function saveShop(input: SaveShopInput, ownerId: string = "demo-use
 
     const spRecord: LocalShopProduct = {
       id: spId,
+      organisation_id: organisationId,
       shop_id: shopId,
       product_id: prodInput.productId,
       default_qty: prodInput.defaultQty || 1,
       interval_days: prodInput.intervalDays || 7,
       remind_offset_days: Math.min(3, Math.max(0, prodInput.remindOffsetDays || 0)),
       next_due_date: nextDueDate,
+      snooze_until: existingSp ? (existingSp.snooze_until ?? null) : null,
       created_at: existingSp ? existingSp.created_at : nowIso,
     };
 
