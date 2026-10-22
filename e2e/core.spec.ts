@@ -89,21 +89,21 @@ test.describe("Waymark Mobile E2E Flows", () => {
     await expect(page.getByText(/Working offline/i)).not.toBeVisible({ timeout: 5000 });
   });
 
-  test("renders multilingual landing page with interactive mini route line", async ({ page }) => {
+  test("renders 3D interactive cockpit landing page with live route simulation", async ({ page }) => {
     await page.goto("/welcome");
 
-    // 1. English Hero
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Never miss a restock round");
+    // 1. Hero headline check
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Never let a distributor rack run out of stock");
 
-    // 2. Mini Today route line preview
-    await expect(page.getByText("Today's Live Route Line")).toBeVisible();
+    // 2. 3D Cockpit route preview
+    await expect(page.getByText("Sector 4 — Central Godown Route Line")).toBeVisible();
 
-    // 3. Toggle Malayalam
-    await page.getByTestId("lang-ml").click();
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("റീസ്റ്റോക്ക്");
+    // 3. Interactive stop toggle
+    const stopToTap = page.getByText("Laxmi Supermarket");
+    await expect(stopToTap).toBeVisible();
+    await stopToTap.click();
 
-    // 4. Toggle Hindi
-    await page.getByTestId("lang-hi").click();
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("रीस्टॉक");
+    // 4. Verify completed tally updates
+    await expect(page.getByText(/2 \/ 4 Stops/i)).toBeVisible();
   });
 });
