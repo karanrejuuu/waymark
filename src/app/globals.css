@@ -1,9 +1,34 @@
-@import "../lib/tokens.css";
-@import "leaflet/dist/leaflet.css";
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  /* Warmth & Personality tokens */
+  --bg: #FBFBF9;
+  --ink: #14213D;
+  --text-primary: #14213D;
+  --text-secondary: #53627A;
+  --text-tertiary: #8E9BAE;
+  
+  /* Single accent: Turmeric gold for primary actions and next-up stop */
+  --accent: #F2A900;
+  --accent-hover: #D99600;
+  --accent-faint: rgba(242, 169, 0, 0.12);
+
+  /* Status tokens */
+  --success: #1F9D6B;
+  --green-soft: #1F9D6B;
+  --urgent: #D64545;
+  --red-soft: #D64545;
+  --yellow-soft: #DFAB01;
+
+  /* Line & Surface tokens */
+  --lines: #E6E9EF;
+  --border: #E6E9EF;
+  --bg-subtle: #F4F5F7;
+  --bg-hover: #ECEEF2;
+  --card: #FFFFFF;
+}
 
 @layer base {
   * {

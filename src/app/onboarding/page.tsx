@@ -78,13 +78,8 @@ export default function OnboardingPage() {
   const [lat, setLat] = useState<number>(19.076);
   const [lng, setLng] = useState<number>(72.8777);
 
-  // Step 5: Products & Intervals
-  const [products, setProducts] = useState<ProductConfig[]>([
-    { name: "Parle-G Glucose 100g (Case of 24)", interval: 5 },
-    { name: "Frooti Mango 200ml (Crate of 30)", interval: 7 },
-    { name: "Maggi 2-Minute Noodles (Box of 48)", interval: 6 },
-    { name: "Tata Tea Gold 250g (Pack of 12)", interval: 10 },
-  ]);
+  // Step 5: Products & Intervals (clean zero-mock)
+  const [products, setProducts] = useState<ProductConfig[]>([]);
   const [newProdName, setNewProdName] = useState("");
   const [newProdInterval, setNewProdInterval] = useState(7);
 
@@ -440,28 +435,34 @@ export default function OnboardingPage() {
                 </div>
               </div>
 
-              <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
-                {products.map((p, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between p-2.5 rounded-xl border border-[#E6E9EF] bg-[#FBFBF9] text-xs"
-                  >
-                    <span className="font-semibold text-ink truncate pr-2">{p.name}</span>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-[#5C6B73] tabular-nums font-medium">
-                        Every {p.interval} days
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveProduct(i)}
-                        className="text-[#5C6B73] hover:text-[#D64545] p-1"
-                      >
-                        <Trash2 size={13} />
-                      </button>
+              {products.length === 0 ? (
+                <div className="py-6 px-4 text-center border border-dashed border-[#E6E9EF] rounded-xl bg-[#FBFBF9] text-xs text-[#5C6B73]">
+                  No products configured yet. Type the items you supply below (or skip to add them anytime from the Products menu).
+                </div>
+              ) : (
+                <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                  {products.map((p, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center justify-between p-2.5 rounded-xl border border-[#E6E9EF] bg-[#FBFBF9] text-xs"
+                    >
+                      <span className="font-semibold text-ink truncate pr-2">{p.name}</span>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="text-[#5C6B73] tabular-nums font-medium">
+                          Every {p.interval} days
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveProduct(i)}
+                          className="text-[#5C6B73] hover:text-[#D64545] p-1"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
 
               {/* Add Product inline */}
               <div className="p-3 bg-[#E6E9EF]/30 rounded-xl border border-[#E6E9EF] flex items-center gap-2">

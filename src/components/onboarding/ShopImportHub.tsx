@@ -28,21 +28,15 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
   const [tab, setTab] = useState<"table" | "csv" | "skip">("table");
   const [isImporting, setIsImporting] = useState(false);
 
-  // 1. Rapid Table State
+  // 1. Rapid Table State (clean empty entry rows)
   const [rows, setRows] = useState<RapidShopRow[]>([
-    { name: "Gupta Kirana Store", region: defaultRegion, intervalDays: 6, contact: "9820011223", balanceDue: 1450 },
-    { name: "Laxmi Supermarket", region: defaultRegion, intervalDays: 7, contact: "9820044556", balanceDue: 3200 },
-    { name: "Anand Tea Depot", region: defaultRegion, intervalDays: 10, contact: "9820077889", balanceDue: 0 },
+    { name: "", region: defaultRegion, intervalDays: 7, contact: "", balanceDue: 0 },
+    { name: "", region: defaultRegion, intervalDays: 7, contact: "", balanceDue: 0 },
     { name: "", region: defaultRegion, intervalDays: 7, contact: "", balanceDue: 0 },
   ]);
 
   // 2. CSV / Paste State
-  const [csvText, setCsvText] = useState<string>(
-    "Gupta Kirana Store, Market Route, 6, 9820011223, 1450\n" +
-    "Laxmi Supermarket, Market Route, 7, 9820044556, 3200\n" +
-    "Anand Tea Depot, Market Route, 10, 9820077889, 0\n" +
-    "Bharat Daily Needs, Station Road, 5, 9820099001, 850"
-  );
+  const [csvText, setCsvText] = useState<string>("");
   const [csvError, setCsvError] = useState<string | null>(null);
 
   const handleAddRow = () => {
@@ -378,7 +372,7 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
           <div>
             <h4 className="text-sm font-bold text-ink font-heading">Add shops as you ride</h4>
             <p className="text-xs text-[#5C6B73] mt-1 max-w-sm mx-auto">
-              Don't want to type your shops right now? We'll load 4 realistic FMCG demo shops so you can test the delivery tick and due collection immediately.
+              You can skip importing right now and enter your app with a clean dashboard. Add your shops anytime as you visit retailers.
             </p>
           </div>
 

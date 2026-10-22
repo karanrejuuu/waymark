@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, DM_Sans } from "next/font/google";
 import { AppShell } from "@/components/layout/AppShell";
 import { AuthProvider } from "@/context/AuthContext";
+import "leaflet/dist/leaflet.css";
 import "./globals.css";
 
 const bricolage = Bricolage_Grotesque({
