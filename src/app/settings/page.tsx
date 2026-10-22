@@ -164,7 +164,8 @@ export default function SettingsPage() {
                 lat={godown?.lat ?? 19.076}
                 lng={godown?.lng ?? 72.8777}
                 editable={true}
-                height="180px"
+                height="220px"
+                placeholder="Search godown address or area..."
                 onLocationChange={handleUpdateGodownCoords}
               />
             </div>

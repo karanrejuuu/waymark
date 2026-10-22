@@ -188,7 +188,7 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
       {/* Map location pin */}
       <div className="pt-2">
         <label className="block text-xs font-medium text-text-secondary mb-1.5">
-          Map Location (tap to place pin)
+          Shop Location (search address/road or tap to pin)
         </label>
         <ShopMap
           lat={lat}
@@ -198,11 +198,12 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
             setLat(newLat);
             setLng(newLng);
           }}
-          height="220px"
+          height="260px"
+          placeholder="Search road, shop name, or area..."
         />
         {lat !== null && lng !== null && (
           <div className="text-[11px] text-text-tertiary mt-1">
-            Coordinates: {lat.toFixed(4)}, {lng.toFixed(4)}
+            Pinned location: {lat.toFixed(5)}, {lng.toFixed(5)}
           </div>
         )}
       </div>

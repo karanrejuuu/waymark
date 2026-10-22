@@ -74,7 +74,8 @@ export default function OnboardingPage() {
               lat={lat}
               lng={lng}
               editable={true}
-              height="240px"
+              height="260px"
+              placeholder="Search godown address or area..."
               onLocationChange={(newLat, newLng) => {
                 setLat(newLat);
                 setLng(newLng);
