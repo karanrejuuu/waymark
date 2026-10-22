@@ -40,3 +40,5 @@ next-env.d.ts
 .superpowers/
 .agents/
 skills-lock.json
+design-system/
+docs/
