@@ -54,7 +54,7 @@ export const InstallPrompt: React.FC = () => {
         <button
           type="button"
           onClick={handleInstall}
-          className="px-2.5 py-1 bg-accent text-white font-medium rounded hover:opacity-90"
+          className="px-2.5 py-1 bg-[#0F172A] text-white font-semibold rounded hover:bg-[#1E293B]"
         >
           Install
         </button>
