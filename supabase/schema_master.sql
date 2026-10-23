@@ -137,9 +137,11 @@ CREATE INDEX IF NOT EXISTS idx_payments_org_shop ON payments(organisation_id, sh
 CREATE INDEX IF NOT EXISTS idx_org_members_user ON organisation_members(user_id, organisation_id);
 CREATE INDEX IF NOT EXISTS idx_shops_region ON shops(region_id);
 
--- 12. Multi-Tenant Isolation Function
+-- 12. Multi-Tenant Isolation Function (Hardened search_path)
 CREATE OR REPLACE FUNCTION has_org_access(target_org_id uuid)
-RETURNS boolean AS $$
+RETURNS boolean
+SET search_path = public
+AS $$
 BEGIN
   RETURN EXISTS (
     SELECT 1 FROM organisation_members
