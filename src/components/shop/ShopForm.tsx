@@ -125,7 +125,7 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
       {/* Basic properties */}
       <div className="space-y-4">
         <div>
-          <label className="block text-xs font-medium text-text-secondary mb-1">
+          <label className="block text-xs font-bold text-[#0F172A] mb-1">
             Shop Name *
           </label>
           <input
@@ -134,19 +134,19 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
             placeholder="e.g. Laxmi General Store"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full text-sm px-3 py-2 border border-border rounded bg-bg focus:outline-none focus:border-accent"
+            className="w-full text-xs px-3.5 py-2.5 border border-[#CBD5E1] rounded-xl bg-white text-[#0F172A] placeholder:text-[#475569] font-medium focus:outline-none focus:border-[#92400E]"
           />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-medium text-text-secondary mb-1">
+            <label className="block text-xs font-bold text-[#0F172A] mb-1">
               Region / Route
             </label>
             <select
               value={regionId}
               onChange={(e) => setRegionId(e.target.value)}
-              className="w-full text-sm px-3 py-2 border border-border rounded bg-bg focus:outline-none focus:border-accent"
+              className="w-full text-xs px-3.5 py-2.5 border border-[#CBD5E1] rounded-xl bg-white text-[#0F172A] font-medium focus:outline-none focus:border-[#92400E]"
             >
               <option value="">Select a region...</option>
               {allRegions.map((r) => (
@@ -158,7 +158,7 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-text-secondary mb-1">
+            <label className="block text-xs font-bold text-[#0F172A] mb-1">
               Contact Phone
             </label>
             <input
@@ -166,13 +166,13 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
               placeholder="e.g. 9820012345"
               value={contact}
               onChange={(e) => setContact(e.target.value)}
-              className="w-full text-sm px-3 py-2 border border-border rounded bg-bg focus:outline-none focus:border-accent"
+              className="w-full text-xs px-3.5 py-2.5 border border-[#CBD5E1] rounded-xl bg-white text-[#0F172A] placeholder:text-[#475569] font-medium focus:outline-none focus:border-[#92400E]"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-text-secondary mb-1">
+          <label className="block text-xs font-bold text-[#0F172A] mb-1">
             Notes & Delivery Instructions
           </label>
           <textarea
@@ -180,14 +180,14 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
             placeholder="e.g. Prefers mornings, near Shiv temple..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="w-full text-sm px-3 py-2 border border-border rounded bg-bg focus:outline-none focus:border-accent resize-none"
+            className="w-full text-xs px-3.5 py-2.5 border border-[#CBD5E1] rounded-xl bg-white text-[#0F172A] placeholder:text-[#475569] font-medium focus:outline-none focus:border-[#92400E] resize-none"
           />
         </div>
       </div>
 
       {/* Map location pin */}
       <div className="pt-2">
-        <label className="block text-xs font-medium text-text-secondary mb-1.5">
+        <label className="block text-xs font-bold text-[#0F172A] mb-1.5">
           Shop Location (search address/road or tap to pin)
         </label>
         <ShopMap
@@ -202,7 +202,7 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
           placeholder="Search road, shop name, or area..."
         />
         {lat !== null && lng !== null && (
-          <div className="text-[11px] text-text-tertiary mt-1">
+          <div className="text-xs text-[#475569] mt-1 font-medium">
             Pinned location: {lat.toFixed(5)}, {lng.toFixed(5)}
           </div>
         )}
@@ -211,13 +211,13 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
       {/* Products & Intervals */}
       <div className="pt-2">
         <div className="flex items-center justify-between mb-2">
-          <label className="text-xs font-medium text-text-secondary">
+          <label className="text-xs font-bold text-[#0F172A]">
             Stocked Products & Delivery Cycles
           </label>
           <button
             type="button"
             onClick={handleAddProduct}
-            className="text-xs text-accent hover:underline inline-flex items-center gap-1 font-medium"
+            className="text-xs text-[#92400E] hover:underline inline-flex items-center gap-1 font-bold"
           >
             <Plus size={13} />
             <span>Add product</span>
@@ -225,7 +225,7 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
         </div>
 
         {configuredProducts.length === 0 ? (
-          <div className="p-4 border border-border border-dashed rounded text-center text-xs text-text-tertiary">
+          <div className="p-4 border border-[#CBD5E1] border-dashed rounded-xl text-center text-xs text-[#475569] font-medium bg-white">
             No products added yet. Click &quot;Add product&quot; to configure delivery cycles.
           </div>
         ) : (
@@ -234,7 +234,7 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
               return (
                 <div
                   key={idx}
-                  className="p-3 border border-border rounded-lg bg-bg-subtle/40 space-y-3"
+                  className="p-3.5 border border-[#CBD5E1] rounded-xl bg-white space-y-3 shadow-xs"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <select
@@ -254,7 +254,7 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
                           )
                         );
                       }}
-                      className="text-sm font-medium bg-bg border border-border rounded px-2.5 py-1.5 flex-1"
+                      className="text-xs font-bold bg-[#FAF8F5] border border-[#CBD5E1] rounded-lg px-2.5 py-1.5 flex-1 text-[#0F172A]"
                     >
                       {allProducts.map((p) => (
                         <option key={p.id} value={p.id}>
@@ -266,7 +266,7 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
                     <button
                       type="button"
                       onClick={() => handleRemoveProduct(idx)}
-                      className="p-1.5 text-text-tertiary hover:text-red-soft rounded"
+                      className="p-1.5 text-[#475569] hover:text-[#DC2626] rounded-lg"
                     >
                       <Trash2 size={14} />
                     </button>
@@ -274,7 +274,7 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
 
                   <div className="grid grid-cols-2 gap-3 text-xs">
                     <div>
-                      <span className="text-text-secondary block mb-1">
+                      <span className="text-[#475569] font-medium block mb-1">
                         Default Delivery Qty
                       </span>
                       <input
@@ -289,12 +289,12 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
                             )
                           );
                         }}
-                        className="w-full text-sm px-2.5 py-1 bg-bg border border-border rounded font-medium"
+                        className="w-full text-xs px-2.5 py-1.5 bg-[#FAF8F5] border border-[#CBD5E1] rounded-lg font-bold text-[#0F172A]"
                       />
                     </div>
 
                     <div>
-                      <span className="text-text-secondary block mb-1">
+                      <span className="text-[#475569] font-medium block mb-1">
                         Delivery Interval (days)
                       </span>
                       <input
@@ -310,13 +310,13 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
                             )
                           );
                         }}
-                        className="w-full text-sm px-2.5 py-1 bg-bg border border-border rounded font-medium"
+                        className="w-full text-xs px-2.5 py-1.5 bg-[#FAF8F5] border border-[#CBD5E1] rounded-lg font-bold text-[#0F172A]"
                       />
                     </div>
                   </div>
 
                   {/* Inline Remind Earlier Slider */}
-                  <div className="pt-1 border-t border-border/60">
+                  <div className="pt-1 border-t border-[#E2E8F0]">
                     <RemindOffsetSlider
                       value={cp.remindOffsetDays}
                       onChange={(newOffset) => {
@@ -336,18 +336,18 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
       </div>
 
       {/* Submit buttons */}
-      <div className="pt-4 flex items-center justify-end gap-3 border-t border-border">
+      <div className="pt-4 flex items-center justify-end gap-3 border-t border-[#CBD5E1]">
         <button
           type="button"
           onClick={() => router.back()}
-          className="px-4 py-2 text-xs font-medium text-text-secondary hover:text-text-primary rounded"
+          className="px-4 py-2 text-xs font-semibold text-[#475569] hover:text-[#0F172A] rounded-xl"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={submitting}
-          className="px-5 py-2 text-xs font-medium text-white bg-accent rounded hover:opacity-90 transition-opacity"
+          className="px-5 py-2.5 text-xs font-bold text-white bg-[#0F172A] hover:bg-[#92400E] rounded-xl transition-all shadow-xs"
         >
           {submitting ? "Saving..." : initialShop ? "Save changes" : "Create shop"}
         </button>

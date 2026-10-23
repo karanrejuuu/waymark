@@ -138,13 +138,13 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FBFBF9] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#FAF8F5] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         {/* Back Link */}
         <div className="mb-6">
           <Link
             href="/welcome"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#5C6B73] hover:text-ink transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#475569] hover:text-[#0F172A] transition-colors"
           >
             <ArrowLeft size={14} />
             Back to Waymark Overview
@@ -152,19 +152,19 @@ export default function LoginPage() {
         </div>
 
         {/* Brand Logo & Title */}
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-8 h-8 rounded-xl bg-[#F2A900] flex items-center justify-center font-bold text-ink text-base shadow-sm">
+        <div className="flex items-center gap-2.5 mb-2">
+          <div className="w-8 h-8 rounded-xl bg-[#92400E] text-white flex items-center justify-center font-bold text-base shadow-xs font-heading">
             W
           </div>
-          <span className="font-heading font-extrabold text-2xl tracking-tight text-ink">
+          <span className="font-heading font-extrabold text-2xl tracking-tight text-[#0F172A]">
             Waymark
           </span>
         </div>
 
-        <h2 className="text-xl font-bold font-heading text-ink">
+        <h2 className="text-xl sm:text-2xl font-extrabold font-heading text-[#0F172A]">
           {mode === "login" ? "Sign in to your distributor account" : "Create your agency account"}
         </h2>
-        <p className="mt-1 text-xs text-[#5C6B73]">
+        <p className="mt-1 text-xs text-[#475569] font-medium">
           {mode === "login"
             ? "Access your daily routes, shop orders, and dues ledger"
             : "Set up delivery tracking for your wholesale rounds in 2 minutes"}
@@ -172,9 +172,9 @@ export default function LoginPage() {
       </div>
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-6 shadow-xs border border-[#E6E9EF] rounded-2xl">
+        <div className="bg-white py-8 px-6 sm:px-8 shadow-xs border border-[#CBD5E1] rounded-2xl">
           {/* Mode Switcher Tabs */}
-          <div className="grid grid-cols-2 gap-1 bg-[#E6E9EF]/60 p-1 rounded-xl mb-6 text-xs font-semibold">
+          <div className="grid grid-cols-2 gap-1 bg-[#F1F5F9] p-1 rounded-xl mb-6 text-xs font-bold">
             <button
               type="button"
               onClick={() => {
@@ -182,7 +182,7 @@ export default function LoginPage() {
                 setErrorMsg(null);
               }}
               className={`py-2 rounded-lg transition-colors ${
-                mode === "login" ? "bg-white text-ink shadow-xs" : "text-[#5C6B73] hover:text-ink"
+                mode === "login" ? "bg-white text-[#0F172A] shadow-xs" : "text-[#475569] hover:text-[#0F172A]"
               }`}
             >
               Sign In
@@ -194,7 +194,7 @@ export default function LoginPage() {
                 setErrorMsg(null);
               }}
               className={`py-2 rounded-lg transition-colors ${
-                mode === "signup" ? "bg-white text-ink shadow-xs" : "text-[#5C6B73] hover:text-ink"
+                mode === "signup" ? "bg-white text-[#0F172A] shadow-xs" : "text-[#475569] hover:text-[#0F172A]"
               }`}
             >
               Create Account
@@ -203,14 +203,14 @@ export default function LoginPage() {
 
           {/* Feedback messages */}
           {errorMsg && (
-            <div className="mb-4 p-3 rounded-xl bg-[#D64545]/10 border border-[#D64545]/30 text-xs text-[#D64545] flex items-start gap-2">
+            <div className="mb-4 p-3 rounded-xl bg-[#FEF2F2] border border-[#FECACA] text-xs text-[#DC2626] font-semibold flex items-start gap-2">
               <AlertCircle size={15} className="shrink-0 mt-0.5" />
               <span>{errorMsg}</span>
             </div>
           )}
 
           {successMsg && (
-            <div className="mb-4 p-3 rounded-xl bg-[#1F9D6B]/10 border border-[#1F9D6B]/30 text-xs text-[#1F9D6B] flex items-start gap-2">
+            <div className="mb-4 p-3 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] text-xs text-[#065F46] font-semibold flex items-start gap-2">
               <Check size={15} className="shrink-0 mt-0.5" />
               <span>{successMsg}</span>
             </div>
@@ -220,11 +220,11 @@ export default function LoginPage() {
             {mode === "signup" && (
               <>
                 <div>
-                  <label className="block text-xs font-semibold text-ink mb-1">
+                  <label className="block text-xs font-bold text-[#0F172A] mb-1">
                     Your Full Name
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#5C6B73]">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#64748B]">
                       <User size={15} />
                     </div>
                     <input
@@ -233,17 +233,17 @@ export default function LoginPage() {
                       placeholder="e.g. Ramesh Patel"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2 text-xs border border-[#E6E9EF] rounded-xl focus:outline-none focus:border-[#F2A900]"
+                      className="w-full pl-9 pr-3 py-2 text-xs border border-[#CBD5E1] rounded-xl bg-[#FAF8F5] text-[#0F172A] placeholder:text-[#475569] focus:outline-none focus:border-[#92400E]"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-ink mb-1">
+                  <label className="block text-xs font-bold text-[#0F172A] mb-1">
                     Business / Agency Name (Optional)
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#5C6B73]">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#64748B]">
                       <Building size={15} />
                     </div>
                     <input
@@ -251,7 +251,7 @@ export default function LoginPage() {
                       placeholder="e.g. Apex FMCG Agency"
                       value={businessName}
                       onChange={(e) => setBusinessName(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2 text-xs border border-[#E6E9EF] rounded-xl focus:outline-none focus:border-[#F2A900]"
+                      className="w-full pl-9 pr-3 py-2 text-xs border border-[#CBD5E1] rounded-xl bg-[#FAF8F5] text-[#0F172A] placeholder:text-[#475569] focus:outline-none focus:border-[#92400E]"
                     />
                   </div>
                 </div>
@@ -259,11 +259,11 @@ export default function LoginPage() {
             )}
 
             <div>
-              <label className="block text-xs font-semibold text-ink mb-1">
+              <label className="block text-xs font-bold text-[#0F172A] mb-1">
                 Email Address
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#5C6B73]">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#64748B]">
                   <Mail size={15} />
                 </div>
                 <input
@@ -272,29 +272,29 @@ export default function LoginPage() {
                   placeholder="ramesh@distributors.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-xs border border-[#E6E9EF] rounded-xl focus:outline-none focus:border-[#F2A900]"
+                  className="w-full pl-9 pr-3 py-2 text-xs border border-[#CBD5E1] rounded-xl bg-[#FAF8F5] text-[#0F172A] placeholder:text-[#475569] focus:outline-none focus:border-[#92400E]"
                 />
               </div>
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="block text-xs font-semibold text-ink">
+                <label className="block text-xs font-bold text-[#0F172A]">
                   Password
                 </label>
                 {mode === "signup" && (
                   <button
                     type="button"
                     onClick={handleGeneratePassword}
-                    className="text-[11px] font-semibold text-[#F2A900] hover:underline flex items-center gap-1"
+                    className="text-xs font-bold text-[#92400E] hover:underline flex items-center gap-1"
                   >
-                    <Sparkles size={12} />
+                    <Sparkles size={13} />
                     Suggest Strong Password
                   </button>
                 )}
               </div>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#5C6B73]">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#64748B]">
                   <Lock size={15} />
                 </div>
                 <input
@@ -303,18 +303,18 @@ export default function LoginPage() {
                   placeholder="Min. 8 characters with 1 number"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-9 pr-9 py-2 text-xs border border-[#E6E9EF] rounded-xl focus:outline-none focus:border-[#F2A900]"
+                  className="w-full pl-9 pr-9 py-2 text-xs border border-[#CBD5E1] rounded-xl bg-[#FAF8F5] text-[#0F172A] placeholder:text-[#475569] focus:outline-none focus:border-[#92400E]"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#5C6B73] hover:text-ink"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#64748B] hover:text-[#0F172A]"
                 >
                   {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                 </button>
               </div>
               {generatedNotice && (
-                <span className="text-[11px] text-[#1F9D6B] font-medium mt-1 block">
+                <span className="text-xs text-[#065F46] font-semibold mt-1 block">
                   ✓ Strong password generated and filled!
                 </span>
               )}
@@ -322,11 +322,11 @@ export default function LoginPage() {
 
             {mode === "signup" && (
               <div>
-                <label className="block text-xs font-semibold text-ink mb-1">
+                <label className="block text-xs font-bold text-[#0F172A] mb-1">
                   Confirm Password
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#5C6B73]">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#64748B]">
                     <KeyRound size={15} />
                   </div>
                   <input
@@ -335,7 +335,7 @@ export default function LoginPage() {
                     placeholder="Repeat password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 text-xs border border-[#E6E9EF] rounded-xl focus:outline-none focus:border-[#F2A900]"
+                    className="w-full pl-9 pr-3 py-2 text-xs border border-[#CBD5E1] rounded-xl bg-[#FAF8F5] text-[#0F172A] placeholder:text-[#475569] focus:outline-none focus:border-[#92400E]"
                   />
                 </div>
               </div>
@@ -344,7 +344,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-2 py-2.5 rounded-xl bg-[#F2A900] text-ink font-bold text-xs hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-sm"
+              className="w-full mt-2 py-3 rounded-xl bg-[#0F172A] hover:bg-[#92400E] text-white font-bold text-xs transition-all flex items-center justify-center gap-2 shadow-sm"
             >
               {isLoading
                 ? "Processing..."
@@ -355,7 +355,7 @@ export default function LoginPage() {
           </form>
 
           {/* Offline local note */}
-          <div className="mt-6 pt-4 border-t border-[#E6E9EF] text-center text-[11px] text-[#5C6B73]">
+          <div className="mt-6 pt-4 border-t border-[#E2E8F0] text-center text-xs text-[#475569] font-medium">
             <span>100% Offline Capable · Works without internet once opened</span>
           </div>
         </div>

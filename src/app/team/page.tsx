@@ -94,85 +94,85 @@ export default function TeamPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
-      <div className="mb-6">
+      <div className="mb-5">
         <Link
           href="/"
-          className="text-xs text-text-secondary hover:text-text-primary inline-flex items-center gap-1 mb-2"
+          className="text-xs font-semibold text-[#475569] hover:text-[#0F172A] inline-flex items-center gap-1 mb-2"
         >
           <ArrowLeft size={14} />
-          <span>Back to Today</span>
+          <span>Back to Today's Route</span>
         </Link>
-        <h1 className="text-xl font-semibold tracking-tight text-text-primary">
-          Team Progress
+        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A] font-heading">
+          Team Dispatch Progress
         </h1>
-        <p className="text-xs text-text-secondary mt-0.5">
-          Glanceable progress of all staff members and daily route completions.
+        <p className="text-xs text-[#475569] mt-1 font-medium">
+          Glanceable progress of all salesmen and daily route completions.
         </p>
       </div>
 
-      <div className="border border-border rounded-lg bg-bg overflow-x-auto shadow-sm">
+      <div className="border border-[#CBD5E1] rounded-2xl bg-white overflow-hidden shadow-xs">
         <table className="w-full text-left text-xs border-collapse">
           <thead>
-            <tr className="border-b border-border bg-bg-subtle text-text-secondary select-none">
+            <tr className="border-b border-[#CBD5E1] bg-[#FAF8F5] text-[#334155] font-bold select-none">
               <th
                 onClick={() => handleSort("name")}
-                className="py-2.5 px-3 font-medium cursor-pointer hover:text-text-primary"
+                className="py-3 px-4 font-bold cursor-pointer hover:text-[#0F172A]"
               >
                 <div className="flex items-center gap-1.5">
                   <span>Staff Member</span>
-                  <ArrowUpDown size={12} className="text-text-tertiary" />
+                  <ArrowUpDown size={13} className="text-[#64748B]" />
                 </div>
               </th>
-              <th className="py-2.5 px-3 font-medium">Role</th>
+              <th className="py-3 px-4 font-bold">Role</th>
               <th
                 onClick={() => handleSort("shopsDue")}
-                className="py-2.5 px-3 font-medium cursor-pointer hover:text-text-primary text-right"
+                className="py-3 px-4 font-bold cursor-pointer hover:text-[#0F172A] text-right"
               >
                 <div className="flex items-center justify-end gap-1.5">
                   <span>Shops Due</span>
-                  <ArrowUpDown size={12} className="text-text-tertiary" />
+                  <ArrowUpDown size={13} className="text-[#64748B]" />
                 </div>
               </th>
               <th
                 onClick={() => handleSort("shopsCompleted")}
-                className="py-2.5 px-3 font-medium cursor-pointer hover:text-text-primary text-right"
+                className="py-3 px-4 font-bold cursor-pointer hover:text-[#0F172A] text-right"
               >
                 <div className="flex items-center justify-end gap-1.5">
                   <span>Completed Today</span>
-                  <ArrowUpDown size={12} className="text-text-tertiary" />
+                  <ArrowUpDown size={13} className="text-[#64748B]" />
                 </div>
               </th>
-              <th className="py-2.5 px-3 font-medium text-right">Last Active</th>
+              <th className="py-3 px-4 font-bold text-right">Last Active</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border">
+          <tbody className="divide-y divide-[#E2E8F0]">
             {loading ? (
               <tr>
-                <td colSpan={5} className="py-8 text-center text-text-tertiary">
+                <td colSpan={5} className="py-10 text-center text-[#475569]">
                   Loading team data...
                 </td>
               </tr>
             ) : (
               sortedStaff.map((staff) => (
-                <tr key={staff.id} className="hover:bg-bg-subtle/50 transition-colors">
-                  <td className="py-3 px-3 font-medium text-text-primary">
-                    <div className="flex items-center gap-2">
-                      <UserCheck size={14} className="text-accent" />
+                <tr key={staff.id} className="hover:bg-[#F8FAFC] transition-colors">
+                  <td className="py-3.5 px-4 font-bold text-[#0F172A]">
+                    <div className="flex items-center gap-2.5">
+                      <UserCheck size={16} className="text-[#92400E]" />
                       <span>{staff.name}</span>
                     </div>
                   </td>
-                  <td className="py-3 px-3 text-text-secondary">
-                    <span className="px-1.5 py-0.5 rounded text-[11px] bg-bg-subtle border border-border">
+                  <td className="py-3.5 px-4 text-[#334155]">
+                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A]">
                       {staff.role}
                     </span>
                   </td>
-                  <td className="py-3 px-3 text-right font-medium text-text-primary">
+                  <td className="py-3.5 px-4 text-right font-bold text-[#0F172A] tabular-nums">
                     {staff.shopsDue}
                   </td>
-                  <td className="py-3 px-3 text-right font-medium text-green-soft">
+                  <td className="py-3.5 px-4 text-right font-bold text-[#065F46] tabular-nums">
                     {staff.shopsCompleted}
                   </td>
-                  <td className="py-3 px-3 text-right text-text-tertiary">
+                  <td className="py-3.5 px-4 text-right text-[#475569] font-medium">
                     {staff.lastActive}
                   </td>
                 </tr>

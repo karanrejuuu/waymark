@@ -188,13 +188,13 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
                 </span>
 
                 {isChilliUrgent && (
-                  <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-urgent text-white">
+                  <span className="px-2 py-0.5 rounded text-xs font-bold bg-[#FEF2F2] text-[#991B1B] border border-[#FECACA]">
                     Urgent
                   </span>
                 )}
 
                 {item.daysOverdue >= 1 && !isChilliUrgent && (
-                  <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-yellow-soft/15 text-ink border border-yellow-soft/40 tabular-nums">
+                  <span className="px-2 py-0.5 rounded text-xs font-bold bg-[#FFFBEB] text-[#78350F] border border-[#FDE68A] tabular-nums">
                     {item.daysOverdue}d overdue
                   </span>
                 )}
@@ -288,10 +288,10 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
                 disabled={isSubmitting}
                 className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-all duration-200 ${
                   isDeliveredState
-                    ? "bg-success border-success text-white scale-105"
+                    ? "bg-[#065F46] border-[#065F46] text-white scale-105 shadow-xs"
                     : isNextUp
-                    ? "border-accent bg-accent text-ink hover:opacity-95"
-                    : "border-lines bg-bg hover:border-text-secondary"
+                    ? "border-[#92400E] bg-[#92400E] text-white hover:bg-[#78350F]"
+                    : "border-[#CBD5E1] bg-white hover:border-[#94A3B8]"
                 }`}
               >
                 <Check
@@ -304,10 +304,10 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
 
           {/* ── INLINE DETAILED EXPANSION ── */}
           {isExpanded && (
-            <div className="p-4 border-t border-lines bg-bg-subtle/50 text-xs">
+            <div className="p-4 border-t border-[#E2E8F0] bg-[#FAF8F5]/80 text-xs">
               <form onSubmit={handleDetailedSubmit} className="space-y-4">
                 <div>
-                  <div className="font-semibold text-text-secondary mb-2">
+                  <div className="font-bold text-[#0F172A] mb-2 uppercase tracking-wide text-xs">
                     Products Due for Restock
                   </div>
 
@@ -342,19 +342,19 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
                 </div>
 
                 {/* Payments / Dues Collection field */}
-                <div className="p-3 bg-card border border-lines rounded-xl space-y-2">
+                <div className="p-3.5 bg-white border border-[#CBD5E1] rounded-xl space-y-2 shadow-xs">
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-ink flex items-center gap-1.5">
-                      <Banknote size={14} className="text-accent" />
-                      Collect Payment
+                    <span className="font-bold text-[#0F172A] flex items-center gap-1.5">
+                      <Banknote size={15} className="text-[#92400E]" />
+                      Collect Payment at Counter
                     </span>
-                    <span className="text-[11px] text-text-tertiary tabular-nums">
+                    <span className="text-xs text-[#475569] font-medium tabular-nums">
                       Balance: ₹{item.shop.balance_due.toLocaleString("en-IN")}
                     </span>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-ink">₹</span>
+                    <span className="text-sm font-bold text-[#0F172A]">₹</span>
                     <input
                       type="number"
                       inputMode="numeric"
@@ -362,13 +362,13 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
                       placeholder={item.shop.balance_due > 0 ? `${item.shop.balance_due}` : "0"}
                       value={paymentInput}
                       onChange={(e) => setPaymentInput(e.target.value)}
-                      className="w-full px-3 py-1.5 border border-lines rounded-lg bg-bg font-semibold text-sm tabular-nums focus:outline-none focus:border-accent"
+                      className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded-lg bg-[#FAF8F5] font-bold text-sm tabular-nums text-[#0F172A] focus:outline-none focus:border-[#92400E]"
                     />
                     {item.shop.balance_due > 0 && (
                       <button
                         type="button"
                         onClick={() => setPaymentInput(String(item.shop.balance_due))}
-                        className="px-2.5 py-1.5 rounded-lg bg-bg-subtle text-[11px] font-medium text-text-secondary hover:text-ink flex-shrink-0"
+                        className="px-3 py-1.5 rounded-lg bg-[#F1F5F9] text-xs font-bold text-[#334155] hover:text-[#0F172A] flex-shrink-0"
                       >
                         Full
                       </button>
@@ -381,16 +381,16 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
                   <button
                     type="button"
                     onClick={() => setIsExpanded(false)}
-                    className="px-3.5 py-2 rounded-xl text-text-secondary hover:text-ink font-medium"
+                    className="px-4 py-2 rounded-xl text-[#475569] hover:text-[#0F172A] font-semibold text-xs"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-5 py-2 rounded-xl font-semibold text-ink bg-accent hover:opacity-95 transition-opacity flex items-center gap-1.5 shadow-sm"
+                    className="px-5 py-2.5 rounded-xl font-bold text-xs text-white bg-[#92400E] hover:bg-[#78350F] transition-all flex items-center gap-1.5 shadow-sm"
                   >
-                    {isSubmitting ? "Marking stop..." : "Mark Delivered"}
+                    {isSubmitting ? "Marking stop..." : "Mark Delivered & Update Dues"}
                   </button>
                 </div>
               </form>

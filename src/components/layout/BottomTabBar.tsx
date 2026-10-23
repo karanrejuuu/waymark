@@ -19,7 +19,7 @@ export const BottomTabBar: React.FC = () => {
     <nav
       role="tablist"
       aria-label="Mobile Navigation"
-      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-bg/95 backdrop-blur-md border-t border-border flex items-center justify-around h-14 pb-[env(safe-area-inset-bottom)] shadow-[0_-1px_3px_rgba(0,0,0,0.02)] select-none"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#CBD5E1] flex items-center justify-around h-14 pb-[env(safe-area-inset-bottom)] shadow-[0_-2px_8px_rgba(15,23,42,0.04)] select-none"
     >
       {tabs.map((tab) => {
         const Icon = tab.icon;
@@ -31,13 +31,13 @@ export const BottomTabBar: React.FC = () => {
             href={tab.href}
             role="tab"
             aria-selected={isActive}
-            className={`flex-1 flex flex-col items-center justify-center h-full min-h-[44px] gap-0.5 text-[11px] transition-colors ${
+            className={`flex-1 flex flex-col items-center justify-center h-full min-h-[44px] gap-0.5 text-xs transition-colors ${
               isActive
-                ? "text-accent font-semibold"
-                : "text-text-secondary hover:text-text-primary"
+                ? "text-[#92400E] font-bold"
+                : "text-[#475569] hover:text-[#0F172A]"
             }`}
           >
-            <Icon size={18} className={isActive ? "text-accent" : "text-text-secondary"} />
+            <Icon size={19} className={isActive ? "text-[#92400E]" : "text-[#475569]"} />
             <span>{tab.label}</span>
           </Link>
         );

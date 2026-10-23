@@ -42,13 +42,13 @@ export const UrgentButton: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="text-xs text-text-secondary hover:text-text-primary font-medium py-1 px-2 rounded hover:bg-bg-subtle inline-flex items-center gap-1 transition-colors"
+          className="text-xs text-[#B91C1C] font-bold py-1.5 px-3 rounded-lg border border-[#FECACA] bg-[#FEF2F2] hover:bg-[#FEE2E2] inline-flex items-center gap-1.5 transition-colors shadow-xs"
         >
           <Plus size={14} />
-          <span>Mark shop urgent</span>
+          <span>Mark Shop Urgent</span>
         </button>
       ) : (
-        <div className="absolute left-0 top-0 z-30 w-72 bg-bg border border-border rounded-lg shadow-sm p-2 text-sm">
+        <div className="absolute right-0 top-0 z-30 w-80 bg-white border border-[#CBD5E1] rounded-xl shadow-lg p-3 text-sm">
           <div className="flex items-center justify-between gap-1 pb-1.5 border-b border-border mb-1.5">
             <div className="flex items-center gap-1.5 flex-1 px-1 text-text-secondary">
               <Search size={14} />

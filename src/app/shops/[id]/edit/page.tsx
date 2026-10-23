@@ -23,34 +23,37 @@ export default function EditShopPage() {
   }, [shopId]);
 
   if (loading) {
-    return <div className="max-w-2xl mx-auto px-4 py-8 text-xs text-text-tertiary">Loading...</div>;
+    return <div className="max-w-2xl mx-auto px-4 py-8 text-xs text-[#475569] font-medium">Loading store details...</div>;
   }
 
   if (!shop) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-8 text-xs">
+      <div className="max-w-2xl mx-auto px-4 py-8 text-xs text-[#DC2626]">
         <div>Shop not found.</div>
-        <Link href="/" className="text-accent mt-2 inline-block">← Back</Link>
+        <Link href="/" className="text-[#92400E] font-bold mt-2 inline-block">← Back to Today</Link>
       </div>
     );
   }
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
-      <div className="mb-4">
+      <div className="mb-5">
         <Link
           href={`/shops/${shop.id}`}
-          className="text-xs text-text-secondary hover:text-text-primary inline-flex items-center gap-1 mb-2"
+          className="text-xs font-semibold text-[#475569] hover:text-[#0F172A] inline-flex items-center gap-1 mb-2"
         >
           <ArrowLeft size={14} />
-          <span>Back to Shop</span>
+          <span>Back to Store Profile</span>
         </Link>
-        <h1 className="text-xl font-semibold tracking-tight text-text-primary">
+        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A] font-heading">
           Edit {shop.name}
         </h1>
+        <p className="text-xs text-[#475569] mt-1 font-medium">
+          Update store location, contact details, assigned route, and product inventory intervals.
+        </p>
       </div>
 
-      <div className="bg-bg border border-border rounded-lg p-5">
+      <div className="space-y-6">
         <ShopForm initialShop={shop} />
       </div>
     </div>

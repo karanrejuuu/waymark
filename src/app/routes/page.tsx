@@ -150,44 +150,44 @@ export default function RoutesPage() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
       {/* Header and Add Shop shortcut */}
-      <div className="flex items-start justify-between mb-4">
+      <div className="flex items-start justify-between mb-5">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-text-primary">
-            Routes
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A] font-heading">
+            Routes & Sectors
           </h1>
-          <p className="text-xs text-text-secondary mt-0.5">
-            Browse all shops by route or search directly.
+          <p className="text-xs text-[#475569] mt-1 font-medium">
+            Browse all shops by route or search directly across the agency.
           </p>
         </div>
         <Link
           href="/shops/new"
-          className="text-xs font-medium text-accent hover:underline inline-flex items-center gap-1 py-1"
+          className="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#0F172A] text-white hover:bg-[#92400E] inline-flex items-center gap-1.5 transition-all shadow-xs"
         >
-          <Plus size={14} />
-          <span>Add shop</span>
+          <Plus size={15} />
+          <span>Add Shop</span>
         </Link>
       </div>
 
       {/* Pinned search input */}
       <div className="relative mb-5">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-tertiary">
-          <Search size={15} />
+        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#64748B]">
+          <Search size={16} />
         </div>
         <input
           type="text"
           placeholder="Search by shop name..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full text-xs pl-9 pr-4 py-2 border border-border rounded-lg bg-bg focus:outline-none focus:border-accent placeholder:text-text-tertiary"
+          className="w-full text-xs pl-10 pr-4 py-2.5 border border-[#CBD5E1] rounded-xl bg-white text-[#0F172A] font-medium focus:outline-none focus:border-[#92400E] placeholder:text-[#64748B] shadow-xs"
         />
       </div>
 
       {loading ? (
-        <div className="py-8 text-center text-xs text-text-tertiary">
+        <div className="py-12 text-center text-xs text-[#475569] font-medium">
           Loading routes...
         </div>
       ) : filteredGroups.length === 0 && filteredUnassigned.length === 0 ? (
-        <div className="py-12 text-center text-xs text-text-tertiary border border-border rounded-lg">
+        <div className="py-12 text-center text-xs text-[#475569] border border-[#CBD5E1] rounded-2xl bg-white">
           No shops match &quot;{search}&quot;
         </div>
       ) : (
@@ -198,53 +198,53 @@ export default function RoutesPage() {
             return (
               <div
                 key={region.id}
-                className="border border-border rounded-lg bg-bg overflow-hidden"
+                className="border border-[#CBD5E1] rounded-2xl bg-white overflow-hidden shadow-xs"
               >
                 {/* Region toggle header */}
                 <div
                   role="button"
                   tabIndex={0}
                   onClick={() => toggleRegion(region.id)}
-                  className="py-2.5 px-3 flex items-center justify-between hover:bg-bg-subtle cursor-pointer select-none bg-bg"
+                  className="py-3 px-4 flex items-center justify-between hover:bg-[#FAF8F5] cursor-pointer select-none bg-white transition-colors"
                 >
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2.5">
                     <ChevronRight
-                      size={15}
-                      className={`text-text-tertiary transition-transform duration-150 ${
-                        isExp ? "rotate-90 text-text-primary" : ""
+                      size={16}
+                      className={`text-[#64748B] transition-transform duration-150 ${
+                        isExp ? "rotate-90 text-[#0F172A]" : ""
                       }`}
                     />
-                    <span className="font-semibold text-sm text-text-primary">
+                    <span className="font-heading font-extrabold text-sm sm:text-base text-[#0F172A]">
                       {region.name}
                     </span>
                   </div>
-                  <span className="text-xs text-text-tertiary">
+                  <span className="text-xs font-bold text-[#92400E] px-2.5 py-0.5 rounded-full bg-[#FEF3C7] border border-[#FDE68A]">
                     {shops.length} {shops.length === 1 ? "shop" : "shops"}
                   </span>
                 </div>
 
                 {/* Shop list */}
                 {isExp && (
-                  <div className="border-t border-border divide-y divide-border">
+                  <div className="border-t border-[#E2E8F0] divide-y divide-[#E2E8F0]">
                     {shops.length === 0 ? (
-                      <div className="py-3 text-center text-xs text-text-tertiary">
-                        No shops found in this route.
+                      <div className="py-4 text-center text-xs text-[#64748B]">
+                        No shops assigned to this route yet.
                       </div>
                     ) : (
                       shops.map(({ shop, lastDeliveredStr, statusVariant, statusLabel }) => (
                         <Link
                           key={shop.id}
                           href={`/shops/${shop.id}`}
-                          className="py-2.5 px-3 flex items-center justify-between hover:bg-bg-subtle/70 transition-colors text-xs"
+                          className="py-3 px-4 flex items-center justify-between hover:bg-[#F8FAFC] transition-colors text-xs"
                         >
-                          <div className="flex items-center gap-2.5 flex-1 min-w-0 pr-2">
+                          <div className="flex items-center gap-3 flex-1 min-w-0 pr-2">
                             <StatusDot variant={statusVariant} label={statusLabel} />
-                            <span className="font-medium text-text-primary truncate">
+                            <span className="font-bold text-[#0F172A] truncate">
                               {shop.name}
                             </span>
                           </div>
 
-                          <div className="text-text-tertiary text-right text-[11px] flex-shrink-0">
+                          <div className="text-[#475569] text-right text-xs font-medium flex-shrink-0">
                             {lastDeliveredStr ? `Delivered ${lastDeliveredStr}` : "Never delivered"}
                           </div>
                         </Link>

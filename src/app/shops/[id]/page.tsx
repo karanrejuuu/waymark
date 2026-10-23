@@ -150,20 +150,20 @@ export default function ShopDetailPage() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
       {/* Back nav & Edit link */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-5">
         <Link
           href="/"
-          className="text-xs text-text-secondary hover:text-text-primary inline-flex items-center gap-1"
+          className="text-xs font-semibold text-[#475569] hover:text-[#0F172A] inline-flex items-center gap-1"
         >
           <ArrowLeft size={14} />
-          <span>Back</span>
+          <span>Back to Today</span>
         </Link>
         <Link
           href={`/shops/${shop.id}/edit`}
-          className="text-xs text-text-secondary hover:text-text-primary inline-flex items-center gap-1 py-1 px-2 rounded hover:bg-bg-subtle"
+          className="px-3 py-1.5 rounded-xl font-bold text-xs bg-[#0F172A] text-white hover:bg-[#92400E] inline-flex items-center gap-1.5 shadow-xs transition-all"
         >
           <Edit3 size={13} />
-          <span>Edit shop</span>
+          <span>Edit Shop</span>
         </Link>
       </div>
 
@@ -177,46 +177,46 @@ export default function ShopDetailPage() {
             onBlur={handleNameSave}
             onKeyDown={(e) => e.key === "Enter" && handleNameSave()}
             autoFocus
-            className="text-2xl font-semibold text-text-primary bg-transparent border-b border-accent focus:outline-none w-full"
+            className="text-2xl sm:text-3xl font-extrabold font-heading text-[#0F172A] bg-transparent border-b-2 border-[#92400E] focus:outline-none w-full"
           />
         ) : (
           <h1
             onClick={() => setIsEditingName(true)}
             title="Click to rename"
-            className="text-2xl font-semibold text-text-primary hover:bg-bg-subtle/80 px-1 -mx-1 rounded cursor-text inline-block transition-colors"
+            className="text-2xl sm:text-3xl font-extrabold font-heading text-[#0F172A] hover:bg-white px-2 -mx-2 rounded-xl cursor-text inline-block transition-colors"
           >
             {shop.name}
           </h1>
         )}
       </div>
 
-      {/* Notion-style Properties Block */}
-      <div className="space-y-1.5 text-xs pb-4 border-b border-border">
+      {/* Properties Block */}
+      <div className="space-y-2 text-xs pb-5 border-b border-[#E2E8F0] bg-white p-4 rounded-2xl border border-[#CBD5E1] shadow-xs mb-6">
         {/* Region */}
-        <div className="flex items-center py-0.5">
-          <span className="w-24 text-text-tertiary">Region</span>
-          <span className="text-text-primary font-medium">
+        <div className="flex items-center py-1">
+          <span className="w-28 text-[#475569] font-medium">Route Sector</span>
+          <span className="text-[#0F172A] font-bold">
             {region ? region.name : "Unassigned"}
           </span>
         </div>
 
         {/* Contact */}
         {shop.contact && (
-          <div className="flex items-center py-0.5">
-            <span className="w-24 text-text-tertiary">Contact</span>
+          <div className="flex items-center py-1">
+            <span className="w-28 text-[#475569] font-medium">Store Phone</span>
             <a
               href={`tel:${shop.contact}`}
-              className="text-accent hover:underline inline-flex items-center gap-1 font-medium"
+              className="text-[#92400E] hover:underline inline-flex items-center gap-1 font-bold"
             >
-              <Phone size={12} />
+              <Phone size={13} />
               <span>{shop.contact}</span>
             </a>
           </div>
         )}
 
         {/* Status */}
-        <div className="flex items-center py-0.5">
-          <span className="w-24 text-text-tertiary">Status</span>
+        <div className="flex items-center py-1">
+          <span className="w-28 text-[#475569] font-medium">Replenishment Status</span>
           {shop.is_urgent ? (
             <StatusDot variant="urgent" label="Urgent call-in" />
           ) : anyEscalated ? (
@@ -228,25 +228,33 @@ export default function ShopDetailPage() {
           )}
         </div>
 
+        {/* Outstanding Dues */}
+        <div className="flex items-center py-1">
+          <span className="w-28 text-[#475569] font-medium">Current Credit Dues</span>
+          <span className={`font-bold tabular-nums ${shop.balance_due > 0 ? "text-[#DC2626]" : "text-[#065F46]"}`}>
+            ₹{shop.balance_due.toLocaleString("en-IN")}
+          </span>
+        </div>
+
         {/* Expense Estimator (haversine) */}
         {distanceKm !== null && fuelCost !== null && (
-          <div className="flex items-center py-0.5 text-text-secondary">
-            <span className="w-24 text-text-tertiary">Expense</span>
-            <span className="inline-flex items-center gap-1.5">
-              <MapPin size={12} className="text-text-tertiary" />
+          <div className="flex items-center py-1 text-[#475569]">
+            <span className="w-28 text-[#475569] font-medium">Trip Distance</span>
+            <span className="inline-flex items-center gap-2 font-medium text-[#0F172A]">
+              <MapPin size={13} className="text-[#92400E]" />
               <span>≈ {distanceKm.toFixed(1)} km from godown</span>
               <span>·</span>
-              <Fuel size={12} className="text-text-tertiary" />
-              <span>₹{Math.round(fuelCost)} est. fuel</span>
+              <Fuel size={13} className="text-[#92400E]" />
+              <span>₹{Math.round(fuelCost)} estimated fuel burn</span>
             </span>
           </div>
         )}
       </div>
 
       {/* Section 1: Products */}
-      <div className="py-6 border-b border-border">
-        <h2 className="text-sm font-semibold text-text-primary mb-3">
-          Products
+      <div className="py-6 border-b border-[#E2E8F0]">
+        <h2 className="text-base font-extrabold font-heading text-[#0F172A] mb-3">
+          Products & Restock Cadence
         </h2>
         <ProductsTable
           products={productsData}
@@ -254,33 +262,33 @@ export default function ShopDetailPage() {
         />
       </div>
 
-      {/* Section 2: Notes (Notion-style auto-save on blur) */}
-      <div className="py-6 border-b border-border">
-        <h2 className="text-sm font-semibold text-text-primary mb-2">
-          Notes
+      {/* Section 2: Notes */}
+      <div className="py-6 border-b border-[#E2E8F0]">
+        <h2 className="text-base font-extrabold font-heading text-[#0F172A] mb-2">
+          Dispatcher Notes
         </h2>
         <textarea
           rows={3}
-          placeholder="Add notes (e.g. prefers mornings, delivery gate in rear)..."
+          placeholder="Add delivery notes (e.g. prefers mornings, delivery gate in rear)..."
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           onBlur={handleNotesBlur}
-          className="w-full text-xs p-2.5 rounded bg-bg-subtle/50 border border-transparent hover:border-border focus:border-border focus:bg-bg focus:outline-none transition-colors resize-none placeholder:text-text-tertiary"
+          className="w-full text-xs p-3 rounded-2xl bg-white border border-[#CBD5E1] text-[#0F172A] focus:border-[#92400E] focus:outline-none transition-colors resize-none placeholder:text-[#64748B] shadow-xs"
         />
       </div>
 
       {/* Section 3: History */}
-      <div className="py-6 border-b border-border">
-        <h2 className="text-sm font-semibold text-text-primary mb-3">
-          Delivery History
+      <div className="py-6 border-b border-[#E2E8F0]">
+        <h2 className="text-base font-extrabold font-heading text-[#0F172A] mb-3">
+          Delivery History & Tally Log
         </h2>
         <DeliveryHistory deliveries={deliveries} productMap={productMap} />
       </div>
 
-      {/* Section 4: Map (least important, shown last) */}
+      {/* Section 4: Map */}
       <div className="py-6">
-        <h2 className="text-sm font-semibold text-text-primary mb-3">
-          Location
+        <h2 className="text-base font-extrabold font-heading text-[#0F172A] mb-3">
+          Kirana Store Location
         </h2>
         <ShopMap lat={shop.lat} lng={shop.lng} editable={false} height="200px" />
       </div>

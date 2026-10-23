@@ -20,10 +20,10 @@ export const ProductConfirmRow: React.FC<ProductConfirmRowProps> = ({
   onFeedbackChange,
 }) => {
   return (
-    <div className="py-2.5 px-3 bg-bg-subtle rounded-md mb-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-sm">
+    <div className="py-2.5 px-3.5 bg-white border border-[#CBD5E1] rounded-xl mb-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-sm shadow-xs">
       <div className="flex-1 min-w-0">
-        <div className="font-medium text-text-primary truncate">{product.name}</div>
-        <div className="text-xs text-text-tertiary">
+        <div className="font-bold text-[#0F172A] truncate">{product.name}</div>
+        <div className="text-xs text-[#475569] font-medium">
           Interval: {shopProduct.interval_days}d · Default: {shopProduct.default_qty}
         </div>
       </div>
@@ -31,7 +31,7 @@ export const ProductConfirmRow: React.FC<ProductConfirmRowProps> = ({
       <div className="flex items-center gap-3">
         {/* Quantity input */}
         <div className="flex items-center gap-1.5">
-          <label htmlFor={`qty-${product.id}`} className="text-xs text-text-secondary">
+          <label htmlFor={`qty-${product.id}`} className="text-xs font-semibold text-[#334155]">
             Qty:
           </label>
           <input
@@ -44,12 +44,12 @@ export const ProductConfirmRow: React.FC<ProductConfirmRowProps> = ({
               const val = parseInt(e.target.value, 10);
               onQtyChange(val);
             }}
-            className="w-16 h-8 px-2 text-center text-sm font-medium bg-bg border border-border rounded focus:outline-none focus:border-accent"
+            className="w-16 h-8 px-2 text-center text-sm font-bold bg-[#FAF8F5] border border-[#CBD5E1] rounded-lg text-[#0F172A] focus:outline-none focus:border-[#92400E]"
           />
         </div>
 
         {/* Stock feedback selector (the spec-allowed 🔴🟡🟢 emoji exception) */}
-        <div className="flex items-center gap-1 bg-bg border border-border rounded p-0.5" role="group" aria-label="Stock level feedback">
+        <div className="flex items-center gap-1 bg-[#FAF8F5] border border-[#CBD5E1] rounded-lg p-0.5" role="group" aria-label="Stock level feedback">
           <button
             type="button"
             title="Stock low (decreases interval next round)"

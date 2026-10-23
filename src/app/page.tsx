@@ -74,40 +74,40 @@ export default function TodayPage() {
     <div className="max-w-2xl mx-auto px-4 py-6">
       {/* Network / Sync status line if offline */}
       {!isOnline && (
-        <div className="mb-4 py-2 px-3 bg-[#F2A900]/10 border border-[#F2A900]/30 rounded-lg text-xs text-ink flex items-center justify-between">
-          <span className="flex items-center gap-1.5 font-medium">
-            <CloudOff size={14} className="text-[#F2A900]" />
+        <div className="mb-4 py-2.5 px-3.5 bg-[#FEF3C7] border border-[#FDE68A] rounded-xl text-xs text-[#78350F] flex items-center justify-between shadow-xs">
+          <span className="flex items-center gap-2 font-semibold">
+            <CloudOff size={15} className="text-[#92400E]" />
             Working offline. All restock & payment records will sync when reconnected.
           </span>
         </div>
       )}
 
       {/* Header section with warm tone and clear typography */}
-      <div className="flex items-start justify-between mb-4">
+      <div className="flex items-start justify-between mb-5">
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight text-ink font-heading">
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A] font-heading">
               Today's Route
             </h1>
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-[#F2A900]/15 text-ink border border-[#F2A900]/30 tabular-nums">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#FFFBEB] text-[#92400E] border border-[#FDE68A] tabular-nums">
               {todayItems === undefined ? "..." : `${totalDueCount} stops`}
             </span>
           </div>
           
-          <p className="text-xs text-[#5C6B73] mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+          <p className="text-xs text-[#475569] mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">
             {todayItems === undefined || !hasInitialized ? (
               <span>Loading route...</span>
             ) : totalDueCount === 0 ? (
-              <span>All stops completed for today! 🎉</span>
+              <span className="font-semibold text-[#065F46]">All stops completed for today! 🎉</span>
             ) : (
               <>
-                <span className="tabular-nums font-medium text-ink">
+                <span className="tabular-nums font-bold text-[#0F172A]">
                   {totalDueCount} {totalDueCount === 1 ? "shop" : "shops"} due
                 </span>
                 {urgentCount > 0 && (
                   <>
                     <span>·</span>
-                    <span className="text-[#D64545] font-semibold flex items-center gap-0.5">
+                    <span className="text-[#DC2626] font-bold flex items-center gap-0.5">
                       🌶️ {urgentCount} urgent
                     </span>
                   </>
@@ -115,16 +115,16 @@ export default function TodayPage() {
                 {overdueCount > 0 && (
                   <>
                     <span>·</span>
-                    <span className="text-[#D64545] font-medium flex items-center gap-0.5 tabular-nums">
-                      <AlertTriangle size={11} /> {overdueCount} carried over
+                    <span className="text-[#DC2626] font-semibold flex items-center gap-0.5 tabular-nums">
+                      <AlertTriangle size={12} /> {overdueCount} carried over
                     </span>
                   </>
                 )}
                 {totalBalanceDue > 0 && (
                   <>
                     <span>·</span>
-                    <span className="text-[#1F9D6B] font-medium flex items-center gap-0.5 tabular-nums">
-                      <IndianRupee size={11} /> {totalBalanceDue.toLocaleString("en-IN")} pending dues
+                    <span className="text-[#065F46] font-bold flex items-center gap-0.5 tabular-nums">
+                      <IndianRupee size={12} /> {totalBalanceDue.toLocaleString("en-IN")} pending dues
                     </span>
                   </>
                 )}
@@ -140,52 +140,52 @@ export default function TodayPage() {
               type="button"
               onClick={handleManualSync}
               title="Sync now"
-              className="p-2 text-[#5C6B73] hover:text-ink rounded-lg hover:bg-[#E6E9EF]/50 transition-colors"
+              className="p-2 text-[#475569] hover:text-[#0F172A] rounded-xl hover:bg-white border border-transparent hover:border-[#CBD5E1] transition-all"
             >
-              <RefreshCw size={15} className={isSyncing ? "animate-spin text-[#F2A900]" : ""} />
+              <RefreshCw size={15} className={isSyncing ? "animate-spin text-[#92400E]" : ""} />
             </button>
           )}
         </div>
       </div>
 
       {/* Due route container */}
-      <div className="border border-[#E6E9EF] rounded-[12px] bg-bg overflow-hidden shadow-[0_1px_3px_rgba(20,33,61,0.03)]">
+      <div className="border border-[#CBD5E1] rounded-2xl bg-white overflow-hidden shadow-xs">
         {todayItems === undefined || !hasInitialized ? (
-          <div className="py-16 text-center text-xs text-[#5C6B73]">
-            <RefreshCw size={18} className="animate-spin text-[#F2A900] mx-auto mb-2" />
+          <div className="py-16 text-center text-xs text-[#475569]">
+            <RefreshCw size={18} className="animate-spin text-[#92400E] mx-auto mb-2" />
             Loading today's delivery stops...
           </div>
         ) : totalShopCount === 0 ? (
           /* SaaS First-Run Clean State (Zero Mock Data) */
           <div className="py-16 px-6 text-center max-w-md mx-auto">
-            <div className="w-12 h-12 rounded-2xl bg-[#F2A900]/15 text-ink flex items-center justify-center mx-auto mb-3">
-              <MapPin size={24} className="text-[#F2A900]" />
+            <div className="w-12 h-12 rounded-2xl bg-[#FEF3C7] text-[#92400E] flex items-center justify-center mx-auto mb-3 shadow-xs">
+              <MapPin size={24} className="text-[#92400E]" />
             </div>
-            <div className="text-lg font-bold text-ink font-heading">
+            <div className="text-xl font-extrabold text-[#0F172A] font-heading">
               Ready to start your rounds?
             </div>
-            <div className="text-xs text-[#5C6B73] mt-1.5 leading-relaxed">
+            <div className="text-xs text-[#475569] mt-2 leading-relaxed">
               Your account is clean with zero shops. Add your shops via rapid entry, paste an Excel sheet, or complete onboarding to build today's route.
             </div>
             <div className="mt-5 flex flex-col sm:flex-row justify-center gap-2.5">
               <Link
                 href="/onboarding"
-                className="px-5 py-2.5 text-xs font-bold bg-[#F2A900] text-ink rounded-xl hover:opacity-90 transition-opacity shadow-sm"
+                className="px-5 py-2.5 text-xs font-bold bg-[#92400E] text-white rounded-xl hover:bg-[#78350F] transition-all shadow-sm"
               >
                 Start Guided Setup →
               </Link>
               <Link
                 href="/shops/new"
-                className="px-4 py-2.5 text-xs font-semibold border border-[#E6E9EF] bg-white text-ink rounded-xl hover:bg-[#E6E9EF]/40"
+                className="px-4 py-2.5 text-xs font-semibold border border-[#CBD5E1] bg-white text-[#0F172A] rounded-xl hover:bg-[#F8FAFC]"
               >
                 + Add Single Shop
               </Link>
             </div>
-            <div className="mt-6 pt-4 border-t border-[#E6E9EF]/60">
+            <div className="mt-6 pt-4 border-t border-[#E2E8F0]">
               <button
                 type="button"
                 onClick={handleLoadDemoData}
-                className="text-[11px] text-[#5C6B73] hover:text-ink underline decoration-dashed transition-colors"
+                className="text-xs text-[#475569] hover:text-[#0F172A] underline decoration-dashed transition-colors"
               >
                 Load 4 sample FMCG shops (for testing demo)
               </button>
@@ -193,32 +193,32 @@ export default function TodayPage() {
           </div>
         ) : activeItems.length === 0 ? (
           <div className="py-16 px-4 text-center">
-            <div className="w-12 h-12 rounded-full bg-[#1F9D6B]/15 text-[#1F9D6B] flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 rounded-full bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0] flex items-center justify-center mx-auto mb-3 font-bold text-lg">
               ✓
             </div>
-            <div className="text-base font-semibold text-ink font-heading">
+            <div className="text-lg font-bold text-[#0F172A] font-heading">
               Nothing due today
             </div>
-            <div className="text-xs text-[#5C6B73] mt-1 max-w-xs mx-auto">
+            <div className="text-xs text-[#475569] mt-1 max-w-xs mx-auto">
               All scheduled delivery cycles are satisfied. Check the routes or shops view to review pending inventory.
             </div>
             <div className="mt-4 flex justify-center gap-2">
               <Link
                 href="/routes"
-                className="px-3 py-1.5 text-xs font-medium bg-[#F2A900] text-ink rounded-lg hover:opacity-90 transition-opacity"
+                className="px-4 py-2 text-xs font-bold bg-[#92400E] text-white rounded-xl hover:bg-[#78350F] transition-all shadow-xs"
               >
                 Browse All Routes
               </Link>
               <Link
                 href="/shops/new"
-                className="px-3 py-1.5 text-xs font-medium border border-[#E6E9EF] text-ink rounded-lg hover:bg-[#E6E9EF]/40"
+                className="px-4 py-2 text-xs font-semibold border border-[#CBD5E1] text-[#0F172A] rounded-xl hover:bg-[#F8FAFC]"
               >
                 + Add Shop
               </Link>
             </div>
           </div>
         ) : (
-          <div>
+          <div className="p-4 sm:p-5">
             {activeItems.map((item, index) => (
               <VerticalRouteStop
                 key={item.shop.id}
@@ -235,13 +235,13 @@ export default function TodayPage() {
 
       {/* Route footer quick navigation */}
       {activeItems.length > 0 && (
-        <div className="mt-4 flex items-center justify-between text-xs text-[#5C6B73] px-1">
-          <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#F2A900] inline-block" />
+        <div className="mt-4 flex items-center justify-between text-xs text-[#475569] px-1 font-medium">
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#92400E] inline-block" />
             First stop highlighted as next-up
           </span>
-          <Link href="/routes" className="text-ink font-medium hover:underline flex items-center gap-1">
-            <MapPin size={12} /> View on Map
+          <Link href="/routes" className="text-[#0F172A] font-bold hover:underline flex items-center gap-1">
+            <MapPin size={13} className="text-[#92400E]" /> View on Map
           </Link>
         </div>
       )}

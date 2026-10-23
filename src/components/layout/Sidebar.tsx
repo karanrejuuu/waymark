@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import {
   CalendarCheck,
   Compass,
-  Store,
   Map,
   Users,
   Settings,
@@ -24,25 +23,27 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole = "owner" }) => {
   const { user, signOut } = useAuth();
 
   const navItems = [
-    { href: "/", label: "Today", icon: CalendarCheck },
+    { href: "/", label: "Today's Dispatch", icon: CalendarCheck },
     { href: "/routes", label: "Routes", icon: Compass },
-    { href: "/regions", label: "Manage Routes", icon: Map },
+    { href: "/regions", label: "Manage Sectors", icon: Map },
     ...(userRole === "owner" ? [{ href: "/team", label: "Team", icon: Users }] : []),
     { href: "/settings", label: "Settings", icon: Settings },
   ];
 
   return (
-    <aside className="w-60 bg-bg-subtle border-r border-border h-screen sticky top-0 flex-shrink-0 flex flex-col justify-between hidden md:flex select-none">
-      <div className="p-4">
+    <aside className="w-64 bg-white border-r border-[#CBD5E1] h-screen sticky top-0 flex-shrink-0 flex flex-col justify-between hidden md:flex select-none z-30">
+      <div className="p-5">
         {/* Brand header */}
         <div className="flex items-center justify-between mb-6 px-1">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-accent flex-shrink-0" />
-            <span className="font-semibold text-sm tracking-tight text-text-primary">
+          <Link href="/" className="flex items-center gap-2.5">
+            <span className="w-7 h-7 rounded-lg bg-[#92400E] text-white flex items-center justify-center font-bold text-sm font-heading shadow-xs">
+              W
+            </span>
+            <span className="font-heading font-extrabold text-base tracking-tight text-[#0F172A]">
               Waymark
             </span>
-          </div>
-          <span className="text-[10px] text-text-tertiary uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded bg-bg border border-border">
+          </Link>
+          <span className="text-xs font-bold text-[#92400E] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">
             FMCG
           </span>
         </div>
@@ -50,14 +51,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole = "owner" }) => {
         {/* Quick Add Shop Button */}
         <Link
           href="/shops/new"
-          className="w-full mb-4 py-1.5 px-2.5 bg-bg border border-border hover:border-text-secondary rounded-md text-xs font-medium text-text-primary flex items-center justify-center gap-1.5 transition-colors shadow-sm"
+          className="w-full mb-5 py-2.5 px-3 bg-[#0F172A] hover:bg-[#92400E] rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2 transition-all shadow-sm"
         >
-          <PlusCircle size={14} className="text-accent" />
-          <span>New Shop</span>
+          <PlusCircle size={15} />
+          <span>New Kirana Shop</span>
         </Link>
 
         {/* Nav Links */}
-        <nav className="space-y-0.5">
+        <nav className="space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -66,15 +67,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole = "owner" }) => {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-2.5 px-2.5 py-2 rounded-md text-xs font-medium transition-colors ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
                   isActive
-                    ? "bg-bg text-text-primary border border-border shadow-[0_1px_2px_rgba(0,0,0,0.03)] font-semibold"
-                    : "text-text-secondary hover:text-text-primary hover:bg-bg-hover"
+                    ? "bg-[#FFFBEB] text-[#92400E] border border-[#FDE68A] shadow-xs"
+                    : "text-[#475569] hover:text-[#0F172A] hover:bg-[#F8FAFC]"
                 }`}
               >
                 <Icon
                   size={16}
-                  className={isActive ? "text-accent" : "text-text-secondary"}
+                  className={isActive ? "text-[#92400E]" : "text-[#475569]"}
                 />
                 <span>{item.label}</span>
               </Link>
@@ -84,13 +85,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole = "owner" }) => {
       </div>
 
       {/* Footer Info & Sign Out */}
-      <div className="p-4 border-t border-border/80 text-[11px] text-text-tertiary">
+      <div className="p-4 border-t border-[#E2E8F0] bg-[#FAF8F5] text-xs text-[#475569]">
         <div className="flex items-center justify-between mb-2">
-          <div className="truncate max-w-[130px]">
-            <div className="truncate font-semibold text-text-primary text-xs">
-              {user?.user_metadata?.name || user?.email?.split("@")[0] || "Distributor"}
+          <div className="truncate max-w-[150px]">
+            <div className="truncate font-bold text-[#0F172A]">
+              {user?.user_metadata?.name || user?.email?.split("@")[0] || "Agency Dispatcher"}
             </div>
-            <div className="truncate text-[10px] text-text-tertiary">
+            <div className="truncate text-xs text-[#475569]">
               {user?.email || "Offline Account"}
             </div>
           </div>
@@ -98,14 +99,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole = "owner" }) => {
             type="button"
             onClick={signOut}
             title="Sign out of account"
-            className="p-1.5 text-text-tertiary hover:text-[#D64545] rounded-md hover:bg-bg transition-colors"
+            className="p-1.5 text-[#475569] hover:text-[#DC2626] rounded-lg hover:bg-white transition-colors"
           >
-            <LogOut size={14} />
+            <LogOut size={15} />
           </button>
         </div>
-        <div className="flex items-center justify-between text-[10px] text-text-tertiary pt-1 border-t border-border/50">
-          <span>PWA Sync Ready</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-[#1F9D6B]" />
+        <div className="flex items-center justify-between text-xs text-[#475569] pt-2 border-t border-[#E2E8F0]">
+          <span className="font-medium">IndexedDB Offline Sync</span>
+          <span className="w-2 h-2 rounded-full bg-[#065F46]" />
         </div>
       </div>
     </aside>

@@ -286,6 +286,28 @@ export default function WelcomePage() {
               )}
             </button>
           </div>
+
+          {/* Authentic Tempo Loading Visual */}
+          <div className="mt-8 rounded-2xl overflow-hidden border border-[#CBD5E1] shadow-sm relative">
+            <img
+              src="/images/wholesale-tempo-loading.jpg"
+              alt="Indian FMCG delivery tempo being loaded outside a wholesale godown at dawn"
+              className="w-full h-48 sm:h-72 object-cover object-center"
+            />
+            <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-[#0F172A]/90 via-[#0F172A]/50 to-transparent p-4 sm:p-5 flex items-center justify-between text-white">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-[#FDE68A] block">
+                  6:30 AM Wholesale Godown Loading Dock
+                </span>
+                <span className="text-xs text-[#E2E8F0] font-medium hidden sm:inline">
+                  LIFO crate sequence packing · First stop loaded right at the rear door
+                </span>
+              </div>
+              <span className="text-xs font-mono font-bold bg-[#92400E] px-2.5 py-1 rounded-lg">
+                Route 04 Dispatch
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* The Kinetic Dispatch Instrument (Flattened Container — No Nested Cards) */}
@@ -561,16 +583,29 @@ export default function WelcomePage() {
 
         {/* The 48-Hour Kirana Rack Battle (Interactive Timeline Simulator) */}
         <section className="mb-24 pt-8 border-t border-[#E5E7EB]">
-          <div className="max-w-2xl mb-8">
-            <h2
-              style={{ textWrap: "balance" }}
-              className="text-2xl sm:text-4xl font-extrabold font-heading text-[#0F172A] tracking-tight mb-3"
-            >
-              The 48-Hour Shelf Gap
-            </h2>
-            <p className="text-sm sm:text-base text-[#475569] leading-relaxed">
-              When a kirana rack runs dry, the storekeeper doesn&apos;t wait for your salesman. A competitor salesman walks in, sees the void, and pays ₹500 for the front counter facing.
-            </p>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-8">
+            <div className="lg:col-span-7">
+              <h2
+                style={{ textWrap: "balance" }}
+                className="text-2xl sm:text-4xl font-extrabold font-heading text-[#0F172A] tracking-tight mb-3"
+              >
+                The 48-Hour Shelf Gap
+              </h2>
+              <p className="text-sm sm:text-base text-[#475569] leading-relaxed">
+                When a kirana rack runs dry, the storekeeper doesn&apos;t wait for your salesman. A competitor salesman walks in, sees the void, and pays ₹500 for the front counter facing.
+              </p>
+            </div>
+            <div className="lg:col-span-5 rounded-xl overflow-hidden border border-[#CBD5E1] shadow-sm relative">
+              <img
+                src="/images/kirana-stocked-rack.jpg"
+                alt="Neat kirana counter rack stocked with biscuits and FMCG goods"
+                className="w-full h-44 object-cover object-center"
+              />
+              <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-[#0F172A]/85 to-transparent p-2.5 text-white flex items-center justify-between text-xs">
+                <span className="font-semibold text-[#FEF3C7]">Front Counter Facing</span>
+                <span className="text-slate-300">Prime Kirana Real Estate</span>
+              </div>
+            </div>
           </div>
 
           {/* Interactive Step Switcher */}
@@ -673,16 +708,29 @@ export default function WelcomePage() {
 
         {/* Operating Pillars (Without AI Tells or Icon Tiles) */}
         <section className="mb-20 pt-8 border-t border-[#E5E7EB]">
-          <div className="max-w-2xl mb-8">
-            <h2
-              style={{ textWrap: "balance" }}
-              className="text-2xl sm:text-4xl font-extrabold font-heading text-[#0F172A] tracking-tight mb-3"
-            >
-              Built for the Physical Realities of Indian Wholesale
-            </h2>
-            <p className="text-sm sm:text-base text-[#475569]">
-              Engineered for dusty mandi basements, one-handed phone use in moving auto-tempos, and end-of-day cash reconciliation.
-            </p>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-8">
+            <div className="lg:col-span-7">
+              <h2
+                style={{ textWrap: "balance" }}
+                className="text-2xl sm:text-4xl font-extrabold font-heading text-[#0F172A] tracking-tight mb-3"
+              >
+                Built for the Physical Realities of Indian Wholesale
+              </h2>
+              <p className="text-sm sm:text-base text-[#475569]">
+                Engineered for dusty mandi basements, one-handed phone use in moving auto-tempos, and end-of-day cash reconciliation.
+              </p>
+            </div>
+            <div className="lg:col-span-5 rounded-xl overflow-hidden border border-[#CBD5E1] shadow-sm relative">
+              <img
+                src="/images/kirana-store-dawn.jpg"
+                alt="Kirana grocery store in early morning bazaar with crates on display"
+                className="w-full h-44 object-cover object-center"
+              />
+              <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-[#0F172A]/85 to-transparent p-2.5 text-white flex items-center justify-between text-xs">
+                <span className="font-semibold text-[#FEF3C7]">Bazaar Dawn Deliveries</span>
+                <span className="text-slate-300">Deliveries before shutters roll up</span>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
