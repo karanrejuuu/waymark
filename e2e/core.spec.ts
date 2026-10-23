@@ -89,14 +89,14 @@ test.describe("Waymark Mobile E2E Flows", () => {
     await expect(page.getByText(/Working offline/i)).not.toBeVisible({ timeout: 5000 });
   });
 
-  test("renders 3D interactive cockpit landing page with live route simulation", async ({ page }) => {
+  test("renders authentic physical dispatch sheet landing page with live route simulation", async ({ page }) => {
     await page.goto("/welcome");
 
     // 1. Hero headline check
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Never let a distributor rack run out of stock");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Every day a kirana shelf stays empty, another brand takes your space");
 
-    // 2. 3D Cockpit route preview
-    await expect(page.getByText("Sector 4 — Central Godown Route Line")).toBeVisible();
+    // 2. Active Dispatch Sheet preview
+    await expect(page.getByText("Active Dispatch Line · Route 04 (North Bazaar)")).toBeVisible();
 
     // 3. Interactive stop toggle
     const stopToTap = page.getByText("Laxmi Supermarket");
@@ -104,6 +104,6 @@ test.describe("Waymark Mobile E2E Flows", () => {
     await stopToTap.click();
 
     // 4. Verify completed tally updates
-    await expect(page.getByText(/2 \/ 4 Stops/i)).toBeVisible();
+    await expect(page.getByText(/1 of 4 completed/i)).toBeVisible();
   });
 });
