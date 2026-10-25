@@ -12,9 +12,9 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
   const pathname = usePathname();
   const { user, isLoading } = useAuth();
   const isStandalonePage =
+    pathname === "/" ||
     pathname === "/welcome" ||
-    pathname === "/login" ||
-    (pathname === "/" && !user && !isLoading);
+    pathname === "/login";
 
   useEffect(() => {
     // 1. Request persistent storage from browser to prevent automatic cache/IndexedDB eviction

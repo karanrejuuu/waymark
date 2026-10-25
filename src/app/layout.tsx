@@ -1,12 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { AppShell } from "@/components/layout/AppShell";
 import { AuthProvider } from "@/context/AuthContext";
-import "leaflet/dist/leaflet.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Waymark — FMCG Wholesale Dispatch & Replenishment Line",
-  description: "Offline-first FMCG wholesale delivery line, route dispatching, and doorstep cash ledger for Indian distributors.",
+  title: "Waymark — FMCG Wholesale Supplier & Route Dispatch",
+  description: "Offline-first FMCG wholesale delivery line, route dispatching, and walk-to-car store updates for suppliers.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -16,7 +15,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0B0F19",
+  themeColor: "#0C0D12",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -33,7 +32,7 @@ export default function RootLayout({
       <head>
         <link rel="manifest" href="/manifest.json" />
       </head>
-      <body className="bg-[#0B0F19] text-[#F8FAFC] min-h-screen selection:bg-[#2563EB] selection:text-white antialiased">
+      <body className="bg-[#0C0D12] text-white min-h-screen selection:bg-[#D4F638] selection:text-[#0A0D02] antialiased">
         <AuthProvider>
           <AppShell>{children}</AppShell>
         </AuthProvider>

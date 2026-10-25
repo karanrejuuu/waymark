@@ -1,6 +1,6 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, LocalShop, LocalProduct, LocalShopProduct, LocalRegion } from "@/lib/db/dexie";
-import { isDueToday, isEscalated, daysOverdue, sortTodayItems, parseDateOnly } from "@/lib/scheduling";
+import { isDueToday, isEscalated, daysOverdue, sortTodayItems, parseDateOnly, formatDateOnly } from "@/lib/scheduling";
 
 export interface TodayDueProduct {
   product: LocalProduct;
@@ -17,6 +17,8 @@ export interface TodayShopItem {
   isEscalated: boolean;
   daysOverdue: number;
   earliestDueDate: Date;
+  hasReminderToday?: boolean;
+  reminderNote?: string | null;
 }
 
 export function useTodayList(todayStr?: string, orgId?: string) {
@@ -87,7 +89,11 @@ export function useTodayList(todayStr?: string, orgId?: string) {
       // A shop is due if:
       // 1. shop.is_urgent is true
       // 2. OR any of its products is due today/overdue (and not snoozed)
-      const shouldInclude = shop.is_urgent || dueProducts.length > 0;
+      // 3. OR shop has a scheduled reminder date on or before today
+      const todayFormatted = formatDateOnly(today);
+      const shopReminderDate = (shop as any).reminder_date;
+      const hasReminderToday = Boolean(shopReminderDate && shopReminderDate <= todayFormatted);
+      const shouldInclude = shop.is_urgent || dueProducts.length > 0 || hasReminderToday;
 
       if (shouldInclude) {
         const region = shop.region_id ? regionMap.get(shop.region_id) || null : null;
@@ -102,6 +108,8 @@ export function useTodayList(todayStr?: string, orgId?: string) {
           isEscalated: isEscalated(finalDueDate, today),
           daysOverdue: daysOverdue(finalDueDate, today),
           earliestDueDate: finalDueDate,
+          hasReminderToday,
+          reminderNote: (shop as any).reminder_note || null,
         });
       }
     }

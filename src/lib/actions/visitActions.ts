@@ -4,6 +4,7 @@ import { markDelivered, ProductDeliveryInput } from "./markDelivered";
 import { recordPayment } from "./paymentActions";
 import { snoozeShop } from "./snoozeShop";
 import { PaymentMode } from "../supabase/types";
+import { formatDateOnly } from "../scheduling";
 
 export type VisitOutcome =
   | "delivered_paid"
@@ -211,6 +212,30 @@ export async function recordShopVisitOutcome(
         updated_at: nowIso,
       });
       break;
+    }
+  }
+
+  // If followUpDate / reminder date was provided for any outcome, update shop's scheduled reminder
+  if (input.followUpDate) {
+    let reminderDateStr = "";
+    if (typeof input.followUpDate === "number") {
+      const d = new Date();
+      d.setDate(d.getDate() + input.followUpDate);
+      reminderDateStr = formatDateOnly(d);
+    } else if (input.followUpDate instanceof Date) {
+      reminderDateStr = formatDateOnly(input.followUpDate);
+    } else if (typeof input.followUpDate === "string") {
+      reminderDateStr = input.followUpDate;
+    }
+
+    if (reminderDateStr) {
+      const currentShop = (await db.shops.get(input.shopId)) || shop;
+      await enqueueWrite("shops", "upsert", {
+        ...currentShop,
+        reminder_date: reminderDateStr,
+        reminder_note: input.notes || "Scheduled follow-up",
+        updated_at: nowIso,
+      });
     }
   }
 

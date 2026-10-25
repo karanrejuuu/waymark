@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="bg_dark">#0B0F19</color>
-    <color name="surface_card">#111827</color>
-    <color name="electric_lime">#2563EB</color>
+    <color name="bg_dark">#0C0D12</color>
+    <color name="surface_card">#13141C</color>
+    <color name="electric_lime">#D4F638</color>
 </resources>

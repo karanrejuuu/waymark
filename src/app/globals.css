@@ -17,22 +17,27 @@
 }
 
 :root {
-  /* Cadnex Precision Dark Theme */
+  /* CDNX Signature Dark Theme */
   color-scheme: dark;
-  --bg: #0B0F19;
-  --surface: #111827;
-  --surface-2: #1E293B;
-  --surface-3: #283548;
-  --ink: #F8FAFC;
-  --mute: #94A3B8;
-  --faint: #64748B;
+  --bg: #0C0D12;
+  --surface: #13141C;
+  --surface-2: #1A1B24;
+  --surface-3: #232532;
+  --ink: #FFFFFF;
+  --mute: #9496A1;
+  --faint: #636573;
   --line: rgba(255, 255, 255, 0.08);
 
-  /* Signature Electric Lime & High-Contrast Accents */
-  --lime: #2563EB;
-  --on-lime: #FFFFFF;
-  --pill: #2563EB;
-  --on-pill: #FFFFFF;
+  /* CDNX Signature Electric Lime Pill & Accents */
+  --lime: #D4F638;
+  --on-lime: #0A0D02;
+  --pill: #D4F638;
+  --on-pill: #0A0D02;
+
+  /* CDNX Indigo/Purple Hero Gradient Aura */
+  --hero-from: #1C1938;
+  --hero-via: #151528;
+  --hero-to: #0F101A;
 
   /* Status Colors */
   --up: #22C55E;
@@ -106,10 +111,10 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0B0F19;
+  background: #0C0D12;
 }
 ::-webkit-scrollbar-thumb {
-  background: #283548;
+  background: #1A1B24;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {

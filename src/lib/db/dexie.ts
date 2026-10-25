@@ -14,7 +14,10 @@ export interface LocalOrganisationMember extends Tables<"organisation_members"> 
 export interface LocalProfile extends Tables<"profiles"> {}
 export interface LocalGodown extends Tables<"godowns"> {}
 export interface LocalRegion extends Tables<"regions"> {}
-export interface LocalShop extends Tables<"shops"> {}
+export interface LocalShop extends Tables<"shops"> {
+  reminder_date?: string | null;
+  reminder_note?: string | null;
+}
 export interface LocalProduct extends Tables<"products"> {}
 export interface LocalShopProduct extends Tables<"shop_products"> {}
 export interface LocalDelivery extends Tables<"deliveries"> {}
@@ -61,6 +64,11 @@ export class WaymarkDatabase extends Dexie {
       deliveries: "id, &client_id, organisation_id, shop_id, product_id, delivered_at, synced",
       payments: "id, &client_id, organisation_id, shop_id, collected_at",
       sync_queue: "++id, table, op, createdAt",
+    });
+
+    // Version 3: Added reminder_date to shops for supplier walk-to-car scheduled reminders
+    this.version(3).stores({
+      shops: "id, owner_id, organisation_id, region_id, is_urgent, is_archived, sort_order, reminder_date",
     });
   }
 }
