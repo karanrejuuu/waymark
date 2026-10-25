@@ -101,15 +101,15 @@ export default function RegionsPage() {
       <div className="mb-6">
         <Link
           href="/"
-          className="text-xs font-mono text-[#8C8C96] hover:text-[#F4F4F6] inline-flex items-center gap-1 mb-2 transition-colors"
+          className="text-xs font-mono text-[#94A3B8] hover:text-[#F8FAFC] inline-flex items-center gap-1 mb-2 transition-colors"
         >
           <ArrowLeft size={14} />
           <span>Back to Today&apos;s Dispatch</span>
         </Link>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#F4F4F6]">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#F8FAFC]">
           Manage Route Sectors
         </h1>
-        <p className="text-xs text-[#8C8C96] mt-1 font-mono">
+        <p className="text-xs text-[#94A3B8] mt-1 font-mono">
           Organize delivery routes, assign driver sectors, and drag shops to adjust LIFO visitation sequence.
         </p>
       </div>
@@ -120,33 +120,33 @@ export default function RegionsPage() {
           const shops = shopsByRegion.get(reg.id) || [];
 
           return (
-            <div key={reg.id} className="border border-white/[0.08] rounded-2xl bg-[#131316] overflow-hidden shadow-lift">
+            <div key={reg.id} className="border border-white/[0.08] rounded-2xl bg-[#111827] overflow-hidden shadow-lift">
               <div
                 role="button"
                 tabIndex={0}
                 onClick={() => toggleRegion(reg.id)}
-                className="py-3 px-4 flex items-center justify-between hover:bg-[#1B1B20]/60 cursor-pointer select-none bg-[#16161B] transition-colors"
+                className="py-3 px-4 flex items-center justify-between hover:bg-[#1E293B]/60 cursor-pointer select-none bg-[#16161B] transition-colors"
               >
                 <div className="flex items-center gap-2.5">
                   <ChevronRight
                     size={16}
-                    className={`text-[#8C8C96] transition-transform duration-150 ${
-                      isExpanded ? "rotate-90 text-[#F4F4F6]" : ""
+                    className={`text-[#94A3B8] transition-transform duration-150 ${
+                      isExpanded ? "rotate-90 text-[#F8FAFC]" : ""
                     }`}
                   />
-                  <span className="font-bold text-sm text-[#F4F4F6]">
+                  <span className="font-bold text-sm text-[#F8FAFC]">
                     {reg.name}
                   </span>
                 </div>
-                <span className="text-xs font-mono font-bold text-[#B5F23D] px-2.5 py-0.5 rounded-full bg-[#B5F23D]/10 border border-[#B5F23D]/25 tabular-nums">
+                <span className="text-xs font-mono font-bold text-[#3B82F6] px-2.5 py-0.5 rounded-full bg-[#2563EB]/15 border border-[#3B82F6]/30 tabular-nums">
                   {shops.length} {shops.length === 1 ? "store" : "stores"}
                 </span>
               </div>
 
               {isExpanded && (
-                <div className="border-t border-white/[0.04] divide-y divide-white/[0.04] bg-[#131316]">
+                <div className="border-t border-white/[0.04] divide-y divide-white/[0.04] bg-[#111827]">
                   {shops.length === 0 ? (
-                    <div className="py-5 text-center text-xs text-[#8C8C96] font-mono">
+                    <div className="py-5 text-center text-xs text-[#94A3B8] font-mono">
                       No stores assigned to this sector yet.
                     </div>
                   ) : (
@@ -157,21 +157,21 @@ export default function RegionsPage() {
                         onDragStart={(e) => handleDragStart(e, shop.id, reg.id)}
                         onDragOver={handleDragOver}
                         onDrop={(e) => handleDrop(e, shop.id, reg.id)}
-                        className={`py-2.5 px-4 flex items-center justify-between hover:bg-[#1B1B20] text-xs transition-colors cursor-grab active:cursor-grabbing ${
+                        className={`py-2.5 px-4 flex items-center justify-between hover:bg-[#1E293B] text-xs transition-colors cursor-grab active:cursor-grabbing ${
                           draggedShopId === shop.id ? "opacity-30" : ""
                         }`}
                       >
                         <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                          <GripVertical size={14} className="text-[#54545E] flex-shrink-0" />
+                          <GripVertical size={14} className="text-[#64748B] flex-shrink-0" />
                           <Link
                             href={`/shops/${shop.id}`}
-                            className="font-bold text-[#F4F4F6] hover:text-[#B5F23D] truncate transition-colors"
+                            className="font-bold text-[#F8FAFC] hover:text-[#3B82F6] truncate transition-colors"
                           >
                             {shop.name}
                           </Link>
                         </div>
                         {shop.contact && (
-                          <span className="text-[11px] font-mono text-[#8C8C96]">
+                          <span className="text-[11px] font-mono text-[#94A3B8]">
                             {shop.contact}
                           </span>
                         )}
@@ -189,31 +189,31 @@ export default function RegionsPage() {
           <button
             type="button"
             onClick={() => setIsAddingRegion(true)}
-            className="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-[#B5F23D] text-[#0C1004] hover:bg-[#A3DE30] inline-flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
+            className="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-[#2563EB] text-white hover:bg-[#1D4ED8] inline-flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
           >
             <Plus size={15} />
             <span>New Route Sector</span>
           </button>
         ) : (
-          <form onSubmit={handleCreateRegion} className="flex items-center gap-2 mt-2 bg-[#131316] p-3 border border-white/[0.08] rounded-2xl shadow-lift">
+          <form onSubmit={handleCreateRegion} className="flex items-center gap-2 mt-2 bg-[#111827] p-3 border border-white/[0.08] rounded-2xl shadow-lift">
             <input
               type="text"
               autoFocus
               placeholder="Sector name (e.g. Sector 4 North Bazaar)..."
               value={newRegionName}
               onChange={(e) => setNewRegionName(e.target.value)}
-              className="text-xs px-3.5 py-2 border border-white/[0.12] rounded-xl bg-[#1B1B20] text-[#F4F4F6] placeholder:text-[#54545E] focus:outline-none focus:border-[#B5F23D] flex-1 font-medium"
+              className="text-xs px-3.5 py-2 border border-white/[0.12] rounded-xl bg-[#1E293B] text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none focus:border-[#2563EB] flex-1 font-medium"
             />
             <button
               type="submit"
-              className="px-4 py-2 bg-[#B5F23D] hover:bg-[#A3DE30] text-[#0C1004] text-xs font-mono font-bold rounded-xl shadow-sm"
+              className="px-4 py-2 bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-mono font-bold rounded-xl shadow-sm"
             >
               Add Sector
             </button>
             <button
               type="button"
               onClick={() => setIsAddingRegion(false)}
-              className="px-3 py-2 text-xs font-mono font-semibold text-[#8C8C96] hover:text-[#F4F4F6] rounded-xl"
+              className="px-3 py-2 text-xs font-mono font-semibold text-[#94A3B8] hover:text-[#F8FAFC] rounded-xl"
             >
               Cancel
             </button>

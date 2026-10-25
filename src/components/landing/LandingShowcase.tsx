@@ -167,13 +167,13 @@ export const LandingShowcase: React.FC = () => {
   const tempoCurrentIndex = nextPendingIndex === -1 ? stops.length - 1 : nextPendingIndex;
 
   return (
-    <div className="min-h-screen bg-[#0A0A0C] text-[#F4F4F6] selection:bg-[#B5F23D] selection:text-[#0C1004] antialiased">
+    <div className="min-h-screen bg-[#0B0F19] text-[#F8FAFC] selection:bg-[#2563EB] selection:text-white antialiased">
       {/* Offline Simulation Banner */}
       {offlineSimulated && (
-        <div className="bg-[#1B1B20] text-[#B5F23D] border-b border-[#B5F23D]/30 px-4 py-2 text-xs font-mono flex items-center justify-between sticky top-0 z-50">
+        <div className="bg-[#1E293B] text-[#3B82F6] border-b border-[#3B82F6]/35 px-4 py-2 text-xs font-mono flex items-center justify-between sticky top-0 z-50">
           <div className="max-w-6xl mx-auto w-full flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <WifiOff size={15} className="text-[#B5F23D]" />
+              <WifiOff size={15} className="text-[#3B82F6]" />
               <span>Mandi Basement Mode: Zero cellular signal. All dispatch records buffered in local IndexedDB.</span>
             </div>
             <button
@@ -181,7 +181,7 @@ export const LandingShowcase: React.FC = () => {
                 setOfflineSimulated(false);
                 playTactileAudio("switch");
               }}
-              className="text-xs bg-[#B5F23D] text-[#0C1004] px-2.5 py-0.5 rounded font-bold transition-transform active:scale-95"
+              className="text-xs bg-[#2563EB] text-white px-2.5 py-0.5 rounded font-bold transition-transform active:scale-95"
             >
               Restore 4G
             </button>
@@ -190,17 +190,17 @@ export const LandingShowcase: React.FC = () => {
       )}
 
       {/* Cadnex Glass Header */}
-      <header className="border-b border-white/[0.08] bg-[#0A0A0C]/80 backdrop-blur-xl sticky top-0 z-40">
+      <header className="border-b border-white/[0.08] bg-[#0B0F19]/80 backdrop-blur-xl sticky top-0 z-40">
         <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
-            <span className="w-8 h-8 rounded-xl bg-[#B5F23D] text-[#0C1004] flex items-center justify-center font-bold text-sm font-mono shadow-sm">
+            <span className="w-8 h-8 rounded-xl bg-[#2563EB] text-white flex items-center justify-center font-bold text-sm font-mono shadow-sm">
               W
             </span>
             <div>
-              <span className="font-sans font-bold text-base tracking-tight text-[#F4F4F6] block leading-tight">
+              <span className="font-sans font-bold text-base tracking-tight text-[#F8FAFC] block leading-tight">
                 WAYMARK
               </span>
-              <span className="text-xs font-mono tracking-wider uppercase text-[#8C8C96] block">
+              <span className="text-xs font-mono tracking-wider uppercase text-[#94A3B8] block">
                 FMCG Wholesale Dispatch Line
               </span>
             </div>
@@ -215,11 +215,11 @@ export const LandingShowcase: React.FC = () => {
                 if (next) playTactileAudio("tick");
               }}
               title={soundEnabled ? "Disable tactile audio" : "Enable tactile audio"}
-              className="flex items-center gap-1.5 text-xs font-mono px-2.5 py-1.5 rounded-xl border border-white/[0.08] bg-[#131316] text-[#8C8C96] hover:text-[#F4F4F6] transition-colors"
+              className="flex items-center gap-1.5 text-xs font-mono px-2.5 py-1.5 rounded-xl border border-white/[0.08] bg-[#111827] text-[#94A3B8] hover:text-[#F8FAFC] transition-colors"
             >
               {soundEnabled ? (
                 <>
-                  <Volume2 size={14} className="text-[#B5F23D]" />
+                  <Volume2 size={14} className="text-[#3B82F6]" />
                   <span className="hidden sm:inline">Tactile Audio</span>
                 </>
               ) : (
@@ -232,14 +232,14 @@ export const LandingShowcase: React.FC = () => {
 
             <Link
               href="/login"
-              className="text-xs font-semibold text-[#8C8C96] hover:text-[#F4F4F6] px-2.5 py-1.5 transition-colors"
+              className="text-xs font-semibold text-[#94A3B8] hover:text-[#F8FAFC] px-2.5 py-1.5 transition-colors"
             >
               Sign In
             </Link>
 
             <Link
               href="/login"
-              className="text-xs font-bold bg-[#B5F23D] text-[#0C1004] hover:bg-[#A3DE30] px-4 py-2 rounded-xl transition-all shadow-sm active:scale-95"
+              className="text-xs font-bold bg-[#2563EB] text-white hover:bg-[#1D4ED8] px-4 py-2 rounded-xl transition-all shadow-sm active:scale-95"
             >
               Start Free Round
             </Link>
@@ -251,24 +251,24 @@ export const LandingShowcase: React.FC = () => {
       <main className="max-w-6xl mx-auto px-5 pt-12 sm:pt-16 pb-24">
         <div className="max-w-3xl mb-12">
           {/* Micro status badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#131316] border border-white/[0.08] mb-6">
-            <span className="w-2 h-2 rounded-full bg-[#B5F23D]" />
-            <span className="text-xs font-mono uppercase tracking-wider text-[#8C8C96]">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#111827] border border-white/[0.08] mb-6">
+            <span className="w-2 h-2 rounded-full bg-[#2563EB]" />
+            <span className="text-xs font-mono uppercase tracking-wider text-[#94A3B8]">
               Indian Wholesale Distribution Engine
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#F4F4F6] leading-[1.08] mb-5">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#F8FAFC] leading-[1.08] mb-5">
             Every day a kirana shelf stays empty, another brand takes your space.
           </h1>
-          <p className="text-base sm:text-lg text-[#8C8C96] leading-relaxed max-w-2xl">
+          <p className="text-base sm:text-lg text-[#94A3B8] leading-relaxed max-w-2xl">
             Indian FMCG distributors lose over 15% of repeat volume when shop replenishment relies on diaries and driver memory. Waymark turns your store rounds into an offline, self-adjusting daily dispatch line with instant cash settlement at the tempo door.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
               href="/login"
-              className="px-6 py-3.5 rounded-xl bg-[#B5F23D] text-[#0C1004] font-bold text-xs hover:bg-[#A3DE30] transition-all shadow-float flex items-center gap-2 active:scale-95"
+              className="px-6 py-3.5 rounded-xl bg-[#2563EB] text-white font-bold text-xs hover:bg-[#1D4ED8] transition-all shadow-float flex items-center gap-2 active:scale-95"
             >
               <span>Build Today&apos;s Dispatch Route</span>
               <ArrowRight size={15} />
@@ -279,7 +279,7 @@ export const LandingShowcase: React.FC = () => {
                 setOfflineSimulated(!offlineSimulated);
                 playTactileAudio("switch");
               }}
-              className="px-5 py-3.5 rounded-xl border border-white/[0.1] bg-[#131316] text-[#F4F4F6] font-semibold text-xs hover:bg-[#1B1B20] transition-colors flex items-center gap-2"
+              className="px-5 py-3.5 rounded-xl border border-white/[0.1] bg-[#111827] text-[#F8FAFC] font-semibold text-xs hover:bg-[#1E293B] transition-colors flex items-center gap-2"
             >
               {offlineSimulated ? (
                 <>
@@ -288,7 +288,7 @@ export const LandingShowcase: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <WifiOff size={15} className="text-[#8C8C96]" />
+                  <WifiOff size={15} className="text-[#94A3B8]" />
                   <span>Test Mandi Basement Mode</span>
                 </>
               )}
@@ -302,16 +302,16 @@ export const LandingShowcase: React.FC = () => {
               alt="Indian FMCG delivery tempo loading outside a wholesale godown at dawn"
               className="w-full h-48 sm:h-72 object-cover object-center"
             />
-            <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-[#0A0A0C] via-[#0A0A0C]/70 to-transparent p-4 sm:p-5 flex items-center justify-between">
+            <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-[#0B0F19] via-[#0B0F19]/70 to-transparent p-4 sm:p-5 flex items-center justify-between">
               <div>
-                <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#B5F23D] block">
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#3B82F6] block">
                   6:30 AM Wholesale Godown Loading Dock
                 </span>
-                <span className="text-xs text-[#8C8C96] font-medium hidden sm:inline">
+                <span className="text-xs text-[#94A3B8] font-medium hidden sm:inline">
                   LIFO crate sequence packing · First delivery loaded right at the rear door
                 </span>
               </div>
-              <span className="text-xs font-mono font-bold bg-[#1B1B20] text-[#F4F4F6] border border-white/[0.1] px-2.5 py-1 rounded-lg">
+              <span className="text-xs font-mono font-bold bg-[#1E293B] text-[#F8FAFC] border border-white/[0.1] px-2.5 py-1 rounded-lg">
                 Route 04 Dispatch
               </span>
             </div>
@@ -323,20 +323,20 @@ export const LandingShowcase: React.FC = () => {
           <div className="flex flex-col lg:flex-row lg:items-center justify-between pb-6 gap-4">
             <div>
               <div className="flex items-center gap-2.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#B5F23D]" />
-                <span className="text-xs font-mono font-bold tracking-wider uppercase text-[#F4F4F6]">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB]" />
+                <span className="text-xs font-mono font-bold tracking-wider uppercase text-[#F8FAFC]">
                   Active Dispatch Line · Route 04 (North Bazaar)
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-[#8C8C96] mt-1">
+              <p className="text-xs sm:text-sm text-[#94A3B8] mt-1">
                 Tap any kirana stop to review crates and collect dues. Watch the tempo advance and cash tally adjust live.
               </p>
             </div>
 
             {/* Metrics Tally */}
             <div className="flex flex-wrap items-center gap-2.5 text-xs font-mono tabular-nums">
-              <div className="px-3.5 py-1.5 rounded-xl bg-[#131316] border border-white/[0.08] text-[#F4F4F6]">
-                <span className="text-[#8C8C96] mr-1.5">Progress:</span>
+              <div className="px-3.5 py-1.5 rounded-xl bg-[#111827] border border-white/[0.08] text-[#F8FAFC]">
+                <span className="text-[#94A3B8] mr-1.5">Progress:</span>
                 {deliveredCount} of {stops.length} completed
               </div>
               <div className="px-3.5 py-1.5 rounded-xl bg-[#22C55E]/10 border border-[#22C55E]/25 text-[#4ADE80] font-bold">
@@ -353,7 +353,7 @@ export const LandingShowcase: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="p-1.5 text-[#8C8C96] hover:text-[#F4F4F6] rounded-lg border border-white/[0.08] bg-[#131316] transition-all"
+                  className="p-1.5 text-[#94A3B8] hover:text-[#F8FAFC] rounded-lg border border-white/[0.08] bg-[#111827] transition-all"
                   title="Reset simulation to morning route start"
                 >
                   <RotateCcw size={14} />
@@ -379,10 +379,10 @@ export const LandingShowcase: React.FC = () => {
                     }}
                     className={`relative flex items-start gap-3.5 p-4 rounded-2xl border transition-all cursor-pointer ${
                       stop.delivered
-                        ? "bg-[#131316]/60 border-white/[0.04] opacity-75"
+                        ? "bg-[#111827]/60 border-white/[0.04] opacity-75"
                         : isSelected
-                        ? "bg-[#18181E] border-[#B5F23D]/50 shadow-float ring-1 ring-[#B5F23D]/20"
-                        : "bg-[#131316] border-white/[0.08] hover:border-white/[0.18]"
+                        ? "bg-[#161F30] border-[#2563EB]/50 shadow-float ring-1 ring-[#2563EB]/20"
+                        : "bg-[#111827] border-white/[0.08] hover:border-white/[0.18]"
                     }`}
                   >
                     {/* Vertical spine */}
@@ -403,12 +403,12 @@ export const LandingShowcase: React.FC = () => {
                       }}
                       className={`w-7 h-7 rounded-full shrink-0 flex items-center justify-center text-xs font-mono font-bold transition-all z-10 ${
                         stop.delivered
-                          ? "bg-[#B5F23D] text-[#0C1004] shadow-sm"
+                          ? "bg-[#2563EB] text-white shadow-sm"
                           : stop.status === "urgent"
                           ? "border-2 border-[#F43F5E] bg-[#F43F5E]/20 text-[#FDA4AF]"
                           : isCurrentTempoTarget
-                          ? "border-2 border-[#B5F23D] bg-[#B5F23D]/10 text-[#B5F23D]"
-                          : "border border-white/[0.16] bg-[#1B1B20] text-[#8C8C96]"
+                          ? "border-2 border-[#2563EB] bg-[#2563EB]/15 text-[#3B82F6]"
+                          : "border border-white/[0.16] bg-[#1E293B] text-[#94A3B8]"
                       }`}
                     >
                       {stop.delivered ? (
@@ -424,7 +424,7 @@ export const LandingShowcase: React.FC = () => {
                       <div className="flex items-center justify-between gap-2">
                         <span
                           className={`text-sm font-bold truncate ${
-                            stop.delivered ? "line-through text-[#8C8C96]" : "text-[#F4F4F6]"
+                            stop.delivered ? "line-through text-[#94A3B8]" : "text-[#F8FAFC]"
                           }`}
                         >
                           {stop.name}
@@ -449,8 +449,8 @@ export const LandingShowcase: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="text-xs text-[#8C8C96] flex items-center gap-1 mt-0.5">
-                        <MapPin size={12} className="shrink-0 text-[#54545E]" />
+                      <div className="text-xs text-[#94A3B8] flex items-center gap-1 mt-0.5">
+                        <MapPin size={12} className="shrink-0 text-[#64748B]" />
                         <span className="truncate">{stop.lane}</span>
                       </div>
 
@@ -458,18 +458,18 @@ export const LandingShowcase: React.FC = () => {
                         {stop.crates.map((c, i) => (
                           <span
                             key={i}
-                            className="text-xs font-mono px-2 py-0.5 rounded-lg bg-[#1B1B20] text-[#F4F4F6] border border-white/[0.06]"
+                            className="text-xs font-mono px-2 py-0.5 rounded-lg bg-[#1E293B] text-[#F8FAFC] border border-white/[0.06]"
                           >
-                            {c.name}: <span className="text-[#B5F23D] font-bold">{c.count} {c.unit.split(" ")[0]}</span>
+                            {c.name}: <span className="text-[#3B82F6] font-bold">{c.count} {c.unit.split(" ")[0]}</span>
                           </span>
                         ))}
                       </div>
 
                       <div className="mt-2.5 flex items-center justify-between text-xs font-mono">
-                        <span className="font-bold text-[#F4F4F6]">
+                        <span className="font-bold text-[#F8FAFC]">
                           Dues: ₹{stop.dues.toLocaleString("en-IN")}
                         </span>
-                        <span className="text-[#8C8C96]">{stop.statusText}</span>
+                        <span className="text-[#94A3B8]">{stop.statusText}</span>
                       </div>
                     </div>
                   </div>
@@ -479,25 +479,25 @@ export const LandingShowcase: React.FC = () => {
 
             {/* Right: Challan Drawer */}
             <div className="lg:col-span-5">
-              <div className="bg-[#131316] border border-white/[0.08] rounded-2xl p-5 shadow-lift relative">
+              <div className="bg-[#111827] border border-white/[0.08] rounded-2xl p-5 shadow-lift relative">
                 <div className="border-b border-white/[0.08] pb-4 mb-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#8C8C96]">
+                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#94A3B8]">
                       Waymark Challan #WM-4092
                     </span>
-                    <span className="text-xs font-mono font-bold text-[#B5F23D] bg-[#B5F23D]/10 px-2 py-0.5 rounded border border-[#B5F23D]/20">
+                    <span className="text-xs font-mono font-bold text-[#3B82F6] bg-[#2563EB]/15 px-2 py-0.5 rounded border border-[#3B82F6]/25">
                       Driver Copy
                     </span>
                   </div>
-                  <div className="font-bold text-base text-[#F4F4F6] mt-2">
+                  <div className="font-bold text-base text-[#F8FAFC] mt-2">
                     {selectedStop.name}
                   </div>
-                  <div className="text-xs text-[#8C8C96]">{selectedStop.lane}</div>
+                  <div className="text-xs text-[#94A3B8]">{selectedStop.lane}</div>
                 </div>
 
                 {/* Itemized Crate Manifest */}
                 <div className="space-y-2 mb-4">
-                  <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#8C8C96]">
+                  <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#94A3B8]">
                     Crate Manifest
                   </div>
                   {selectedStop.crates.map((c, i) => (
@@ -506,10 +506,10 @@ export const LandingShowcase: React.FC = () => {
                       className="flex items-center justify-between text-xs py-1.5 border-b border-white/[0.04]"
                     >
                       <div className="flex items-center gap-2">
-                        <Package size={14} className="text-[#B5F23D]" />
-                        <span className="font-semibold text-[#F4F4F6]">{c.name}</span>
+                        <Package size={14} className="text-[#3B82F6]" />
+                        <span className="font-semibold text-[#F8FAFC]">{c.name}</span>
                       </div>
-                      <span className="font-mono text-[#8C8C96]">
+                      <span className="font-mono text-[#94A3B8]">
                         {c.count} {c.unit}
                       </span>
                     </div>
@@ -519,18 +519,18 @@ export const LandingShowcase: React.FC = () => {
                 {/* Financial Settlement */}
                 <div className="border-y border-white/[0.08] py-3.5 space-y-2 mb-5 font-mono text-xs">
                   <div className="flex justify-between">
-                    <span className="text-[#8C8C96]">Delivery Value:</span>
-                    <span className="font-bold text-[#F4F4F6]">₹4,280</span>
+                    <span className="text-[#94A3B8]">Delivery Value:</span>
+                    <span className="font-bold text-[#F8FAFC]">₹4,280</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#8C8C96]">Previous Ledger Dues:</span>
+                    <span className="text-[#94A3B8]">Previous Ledger Dues:</span>
                     <span className="font-bold text-[#F43F5E]">
                       +₹{selectedStop.dues.toLocaleString("en-IN")}
                     </span>
                   </div>
                   <div className="border-t border-white/[0.08] pt-2 flex justify-between text-sm font-bold">
-                    <span className="text-[#F4F4F6]">Net Cash to Collect:</span>
-                    <span className="text-[#B5F23D]">
+                    <span className="text-[#F8FAFC]">Net Cash to Collect:</span>
+                    <span className="text-[#3B82F6]">
                       ₹{(4280 + selectedStop.dues).toLocaleString("en-IN")}
                     </span>
                   </div>
@@ -544,7 +544,7 @@ export const LandingShowcase: React.FC = () => {
                     className={`w-full py-3 px-4 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 shadow-sm ${
                       selectedStop.delivered
                         ? "bg-[#22C55E]/15 text-[#4ADE80] border border-[#22C55E]/40 hover:bg-[#22C55E]/25"
-                        : "bg-[#B5F23D] text-[#0C1004] hover:bg-[#A3DE30] active:scale-95"
+                        : "bg-[#2563EB] text-white hover:bg-[#1D4ED8] active:scale-95"
                     }`}
                   >
                     {selectedStop.delivered ? (
@@ -559,7 +559,7 @@ export const LandingShowcase: React.FC = () => {
                       </>
                     )}
                   </button>
-                  <div className="text-xs font-mono text-center text-[#8C8C96]">
+                  <div className="text-xs font-mono text-center text-[#94A3B8]">
                     Logs timestamp, records cash in driver tally, and shifts cycle interval.
                   </div>
                 </div>
@@ -572,10 +572,10 @@ export const LandingShowcase: React.FC = () => {
         <section className="mb-24 pt-8 border-t border-white/[0.08]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-8">
             <div className="lg:col-span-7">
-              <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-[#F4F4F6] mb-3">
+              <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-[#F8FAFC] mb-3">
                 The 48-Hour Shelf Gap
               </h2>
-              <p className="text-sm sm:text-base text-[#8C8C96] leading-relaxed">
+              <p className="text-sm sm:text-base text-[#94A3B8] leading-relaxed">
                 When a kirana rack runs dry, the storekeeper doesn&apos;t wait for your salesman. A competitor salesman walks in, sees the void, and pays ₹500 for the front counter facing.
               </p>
             </div>
@@ -585,9 +585,9 @@ export const LandingShowcase: React.FC = () => {
                 alt="Neat kirana counter rack stocked with biscuits and FMCG goods"
                 className="w-full h-44 object-cover object-center"
               />
-              <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-[#0A0A0C] to-transparent p-3 text-[#F4F4F6] flex items-center justify-between text-xs font-mono">
-                <span className="font-bold text-[#B5F23D]">Front Counter Facing</span>
-                <span className="text-[#8C8C96]">Prime Kirana Real Estate</span>
+              <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-[#0B0F19] to-transparent p-3 text-[#F8FAFC] flex items-center justify-between text-xs font-mono">
+                <span className="font-bold text-[#3B82F6]">Front Counter Facing</span>
+                <span className="text-[#94A3B8]">Prime Kirana Real Estate</span>
               </div>
             </div>
           </div>
@@ -602,8 +602,8 @@ export const LandingShowcase: React.FC = () => {
               }}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 shelfStep === 0
-                  ? "bg-[#B5F23D] text-[#0C1004] shadow-sm"
-                  : "bg-[#131316] border border-white/[0.08] text-[#8C8C96] hover:text-[#F4F4F6]"
+                  ? "bg-[#2563EB] text-white shadow-sm"
+                  : "bg-[#111827] border border-white/[0.08] text-[#94A3B8] hover:text-[#F8FAFC]"
               }`}
             >
               Day 0: Full Shelf
@@ -616,8 +616,8 @@ export const LandingShowcase: React.FC = () => {
               }}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 shelfStep === 1
-                  ? "bg-[#B5F23D] text-[#0C1004] shadow-sm"
-                  : "bg-[#131316] border border-white/[0.08] text-[#8C8C96] hover:text-[#F4F4F6]"
+                  ? "bg-[#2563EB] text-white shadow-sm"
+                  : "bg-[#111827] border border-white/[0.08] text-[#94A3B8] hover:text-[#F8FAFC]"
               }`}
             >
               Day 5: Shelf Empties
@@ -630,8 +630,8 @@ export const LandingShowcase: React.FC = () => {
               }}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 shelfStep === 2
-                  ? "bg-[#B5F23D] text-[#0C1004] shadow-sm"
-                  : "bg-[#131316] border border-white/[0.08] text-[#8C8C96] hover:text-[#F4F4F6]"
+                  ? "bg-[#2563EB] text-white shadow-sm"
+                  : "bg-[#111827] border border-white/[0.08] text-[#94A3B8] hover:text-[#F8FAFC]"
               }`}
             >
               Day 7: The Outcome
@@ -640,16 +640,16 @@ export const LandingShowcase: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* The Notebook Way */}
-            <div className="bg-[#131316] border border-[#F43F5E]/30 rounded-2xl p-6 relative">
+            <div className="bg-[#111827] border border-[#F43F5E]/30 rounded-2xl p-6 relative">
               <div className="text-xs font-mono font-bold text-[#FDA4AF] uppercase tracking-wider mb-2">
                 Without Waymark · Memory & Notebooks
               </div>
-              <div className="font-bold text-lg text-[#F4F4F6] mb-3">
+              <div className="font-bold text-lg text-[#F8FAFC] mb-3">
                 {shelfStep === 0 && "Cases delivered. Salesman writes date in a paper register."}
                 {shelfStep === 1 && "Biscuits sell out on Thursday 4 PM. Shelf stays completely empty."}
                 {shelfStep === 2 && "Competitor van arrives Friday morning. Your rack facing is gone."}
               </div>
-              <p className="text-sm text-[#8C8C96] leading-relaxed">
+              <p className="text-sm text-[#94A3B8] leading-relaxed">
                 {shelfStep === 0 &&
                   "Salesman plans to return in 10 days, but doesn't track that this store's turnover increased 40% due to local school re-opening."}
                 {shelfStep === 1 &&
@@ -664,16 +664,16 @@ export const LandingShowcase: React.FC = () => {
             </div>
 
             {/* The Waymark Way */}
-            <div className="bg-[#131316] border border-[#22C55E]/40 rounded-2xl p-6 relative">
-              <div className="text-xs font-mono font-bold text-[#B5F23D] uppercase tracking-wider mb-2">
+            <div className="bg-[#111827] border border-[#22C55E]/40 rounded-2xl p-6 relative">
+              <div className="text-xs font-mono font-bold text-[#3B82F6] uppercase tracking-wider mb-2">
                 With Waymark · Self-Correcting Interval
               </div>
-              <div className="font-bold text-lg text-[#F4F4F6] mb-3">
+              <div className="font-bold text-lg text-[#F8FAFC] mb-3">
                 {shelfStep === 0 && "First drop logs automatically. Interval set to 6-day baseline."}
                 {shelfStep === 1 && "Waymark detects stock cycle velocity and alerts for early drop."}
                 {shelfStep === 2 && "Tempo drops 3 fresh crates on Day 5 at 8:15 AM. 100% shelf dominance."}
               </div>
-              <p className="text-sm text-[#8C8C96] leading-relaxed">
+              <p className="text-sm text-[#94A3B8] leading-relaxed">
                 {shelfStep === 0 &&
                   "Every stop records historical replenishment cadence in local IndexedDB. No manual memory needed."}
                 {shelfStep === 1 &&
@@ -681,7 +681,7 @@ export const LandingShowcase: React.FC = () => {
                 {shelfStep === 2 &&
                   "Fresh cases arrive before competitor salesmen can even pitch. The storekeeper relies exclusively on your dependable schedule."}
               </p>
-              <div className="mt-4 pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs font-mono font-semibold text-[#B5F23D]">
+              <div className="mt-4 pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs font-mono font-semibold text-[#3B82F6]">
                 <span>Result: Permanent counter dominance</span>
                 <span className="font-bold">+18% repeat order retention</span>
               </div>
@@ -693,10 +693,10 @@ export const LandingShowcase: React.FC = () => {
         <section className="mb-20 pt-8 border-t border-white/[0.08]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-8">
             <div className="lg:col-span-7">
-              <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-[#F4F4F6] mb-3">
+              <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-[#F8FAFC] mb-3">
                 Built for the Physical Realities of Indian Wholesale
               </h2>
-              <p className="text-sm sm:text-base text-[#8C8C96]">
+              <p className="text-sm sm:text-base text-[#94A3B8]">
                 Engineered for dusty mandi basements, one-handed phone use in moving auto-tempos, and end-of-day cash reconciliation.
               </p>
             </div>
@@ -706,46 +706,46 @@ export const LandingShowcase: React.FC = () => {
                 alt="Kirana grocery store in early morning bazaar with crates on display"
                 className="w-full h-44 object-cover object-center"
               />
-              <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-[#0A0A0C] to-transparent p-3 text-[#F4F4F6] flex items-center justify-between text-xs font-mono">
-                <span className="font-bold text-[#B5F23D]">Bazaar Dawn Deliveries</span>
-                <span className="text-[#8C8C96]">Drop-offs before shutters roll up</span>
+              <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-[#0B0F19] to-transparent p-3 text-[#F8FAFC] flex items-center justify-between text-xs font-mono">
+                <span className="font-bold text-[#3B82F6]">Bazaar Dawn Deliveries</span>
+                <span className="text-[#94A3B8]">Drop-offs before shutters roll up</span>
               </div>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-[#131316] border border-white/[0.08] rounded-2xl p-6">
-              <div className="text-xs font-mono font-bold text-[#B5F23D] uppercase tracking-wider mb-2">
+            <div className="bg-[#111827] border border-white/[0.08] rounded-2xl p-6">
+              <div className="text-xs font-mono font-bold text-[#3B82F6] uppercase tracking-wider mb-2">
                 Pillar 01 · Signal Independence
               </div>
-              <h3 className="font-bold text-lg text-[#F4F4F6] mb-2">
+              <h3 className="font-bold text-lg text-[#F8FAFC] mb-2">
                 100% Offline in Mandi Basements
               </h3>
-              <p className="text-xs sm:text-sm text-[#8C8C96] leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#94A3B8] leading-relaxed">
                 Underground godowns and dense mandi alleys have zero cell connectivity. Waymark runs locally inside browser IndexedDB, logging deliveries, challans, and cash tallies instantly with zero loading spinners.
               </p>
             </div>
 
-            <div className="bg-[#131316] border border-white/[0.08] rounded-2xl p-6">
+            <div className="bg-[#111827] border border-white/[0.08] rounded-2xl p-6">
               <div className="text-xs font-mono font-bold text-[#4ADE80] uppercase tracking-wider mb-2">
                 Pillar 02 · Cash Ledger
               </div>
-              <h3 className="font-bold text-lg text-[#F4F4F6] mb-2">
+              <h3 className="font-bold text-lg text-[#F8FAFC] mb-2">
                 Doorstep Dues & UPI Settlement
               </h3>
-              <p className="text-xs sm:text-sm text-[#8C8C96] leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#94A3B8] leading-relaxed">
                 Collect old dues right as fresh crates are unloaded. Drivers see credit limits, take partial cash or dynamic UPI QR payments, and reconcile physical cash notes at warehouse return.
               </p>
             </div>
 
-            <div className="bg-[#131316] border border-white/[0.08] rounded-2xl p-6">
+            <div className="bg-[#111827] border border-white/[0.08] rounded-2xl p-6">
               <div className="text-xs font-mono font-bold text-[#FCD34D] uppercase tracking-wider mb-2">
                 Pillar 03 · Dispatch Logic
               </div>
-              <h3 className="font-bold text-lg text-[#F4F4F6] mb-2">
+              <h3 className="font-bold text-lg text-[#F8FAFC] mb-2">
                 LIFO Crate Sequence & Petrol Burn
               </h3>
-              <p className="text-xs sm:text-sm text-[#8C8C96] leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#94A3B8] leading-relaxed">
                 Stops are ordered so crates for your first stop sit right at the tempo&apos;s back door. Drivers never unpack 30 crates in a narrow alley just to find one box of biscuits, cutting route duration by 45 minutes daily.
               </p>
             </div>
@@ -753,24 +753,24 @@ export const LandingShowcase: React.FC = () => {
         </section>
 
         {/* Final CTA Bar */}
-        <section className="bg-[#131316] border border-white/[0.08] rounded-3xl p-8 sm:p-12 shadow-float relative overflow-hidden">
+        <section className="bg-[#111827] border border-white/[0.08] rounded-3xl p-8 sm:p-12 shadow-float relative overflow-hidden">
           <div className="max-w-2xl relative z-10">
-            <h2 className="text-2xl sm:text-4xl font-bold tracking-tight mb-4 text-[#F4F4F6]">
+            <h2 className="text-2xl sm:text-4xl font-bold tracking-tight mb-4 text-[#F8FAFC]">
               Stop losing shelf space to competitors. Start your first route today.
             </h2>
-            <p className="text-sm sm:text-base text-[#8C8C96] leading-relaxed mb-8">
+            <p className="text-sm sm:text-base text-[#94A3B8] leading-relaxed mb-8">
               Zero software installation required. Works on any smartphone or tablet. Import your shop ledger via CSV or start adding stores one by one.
             </p>
             <div className="flex flex-wrap items-center gap-3">
               <Link
                 href="/login"
-                className="px-6 py-3.5 rounded-xl bg-[#B5F23D] text-[#0C1004] font-bold text-xs hover:bg-[#A3DE30] transition-all shadow-md active:scale-95"
+                className="px-6 py-3.5 rounded-xl bg-[#2563EB] text-white font-bold text-xs hover:bg-[#1D4ED8] transition-all shadow-md active:scale-95"
               >
                 Launch Free Waymark Account
               </Link>
               <Link
                 href="/login"
-                className="px-5 py-3.5 rounded-xl border border-white/[0.1] bg-[#1B1B20] text-[#F4F4F6] font-semibold text-xs hover:bg-[#26262D] transition-colors"
+                className="px-5 py-3.5 rounded-xl border border-white/[0.1] bg-[#1E293B] text-[#F8FAFC] font-semibold text-xs hover:bg-[#283548] transition-colors"
               >
                 Sign In to Existing Agency
               </Link>
@@ -780,10 +780,10 @@ export const LandingShowcase: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/[0.08] bg-[#0A0A0C] py-10">
-        <div className="max-w-6xl mx-auto px-5 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-[#8C8C96]">
+      <footer className="border-t border-white/[0.08] bg-[#0B0F19] py-10">
+        <div className="max-w-6xl mx-auto px-5 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-[#94A3B8]">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-[#F4F4F6]">Waymark</span>
+            <span className="font-bold text-[#F8FAFC]">Waymark</span>
             <span>· FMCG Wholesale Delivery & Shelf Replenishment System</span>
           </div>
           <div>Built for Indian FMCG Distributors, Agencies, and Wholesale Routes</div>

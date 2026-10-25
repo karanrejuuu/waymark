@@ -11,15 +11,15 @@ export default function NewShopPage() {
       <div className="mb-6">
         <Link
           href="/"
-          className="text-xs font-mono text-[#8C8C96] hover:text-[#F4F4F6] inline-flex items-center gap-1 mb-2 transition-colors"
+          className="text-xs font-mono text-[#94A3B8] hover:text-[#F8FAFC] inline-flex items-center gap-1 mb-2 transition-colors"
         >
           <ArrowLeft size={14} />
           <span>Back to Today&apos;s Dispatch</span>
         </Link>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#F4F4F6]">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#F8FAFC]">
           Add Kirana Store
         </h1>
-        <p className="text-xs text-[#8C8C96] mt-1 font-mono">
+        <p className="text-xs text-[#94A3B8] mt-1 font-mono">
           Configure store location, sector route, initial restock intervals, and storekeeper contact.
         </p>
       </div>

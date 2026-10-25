@@ -24,7 +24,7 @@ export default function EditShopPage() {
 
   if (loading) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-16 text-center text-xs font-mono text-[#8C8C96]">
+      <div className="max-w-3xl mx-auto px-4 py-16 text-center text-xs font-mono text-[#94A3B8]">
         Loading store details...
       </div>
     );
@@ -34,7 +34,7 @@ export default function EditShopPage() {
     return (
       <div className="max-w-3xl mx-auto px-4 py-12 text-center text-xs font-mono text-[#F43F5E]">
         <div>Store not found.</div>
-        <Link href="/" className="text-[#B5F23D] font-bold mt-2 inline-block">
+        <Link href="/" className="text-[#3B82F6] font-bold mt-2 inline-block">
           ← Back to Today&apos;s Dispatch
         </Link>
       </div>
@@ -46,15 +46,15 @@ export default function EditShopPage() {
       <div className="mb-6">
         <Link
           href={`/shops/${shop.id}`}
-          className="text-xs font-mono text-[#8C8C96] hover:text-[#F4F4F6] inline-flex items-center gap-1 mb-2 transition-colors"
+          className="text-xs font-mono text-[#94A3B8] hover:text-[#F8FAFC] inline-flex items-center gap-1 mb-2 transition-colors"
         >
           <ArrowLeft size={14} />
           <span>Back to Store Profile</span>
         </Link>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#F4F4F6]">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#F8FAFC]">
           Edit {shop.name}
         </h1>
-        <p className="text-xs text-[#8C8C96] mt-1 font-mono">
+        <p className="text-xs text-[#94A3B8] mt-1 font-mono">
           Update store location, contact details, assigned sector route, and product inventory cadences.
         </p>
       </div>

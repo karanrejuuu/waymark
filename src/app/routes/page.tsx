@@ -163,12 +163,12 @@ export default function RoutesPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="w-2 h-2 rounded-full bg-[#B5F23D]" />
-            <span className="text-[11px] font-mono uppercase tracking-wider text-[#8C8C96]">
+            <span className="w-2 h-2 rounded-full bg-[#2563EB]" />
+            <span className="text-[11px] font-mono uppercase tracking-wider text-[#94A3B8]">
               Fleet Route Logistics & Territory Sectors
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#F4F4F6]">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#F8FAFC]">
             Routes & Sectors
           </h1>
         </div>
@@ -176,13 +176,13 @@ export default function RoutesPage() {
         <div className="flex items-center gap-2.5">
           <Link
             href="/regions"
-            className="px-3.5 py-2 rounded-xl text-xs font-mono font-bold bg-[#131316] text-[#8C8C96] hover:text-[#F4F4F6] border border-white/[0.08] transition-all"
+            className="px-3.5 py-2 rounded-xl text-xs font-mono font-bold bg-[#111827] text-[#94A3B8] hover:text-[#F8FAFC] border border-white/[0.08] transition-all"
           >
             Manage Sectors
           </Link>
           <Link
             href="/shops/new"
-            className="px-4 py-2 rounded-xl text-xs font-bold bg-[#B5F23D] text-[#0C1004] hover:bg-[#A3DE30] inline-flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
+            className="px-4 py-2 rounded-xl text-xs font-bold bg-[#2563EB] text-white hover:bg-[#1D4ED8] inline-flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
           >
             <Plus size={15} />
             <span>Add Store</span>
@@ -192,21 +192,21 @@ export default function RoutesPage() {
 
       {/* Summary KPI Cards */}
       <div className="grid grid-cols-3 gap-3 mb-5 font-mono text-xs">
-        <div className="bg-[#131316] border border-white/[0.08] p-3 rounded-2xl shadow-lift">
-          <span className="text-[10px] text-[#8C8C96] uppercase block">Active Routes</span>
-          <span className="text-lg font-bold text-[#F4F4F6] tabular-nums mt-0.5 block">
+        <div className="bg-[#111827] border border-white/[0.08] p-3 rounded-2xl shadow-lift">
+          <span className="text-[10px] text-[#94A3B8] uppercase block">Active Routes</span>
+          <span className="text-lg font-bold text-[#F8FAFC] tabular-nums mt-0.5 block">
             {groups.length} sectors
           </span>
         </div>
-        <div className="bg-[#131316] border border-white/[0.08] p-3 rounded-2xl shadow-lift">
-          <span className="text-[10px] text-[#8C8C96] uppercase block">Total Kiranas</span>
-          <span className="text-lg font-bold text-[#F4F4F6] tabular-nums mt-0.5 block">
+        <div className="bg-[#111827] border border-white/[0.08] p-3 rounded-2xl shadow-lift">
+          <span className="text-[10px] text-[#94A3B8] uppercase block">Total Kiranas</span>
+          <span className="text-lg font-bold text-[#F8FAFC] tabular-nums mt-0.5 block">
             {totalShops} stores
           </span>
         </div>
-        <div className="bg-[#131316] border border-white/[0.08] p-3 rounded-2xl shadow-lift">
-          <span className="text-[10px] text-[#8C8C96] uppercase block">Due Dispatch</span>
-          <span className="text-lg font-bold text-[#B5F23D] tabular-nums mt-0.5 block">
+        <div className="bg-[#111827] border border-white/[0.08] p-3 rounded-2xl shadow-lift">
+          <span className="text-[10px] text-[#94A3B8] uppercase block">Due Dispatch</span>
+          <span className="text-lg font-bold text-[#3B82F6] tabular-nums mt-0.5 block">
             {totalDueAcrossRoutes} due today
           </span>
         </div>
@@ -214,7 +214,7 @@ export default function RoutesPage() {
 
       {/* Search Input */}
       <div className="relative mb-5">
-        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#8C8C96]">
+        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
           <Search size={15} />
         </div>
         <input
@@ -222,16 +222,16 @@ export default function RoutesPage() {
           placeholder="Search by store name, road, or sector..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full text-xs pl-10 pr-4 py-2.5 border border-white/[0.08] rounded-xl bg-[#131316] text-[#F4F4F6] placeholder:text-[#54545E] focus:outline-none focus:border-[#B5F23D] shadow-sm"
+          className="w-full text-xs pl-10 pr-4 py-2.5 border border-white/[0.08] rounded-xl bg-[#111827] text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none focus:border-[#2563EB] shadow-sm"
         />
       </div>
 
       {loading ? (
-        <div className="py-16 text-center text-xs text-[#8C8C96] bg-[#131316] border border-white/[0.08] rounded-2xl font-mono">
+        <div className="py-16 text-center text-xs text-[#94A3B8] bg-[#111827] border border-white/[0.08] rounded-2xl font-mono">
           Loading fleet routes...
         </div>
       ) : filteredGroups.length === 0 && filteredUnassigned.length === 0 ? (
-        <div className="py-16 text-center text-xs text-[#8C8C96] border border-white/[0.08] rounded-2xl bg-[#131316]">
+        <div className="py-16 text-center text-xs text-[#94A3B8] border border-white/[0.08] rounded-2xl bg-[#111827]">
           No stores match &quot;{search}&quot;
         </div>
       ) : (
@@ -242,7 +242,7 @@ export default function RoutesPage() {
             return (
               <div
                 key={region.id}
-                className="bg-[#131316] border border-white/[0.08] rounded-2xl shadow-lift overflow-hidden"
+                className="bg-[#111827] border border-white/[0.08] rounded-2xl shadow-lift overflow-hidden"
               >
                 {/* Route Header */}
                 <div className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.06] bg-[#16161B]">
@@ -252,7 +252,7 @@ export default function RoutesPage() {
                   >
                     <button
                       type="button"
-                      className="p-1 text-[#8C8C96] hover:text-[#F4F4F6]"
+                      className="p-1 text-[#94A3B8] hover:text-[#F8FAFC]"
                     >
                       <ChevronRight
                         size={16}
@@ -261,16 +261,16 @@ export default function RoutesPage() {
                     </button>
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-sm text-[#F4F4F6]">
+                        <span className="font-bold text-sm text-[#F8FAFC]">
                           {region.name}
                         </span>
                         {dueCount > 0 && (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#B5F23D]/15 text-[#B5F23D] border border-[#B5F23D]/30 tabular-nums">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#2563EB]/15 text-[#3B82F6] border border-[#3B82F6]/35 tabular-nums">
                             {dueCount} Due Today
                           </span>
                         )}
                       </div>
-                      <div className="text-[11px] font-mono text-[#8C8C96] mt-0.5">
+                      <div className="text-[11px] font-mono text-[#94A3B8] mt-0.5">
                         {shops.length} {shops.length === 1 ? "store" : "stores"} on this line
                       </div>
                     </div>
@@ -280,7 +280,7 @@ export default function RoutesPage() {
                   <div className="flex items-center gap-2">
                     <Link
                       href="/"
-                      className="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-[#B5F23D] text-[#0C1004] hover:bg-[#A3DE30] inline-flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
+                      className="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-[#2563EB] text-white hover:bg-[#1D4ED8] inline-flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
                     >
                       <Truck size={13} />
                       <span>Dispatch Today</span>
@@ -292,7 +292,7 @@ export default function RoutesPage() {
                 {isExp && (
                   <div className="divide-y divide-white/[0.04]">
                     {shops.length === 0 ? (
-                      <div className="py-6 text-center text-xs text-[#8C8C96] font-mono">
+                      <div className="py-6 text-center text-xs text-[#94A3B8] font-mono">
                         No stores assigned to this sector yet.
                       </div>
                     ) : (
@@ -300,15 +300,15 @@ export default function RoutesPage() {
                         <Link
                           key={shop.id}
                           href={`/shops/${shop.id}`}
-                          className="p-3.5 sm:px-5 flex items-center justify-between hover:bg-[#1B1B20]/60 transition-colors text-xs"
+                          className="p-3.5 sm:px-5 flex items-center justify-between hover:bg-[#1E293B]/60 transition-colors text-xs"
                         >
                           <div className="flex items-center gap-3 min-w-0">
                             <StatusDot variant={statusVariant} size="sm" />
                             <div className="truncate">
-                              <span className="font-bold text-[#F4F4F6] truncate block">
+                              <span className="font-bold text-[#F8FAFC] truncate block">
                                 {shop.name}
                               </span>
-                              <span className="text-[11px] font-mono text-[#8C8C96]">
+                              <span className="text-[11px] font-mono text-[#94A3B8]">
                                 Last restock: {lastDeliveredStr || "Never"}
                               </span>
                             </div>
@@ -322,13 +322,13 @@ export default function RoutesPage() {
                                     ? "bg-[#F43F5E]/20 text-[#F43F5E]"
                                     : statusVariant === "escalated"
                                     ? "bg-[#F59E0B]/20 text-[#F59E0B]"
-                                    : "bg-[#B5F23D]/20 text-[#B5F23D]"
+                                    : "bg-[#2563EB]/20 text-[#3B82F6]"
                                 }`}
                               >
                                 {statusLabel}
                               </span>
                             )}
-                            <ChevronRight size={14} className="text-[#54545E]" />
+                            <ChevronRight size={14} className="text-[#64748B]" />
                           </div>
                         </Link>
                       ))
@@ -341,13 +341,13 @@ export default function RoutesPage() {
 
           {/* Unassigned Stores */}
           {filteredUnassigned.length > 0 && (
-            <div className="bg-[#131316] border border-white/[0.08] rounded-2xl shadow-lift overflow-hidden">
+            <div className="bg-[#111827] border border-white/[0.08] rounded-2xl shadow-lift overflow-hidden">
               <div className="p-4 bg-[#16161B] border-b border-white/[0.06] flex items-center justify-between">
                 <div>
-                  <div className="font-bold text-sm text-[#F4F4F6]">
+                  <div className="font-bold text-sm text-[#F8FAFC]">
                     Unassigned Stores ({filteredUnassigned.length})
                   </div>
-                  <div className="text-[11px] font-mono text-[#8C8C96] mt-0.5">
+                  <div className="text-[11px] font-mono text-[#94A3B8] mt-0.5">
                     Stores awaiting route or territory allocation
                   </div>
                 </div>
@@ -358,15 +358,15 @@ export default function RoutesPage() {
                   <Link
                     key={shop.id}
                     href={`/shops/${shop.id}`}
-                    className="p-3.5 sm:px-5 flex items-center justify-between hover:bg-[#1B1B20]/60 transition-colors text-xs"
+                    className="p-3.5 sm:px-5 flex items-center justify-between hover:bg-[#1E293B]/60 transition-colors text-xs"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <StatusDot variant={statusVariant} size="sm" />
                       <div className="truncate">
-                        <span className="font-bold text-[#F4F4F6] truncate block">
+                        <span className="font-bold text-[#F8FAFC] truncate block">
                           {shop.name}
                         </span>
-                        <span className="text-[11px] font-mono text-[#8C8C96]">
+                        <span className="text-[11px] font-mono text-[#94A3B8]">
                           Last restock: {lastDeliveredStr || "Never"}
                         </span>
                       </div>
@@ -374,11 +374,11 @@ export default function RoutesPage() {
 
                     <div className="flex items-center gap-2.5 font-mono text-[11px]">
                       {statusLabel && (
-                        <span className="px-2 py-0.5 rounded font-bold bg-white/[0.06] text-[#8C8C96]">
+                        <span className="px-2 py-0.5 rounded font-bold bg-white/[0.06] text-[#94A3B8]">
                           {statusLabel}
                         </span>
                       )}
-                      <ChevronRight size={14} className="text-[#54545E]" />
+                      <ChevronRight size={14} className="text-[#64748B]" />
                     </div>
                   </Link>
                 ))}

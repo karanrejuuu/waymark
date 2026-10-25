@@ -42,9 +42,9 @@ export const InstallPrompt: React.FC = () => {
   if (!showPrompt) return null;
 
   return (
-    <div className="bg-[#131316] border-b border-white/[0.08] py-2 px-4 text-xs flex items-center justify-between gap-3 text-zinc-200">
+    <div className="bg-[#111827] border-b border-white/[0.08] py-2 px-4 text-xs flex items-center justify-between gap-3 text-zinc-200">
       <div className="flex items-center gap-2 min-w-0">
-        <Download size={14} className="text-[#B5F23D] shrink-0" />
+        <Download size={14} className="text-[#3B82F6] shrink-0" />
         <span className="truncate">
           Install Waymark app on your mobile device for offline godown & route access
         </span>
@@ -53,7 +53,7 @@ export const InstallPrompt: React.FC = () => {
         <button
           type="button"
           onClick={handleInstall}
-          className="px-3 py-1 bg-[#B5F23D] text-[#0C1004] font-semibold text-xs rounded-lg hover:bg-[#c4f84c] transition-colors"
+          className="px-3 py-1 bg-[#2563EB] text-white font-semibold text-xs rounded-lg hover:bg-[#1D4ED8] transition-colors"
         >
           Install App
         </button>

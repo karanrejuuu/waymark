@@ -150,7 +150,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0A0C] text-zinc-100 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#0B0F19] text-zinc-100 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         {/* Back Link */}
         <div className="mb-6">
@@ -165,7 +165,7 @@ export default function LoginPage() {
 
         {/* Brand Header */}
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-9 h-9 rounded-xl bg-[#B5F23D] text-[#0C1004] flex items-center justify-center font-bold text-base shadow-[0_0_25px_rgba(181,242,61,0.25)]">
+          <div className="w-9 h-9 rounded-xl bg-[#2563EB] text-white flex items-center justify-center font-bold text-base shadow-[0_0_25px_rgba(181,242,61,0.25)]">
             W
           </div>
           <div>
@@ -189,9 +189,9 @@ export default function LoginPage() {
       </div>
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-[#131316] py-8 px-6 sm:px-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/[0.08] rounded-2xl">
+        <div className="bg-[#111827] py-8 px-6 sm:px-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/[0.08] rounded-2xl">
           {/* Mode Switcher Tabs */}
-          <div className="grid grid-cols-2 gap-1 bg-[#1B1B20] p-1 rounded-xl mb-6 text-xs font-medium border border-white/[0.06]">
+          <div className="grid grid-cols-2 gap-1 bg-[#1E293B] p-1 rounded-xl mb-6 text-xs font-medium border border-white/[0.06]">
             <button
               type="button"
               onClick={() => {
@@ -200,7 +200,7 @@ export default function LoginPage() {
               }}
               className={`py-2 rounded-lg transition-colors ${
                 mode === "login"
-                  ? "bg-[#B5F23D] text-[#0C1004] font-semibold shadow-xs"
+                  ? "bg-[#2563EB] text-white font-semibold shadow-xs"
                   : "text-zinc-400 hover:text-white"
               }`}
             >
@@ -214,7 +214,7 @@ export default function LoginPage() {
               }}
               className={`py-2 rounded-lg transition-colors ${
                 mode === "signup"
-                  ? "bg-[#B5F23D] text-[#0C1004] font-semibold shadow-xs"
+                  ? "bg-[#2563EB] text-white font-semibold shadow-xs"
                   : "text-zinc-400 hover:text-white"
               }`}
             >
@@ -254,7 +254,7 @@ export default function LoginPage() {
                       placeholder="e.g. Ramesh Patel"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2.5 text-xs border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#B5F23D] transition-colors"
+                      className="w-full pl-9 pr-3 py-2.5 text-xs border border-white/[0.1] rounded-xl bg-[#1E293B] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#2563EB] transition-colors"
                     />
                   </div>
                 </div>
@@ -272,7 +272,7 @@ export default function LoginPage() {
                       placeholder="e.g. Apex FMCG Agency"
                       value={businessName}
                       onChange={(e) => setBusinessName(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2.5 text-xs border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#B5F23D] transition-colors"
+                      className="w-full pl-9 pr-3 py-2.5 text-xs border border-white/[0.1] rounded-xl bg-[#1E293B] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#2563EB] transition-colors"
                     />
                   </div>
                 </div>
@@ -293,7 +293,7 @@ export default function LoginPage() {
                   placeholder="ramesh@distributors.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2.5 text-xs border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#B5F23D] transition-colors"
+                  className="w-full pl-9 pr-3 py-2.5 text-xs border border-white/[0.1] rounded-xl bg-[#1E293B] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#2563EB] transition-colors"
                 />
               </div>
             </div>
@@ -307,7 +307,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={handleGeneratePassword}
-                    className="text-[11px] font-mono text-[#B5F23D] hover:underline flex items-center gap-1"
+                    className="text-[11px] font-mono text-[#3B82F6] hover:underline flex items-center gap-1"
                   >
                     <Sparkles size={11} />
                     Suggest Strong
@@ -324,7 +324,7 @@ export default function LoginPage() {
                   placeholder="Min. 8 characters with 1 number"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-9 pr-9 py-2.5 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#B5F23D] transition-colors"
+                  className="w-full pl-9 pr-9 py-2.5 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1E293B] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#2563EB] transition-colors"
                 />
                 <button
                   type="button"
@@ -356,7 +356,7 @@ export default function LoginPage() {
                     placeholder="Repeat password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2.5 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#B5F23D] transition-colors"
+                    className="w-full pl-9 pr-3 py-2.5 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1E293B] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#2563EB] transition-colors"
                   />
                 </div>
               </div>
@@ -365,7 +365,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-2 py-3 rounded-xl bg-[#B5F23D] hover:bg-[#c4f84c] text-[#0C1004] font-semibold text-xs transition-colors flex items-center justify-center gap-2 shadow-xs disabled:opacity-50"
+              className="w-full mt-2 py-3 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-xs transition-colors flex items-center justify-center gap-2 shadow-xs disabled:opacity-50"
             >
               {isLoading
                 ? "Verifying..."
@@ -377,7 +377,7 @@ export default function LoginPage() {
 
           {/* Offline local note */}
           <div className="mt-6 pt-5 border-t border-white/[0.08] text-center text-xs text-zinc-500 font-mono flex items-center justify-center gap-1.5">
-            <ShieldCheck size={13} className="text-[#B5F23D]" />
+            <ShieldCheck size={13} className="text-[#3B82F6]" />
             <span>Offline First Architecture · Works without internet</span>
           </div>
         </div>

@@ -13,7 +13,7 @@ export const DeliveryHistory: React.FC<DeliveryHistoryProps> = ({
 }) => {
   if (deliveries.length === 0) {
     return (
-      <div className="py-6 text-center text-xs text-zinc-500 border border-dashed border-white/[0.08] rounded-xl bg-[#131316]/40">
+      <div className="py-6 text-center text-xs text-zinc-500 border border-dashed border-white/[0.08] rounded-xl bg-[#111827]/40">
         No past deliveries logged for this store yet.
       </div>
     );
@@ -37,7 +37,7 @@ export const DeliveryHistory: React.FC<DeliveryHistoryProps> = ({
             className="py-3 flex items-center justify-between gap-3 hover:bg-white/[0.02] transition-colors rounded-lg px-2 -mx-2"
           >
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-7 h-7 rounded-lg bg-[#1B1B20] border border-white/[0.08] flex items-center justify-center text-zinc-400 shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-[#1E293B] border border-white/[0.08] flex items-center justify-center text-zinc-400 shrink-0">
                 <Package size={13} />
               </div>
               <div className="truncate">

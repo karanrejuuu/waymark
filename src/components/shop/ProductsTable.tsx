@@ -21,17 +21,17 @@ export const ProductsTable: React.FC<ProductsTableProps> = ({
 }) => {
   if (products.length === 0) {
     return (
-      <div className="py-6 text-center text-xs font-mono text-[#8C8C96] bg-[#131316] border border-white/[0.08] rounded-2xl">
+      <div className="py-6 text-center text-xs font-mono text-[#94A3B8] bg-[#111827] border border-white/[0.08] rounded-2xl">
         No products configured for this kirana store.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto border border-white/[0.08] rounded-2xl bg-[#131316] shadow-lift">
+    <div className="overflow-x-auto border border-white/[0.08] rounded-2xl bg-[#111827] shadow-lift">
       <table className="w-full text-left text-xs font-mono border-collapse">
         <thead>
-          <tr className="border-b border-white/[0.08] bg-[#16161B] text-[#8C8C96] select-none">
+          <tr className="border-b border-white/[0.08] bg-[#16161B] text-[#94A3B8] select-none">
             <th className="py-2.5 px-4 font-bold">Product SKU</th>
             <th className="py-2.5 px-3 font-bold">Interval</th>
             <th className="py-2.5 px-3 font-bold">Default Qty</th>
@@ -42,11 +42,11 @@ export const ProductsTable: React.FC<ProductsTableProps> = ({
         </thead>
         <tbody className="divide-y divide-white/[0.04]">
           {products.map(({ product, shopProduct, lastDeliveredStr }) => (
-            <tr key={product.id} className="hover:bg-[#1B1B20]/40 transition-colors">
-              <td className="py-3 px-4 font-bold text-[#F4F4F6]">
+            <tr key={product.id} className="hover:bg-[#1E293B]/40 transition-colors">
+              <td className="py-3 px-4 font-bold text-[#F8FAFC]">
                 {product.name}
               </td>
-              <td className="py-3 px-3 text-[#F4F4F6]">
+              <td className="py-3 px-3 text-[#F8FAFC]">
                 {onUpdateProduct ? (
                   <input
                     type="number"
@@ -58,13 +58,13 @@ export const ProductsTable: React.FC<ProductsTableProps> = ({
                         interval_days: parseInt(e.target.value, 10) || 7,
                       })
                     }
-                    className="w-16 px-2 py-1 border border-white/[0.12] rounded-lg bg-[#1B1B20] text-center font-bold text-[#F4F4F6] focus:border-[#B5F23D]"
+                    className="w-16 px-2 py-1 border border-white/[0.12] rounded-lg bg-[#1E293B] text-center font-bold text-[#F8FAFC] focus:border-[#2563EB]"
                   />
                 ) : (
                   `${shopProduct.interval_days} days`
                 )}
               </td>
-              <td className="py-3 px-3 text-[#F4F4F6]">
+              <td className="py-3 px-3 text-[#F8FAFC]">
                 {onUpdateProduct ? (
                   <input
                     type="number"
@@ -75,19 +75,19 @@ export const ProductsTable: React.FC<ProductsTableProps> = ({
                         default_qty: parseInt(e.target.value, 10) || 1,
                       })
                     }
-                    className="w-16 px-2 py-1 border border-white/[0.12] rounded-lg bg-[#1B1B20] text-center font-bold text-[#B5F23D] focus:border-[#B5F23D]"
+                    className="w-16 px-2 py-1 border border-white/[0.12] rounded-lg bg-[#1E293B] text-center font-bold text-[#3B82F6] focus:border-[#2563EB]"
                   />
                 ) : (
-                  <span className="text-[#B5F23D] font-bold">{shopProduct.default_qty}</span>
+                  <span className="text-[#3B82F6] font-bold">{shopProduct.default_qty}</span>
                 )}
               </td>
-              <td className="py-3 px-3 text-[#8C8C96]">
+              <td className="py-3 px-3 text-[#94A3B8]">
                 {lastDeliveredStr || "Never"}
               </td>
-              <td className="py-3 px-3 font-bold text-[#F4F4F6] tabular-nums">
+              <td className="py-3 px-3 font-bold text-[#F8FAFC] tabular-nums">
                 {shopProduct.next_due_date}
               </td>
-              <td className="py-3 px-4 text-right text-[#8C8C96]">
+              <td className="py-3 px-4 text-right text-[#94A3B8]">
                 {shopProduct.remind_offset_days === 0
                   ? "0d"
                   : `-${shopProduct.remind_offset_days}d`}

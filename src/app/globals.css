@@ -19,20 +19,20 @@
 :root {
   /* Cadnex Precision Dark Theme */
   color-scheme: dark;
-  --bg: #0A0A0C;
-  --surface: #131316;
-  --surface-2: #1B1B20;
-  --surface-3: #26262D;
-  --ink: #F4F4F6;
-  --mute: #8C8C96;
-  --faint: #54545E;
+  --bg: #0B0F19;
+  --surface: #111827;
+  --surface-2: #1E293B;
+  --surface-3: #283548;
+  --ink: #F8FAFC;
+  --mute: #94A3B8;
+  --faint: #64748B;
   --line: rgba(255, 255, 255, 0.08);
 
   /* Signature Electric Lime & High-Contrast Accents */
-  --lime: #B5F23D;
-  --on-lime: #0C1004;
-  --pill: #B5F23D;
-  --on-pill: #0C1004;
+  --lime: #2563EB;
+  --on-lime: #FFFFFF;
+  --pill: #2563EB;
+  --on-pill: #FFFFFF;
 
   /* Status Colors */
   --up: #22C55E;
@@ -106,10 +106,10 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0A0A0C;
+  background: #0B0F19;
 }
 ::-webkit-scrollbar-thumb {
-  background: #26262D;
+  background: #283548;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {

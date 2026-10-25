@@ -111,14 +111,14 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-xl bg-[#131316] border border-white/[0.08] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden my-auto"
+        className="w-full max-w-xl bg-[#111827] border border-white/[0.08] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden my-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="p-5 border-b border-white/[0.08] flex items-start justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#B5F23D]">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#3B82F6]">
                 Store Visit & Update
               </span>
               <span className="text-zinc-500 font-mono text-[11px]">· Offline Ready</span>
@@ -146,15 +146,15 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
         </div>
 
         {/* Outcome Selector Pills */}
-        <div className="p-4 bg-[#1B1B20]/40 border-b border-white/[0.06] overflow-x-auto">
+        <div className="p-4 bg-[#1E293B]/40 border-b border-white/[0.06] overflow-x-auto">
           <div className="flex items-center gap-1.5 min-w-max">
             <button
               type="button"
               onClick={() => setOutcome("delivered_paid")}
               className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all flex items-center gap-1.5 ${
                 outcome === "delivered_paid"
-                  ? "bg-[#B5F23D] text-[#0C1004] shadow-xs"
-                  : "bg-[#1B1B20] text-zinc-300 hover:text-white border border-white/[0.06]"
+                  ? "bg-[#2563EB] text-white shadow-xs"
+                  : "bg-[#1E293B] text-zinc-300 hover:text-white border border-white/[0.06]"
               }`}
             >
               <CheckCircle2 size={13} />
@@ -166,8 +166,8 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
               onClick={() => setOutcome("delivered_unpaid")}
               className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all flex items-center gap-1.5 ${
                 outcome === "delivered_unpaid"
-                  ? "bg-[#B5F23D] text-[#0C1004] shadow-xs"
-                  : "bg-[#1B1B20] text-zinc-300 hover:text-white border border-white/[0.06]"
+                  ? "bg-[#2563EB] text-white shadow-xs"
+                  : "bg-[#1E293B] text-zinc-300 hover:text-white border border-white/[0.06]"
               }`}
             >
               <Clock size={13} />
@@ -179,8 +179,8 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
               onClick={() => setOutcome("bill_to_bill")}
               className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all flex items-center gap-1.5 ${
                 outcome === "bill_to_bill"
-                  ? "bg-[#B5F23D] text-[#0C1004] shadow-xs"
-                  : "bg-[#1B1B20] text-zinc-300 hover:text-white border border-white/[0.06]"
+                  ? "bg-[#2563EB] text-white shadow-xs"
+                  : "bg-[#1E293B] text-zinc-300 hover:text-white border border-white/[0.06]"
               }`}
             >
               <Receipt size={13} />
@@ -192,8 +192,8 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
               onClick={() => setOutcome("follow_up")}
               className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all flex items-center gap-1.5 ${
                 outcome === "follow_up"
-                  ? "bg-[#B5F23D] text-[#0C1004] shadow-xs"
-                  : "bg-[#1B1B20] text-zinc-300 hover:text-white border border-white/[0.06]"
+                  ? "bg-[#2563EB] text-white shadow-xs"
+                  : "bg-[#1E293B] text-zinc-300 hover:text-white border border-white/[0.06]"
               }`}
             >
               <CalendarClock size={13} />
@@ -205,8 +205,8 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
               onClick={() => setOutcome("shop_closed")}
               className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all flex items-center gap-1.5 ${
                 outcome === "shop_closed"
-                  ? "bg-[#B5F23D] text-[#0C1004] shadow-xs"
-                  : "bg-[#1B1B20] text-zinc-300 hover:text-white border border-white/[0.06]"
+                  ? "bg-[#2563EB] text-white shadow-xs"
+                  : "bg-[#1E293B] text-zinc-300 hover:text-white border border-white/[0.06]"
               }`}
             >
               <Store size={13} />
@@ -218,8 +218,8 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
               onClick={() => setOutcome("no_order")}
               className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all flex items-center gap-1.5 ${
                 outcome === "no_order"
-                  ? "bg-[#B5F23D] text-[#0C1004] shadow-xs"
-                  : "bg-[#1B1B20] text-zinc-300 hover:text-white border border-white/[0.06]"
+                  ? "bg-[#2563EB] text-white shadow-xs"
+                  : "bg-[#1E293B] text-zinc-300 hover:text-white border border-white/[0.06]"
               }`}
             >
               <PackageX size={13} />
@@ -231,8 +231,8 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
               onClick={() => setOutcome("update_note")}
               className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all flex items-center gap-1.5 ${
                 outcome === "update_note"
-                  ? "bg-[#B5F23D] text-[#0C1004] shadow-xs"
-                  : "bg-[#1B1B20] text-zinc-300 hover:text-white border border-white/[0.06]"
+                  ? "bg-[#2563EB] text-white shadow-xs"
+                  : "bg-[#1E293B] text-zinc-300 hover:text-white border border-white/[0.06]"
               }`}
             >
               <MessageSquare size={13} />
@@ -258,7 +258,7 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
                 Delivered Items & Quantities
               </label>
               {shopProducts.length === 0 ? (
-                <div className="p-3 bg-[#1B1B20] border border-white/[0.06] rounded-xl text-xs text-zinc-400">
+                <div className="p-3 bg-[#1E293B] border border-white/[0.06] rounded-xl text-xs text-zinc-400">
                   Standard delivery delivery will be stamped for this retailer.
                 </div>
               ) : (
@@ -271,14 +271,14 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
                     return (
                       <div
                         key={sp.shopProduct.id}
-                        className="flex items-center justify-between p-2.5 bg-[#1B1B20] border border-white/[0.06] rounded-xl text-xs"
+                        className="flex items-center justify-between p-2.5 bg-[#1E293B] border border-white/[0.06] rounded-xl text-xs"
                       >
                         <span className="font-semibold text-zinc-200 truncate pr-2">{pName}</span>
                         <div className="flex items-center gap-2 shrink-0">
                           <button
                             type="button"
                             onClick={() => handleQtyChange(pid, qty - 1)}
-                            className="w-6 h-6 rounded bg-[#131316] text-zinc-300 hover:text-white border border-white/[0.08] flex items-center justify-center font-bold"
+                            className="w-6 h-6 rounded bg-[#111827] text-zinc-300 hover:text-white border border-white/[0.08] flex items-center justify-center font-bold"
                           >
                             -
                           </button>
@@ -288,7 +288,7 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
                           <button
                             type="button"
                             onClick={() => handleQtyChange(pid, qty + 1)}
-                            className="w-6 h-6 rounded bg-[#131316] text-zinc-300 hover:text-white border border-white/[0.08] flex items-center justify-center font-bold"
+                            className="w-6 h-6 rounded bg-[#111827] text-zinc-300 hover:text-white border border-white/[0.08] flex items-center justify-center font-bold"
                           >
                             +
                           </button>
@@ -318,14 +318,14 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
                     placeholder="e.g. 1500"
                     value={paymentAmount}
                     onChange={(e) => setPaymentAmount(e.target.value)}
-                    className="w-full pl-8 pr-3 py-2 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#B5F23D]"
+                    className="w-full pl-8 pr-3 py-2 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1E293B] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#2563EB]"
                   />
                 </div>
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-zinc-300 mb-1.5">Payment Mode</label>
-                <div className="grid grid-cols-3 gap-1 bg-[#1B1B20] p-1 rounded-xl border border-white/[0.06] text-xs font-mono">
+                <div className="grid grid-cols-3 gap-1 bg-[#1E293B] p-1 rounded-xl border border-white/[0.06] text-xs font-mono">
                   {(["cash", "upi", "cheque"] as PaymentMode[]).map((m) => (
                     <button
                       key={m}
@@ -333,7 +333,7 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
                       onClick={() => setPaymentMode(m)}
                       className={`py-1.5 rounded-lg uppercase text-[11px] font-bold transition-colors ${
                         paymentMode === m
-                          ? "bg-[#B5F23D] text-[#0C1004]"
+                          ? "bg-[#2563EB] text-white"
                           : "text-zinc-400 hover:text-white"
                       }`}
                     >
@@ -357,7 +357,7 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
                   placeholder="e.g. INV-4902"
                   value={billNumber}
                   onChange={(e) => setBillNumber(e.target.value)}
-                  className="w-full px-3 py-2 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#B5F23D]"
+                  className="w-full px-3 py-2 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1E293B] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#2563EB]"
                 />
               </div>
 
@@ -370,7 +370,7 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
                   placeholder="Amount owed"
                   value={billAmount}
                   onChange={(e) => setBillAmount(e.target.value)}
-                  className="w-full px-3 py-2 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#B5F23D]"
+                  className="w-full px-3 py-2 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1E293B] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#2563EB]"
                 />
               </div>
             </div>
@@ -389,7 +389,7 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
                     placeholder="Amount cleared"
                     value={previousBillSettled}
                     onChange={(e) => setPreviousBillSettled(e.target.value)}
-                    className="w-full px-3 py-2 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#B5F23D]"
+                    className="w-full px-3 py-2 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1E293B] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#2563EB]"
                   />
                 </div>
 
@@ -397,13 +397,13 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
                   <label className="block text-xs font-medium text-zinc-300 mb-1.5">
                     Payment Mode (Cleared Bill)
                   </label>
-                  <div className="grid grid-cols-2 gap-1 bg-[#1B1B20] p-1 rounded-xl border border-white/[0.06] text-xs font-mono">
+                  <div className="grid grid-cols-2 gap-1 bg-[#1E293B] p-1 rounded-xl border border-white/[0.06] text-xs font-mono">
                     <button
                       type="button"
                       onClick={() => setPaymentMode("cash")}
                       className={`py-1.5 rounded-lg text-xs font-bold transition-colors ${
                         paymentMode === "cash"
-                          ? "bg-[#B5F23D] text-[#0C1004]"
+                          ? "bg-[#2563EB] text-white"
                           : "text-zinc-400 hover:text-white"
                       }`}
                     >
@@ -414,7 +414,7 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
                       onClick={() => setPaymentMode("upi")}
                       className={`py-1.5 rounded-lg text-xs font-bold transition-colors ${
                         paymentMode === "upi"
-                          ? "bg-[#B5F23D] text-[#0C1004]"
+                          ? "bg-[#2563EB] text-white"
                           : "text-zinc-400 hover:text-white"
                       }`}
                     >
@@ -434,7 +434,7 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
                     placeholder="e.g. INV-5021"
                     value={billNumber}
                     onChange={(e) => setBillNumber(e.target.value)}
-                    className="w-full px-3 py-2 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#B5F23D]"
+                    className="w-full px-3 py-2 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1E293B] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#2563EB]"
                   />
                 </div>
 
@@ -447,7 +447,7 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
                     placeholder="New bill value"
                     value={billAmount}
                     onChange={(e) => setBillAmount(e.target.value)}
-                    className="w-full px-3 py-2 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#B5F23D]"
+                    className="w-full px-3 py-2 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1E293B] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#2563EB]"
                   />
                 </div>
               </div>
@@ -475,8 +475,8 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
                     }}
                     className={`py-2 rounded-xl text-xs font-mono font-semibold transition-colors ${
                       followUpDays === item.days && !customDate
-                        ? "bg-[#B5F23D] text-[#0C1004]"
-                        : "bg-[#1B1B20] text-zinc-300 hover:text-white border border-white/[0.06]"
+                        ? "bg-[#2563EB] text-white"
+                        : "bg-[#1E293B] text-zinc-300 hover:text-white border border-white/[0.06]"
                     }`}
                   >
                     {item.label}
@@ -496,7 +496,7 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
                     type="date"
                     value={customDate}
                     onChange={(e) => setCustomDate(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 focus:outline-none focus:border-[#B5F23D]"
+                    className="w-full pl-9 pr-3 py-2 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1E293B] text-zinc-100 focus:outline-none focus:border-[#2563EB]"
                   />
                 </div>
               </div>
@@ -526,7 +526,7 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
               }
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full p-3 text-xs border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#B5F23D] transition-colors"
+              className="w-full p-3 text-xs border border-white/[0.1] rounded-xl bg-[#1E293B] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#2563EB] transition-colors"
             />
           </div>
 
@@ -542,7 +542,7 @@ export const VisitOutcomeModal: React.FC<VisitOutcomeModalProps> = ({
             <button
               type="submit"
               disabled={submitting}
-              className="px-5 py-2.5 rounded-xl bg-[#B5F23D] hover:bg-[#c4f84c] text-[#0C1004] font-semibold text-xs transition-colors flex items-center gap-1.5 shadow-xs disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-xs transition-colors flex items-center gap-1.5 shadow-xs disabled:opacity-50"
             >
               {submitting ? "Logging..." : "Log Store Outcome"}
             </button>

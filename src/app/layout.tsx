@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0A0A0C",
+  themeColor: "#0B0F19",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -33,7 +33,7 @@ export default function RootLayout({
       <head>
         <link rel="manifest" href="/manifest.json" />
       </head>
-      <body className="bg-[#0A0A0C] text-[#F4F4F6] min-h-screen selection:bg-[#B5F23D] selection:text-[#0C1004] antialiased">
+      <body className="bg-[#0B0F19] text-[#F8FAFC] min-h-screen selection:bg-[#2563EB] selection:text-white antialiased">
         <AuthProvider>
           <AppShell>{children}</AppShell>
         </AuthProvider>

@@ -136,12 +136,12 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
           title={isDeliveredState ? "Delivered" : "Tap to stamp stop delivered"}
           className={`w-6 h-6 rounded-full flex items-center justify-center cursor-pointer my-1 z-10 transition-all duration-200 text-xs font-mono font-bold ${
             isDeliveredState
-              ? "bg-[#B5F23D] text-[#0C1004] scale-110 shadow-sm"
+              ? "bg-[#2563EB] text-white scale-110 shadow-sm"
               : isUrgent
               ? "border-2 border-[#F43F5E] bg-[#F43F5E]/20 text-[#F43F5E] ring-2 ring-[#F43F5E]/20"
               : isNextUp
-              ? "border-2 border-[#B5F23D] bg-[#B5F23D]/10 text-[#B5F23D] ring-2 ring-[#B5F23D]/25"
-              : "border border-white/[0.16] bg-[#1B1B20] text-[#8C8C96] hover:border-white/40"
+              ? "border-2 border-[#2563EB] bg-[#2563EB]/15 text-[#3B82F6] ring-2 ring-[#2563EB]/25"
+              : "border border-white/[0.16] bg-[#1E293B] text-[#94A3B8] hover:border-white/40"
           }`}
         >
           {isDeliveredState ? (
@@ -169,10 +169,10 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
         <div
           className={`border rounded-2xl transition-all duration-150 overflow-hidden ${
             isDeliveredState
-              ? "bg-[#131316]/50 border-white/[0.04] opacity-75"
+              ? "bg-[#111827]/50 border-white/[0.04] opacity-75"
               : isNextUp
-              ? "bg-[#16161B] border-[#B5F23D]/40 shadow-float ring-1 ring-[#B5F23D]/20"
-              : "bg-[#131316] border-white/[0.08] hover:border-white/[0.18]"
+              ? "bg-[#16161B] border-[#2563EB]/40 shadow-float ring-1 ring-[#2563EB]/20"
+              : "bg-[#111827] border-white/[0.08] hover:border-white/[0.18]"
           }`}
         >
           {/* Stop Header */}
@@ -186,7 +186,7 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
               <div className="flex items-center gap-2">
                 <span
                   className={`font-sans font-bold text-sm tracking-tight truncate ${
-                    isDeliveredState ? "line-through text-[#8C8C96]" : "text-[#F4F4F6]"
+                    isDeliveredState ? "line-through text-[#94A3B8]" : "text-[#F8FAFC]"
                   }`}
                 >
                   {item.shop.name}
@@ -216,10 +216,10 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
                 {item.dueProducts.map((p) => (
                   <span
                     key={p.product.id}
-                    className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-lg bg-[#1B1B20] text-[#F4F4F6] border border-white/[0.06] font-mono"
+                    className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-lg bg-[#1E293B] text-[#F8FAFC] border border-white/[0.06] font-mono"
                   >
                     <span className="truncate max-w-[150px]">{p.product.name}</span>
-                    <span className="text-[#B5F23D] font-bold">×{p.shopProduct.default_qty}</span>
+                    <span className="text-[#3B82F6] font-bold">×{p.shopProduct.default_qty}</span>
                   </span>
                 ))}
               </div>
@@ -241,7 +241,7 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
                     type="button"
                     onClick={handleQuickTick}
                     disabled={isSubmitting}
-                    className="px-3 py-1.5 rounded-xl bg-[#B5F23D] hover:bg-[#A3DE30] text-[#0C1004] text-xs font-bold transition-all flex items-center gap-1 shadow-sm active:scale-95"
+                    className="px-3 py-1.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-bold transition-all flex items-center gap-1 shadow-sm active:scale-95"
                   >
                     <Check size={14} strokeWidth={3} />
                     <span className="hidden sm:inline">Delivered</span>
@@ -250,7 +250,7 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
                     type="button"
                     onClick={() => setShowOutcomeModal(true)}
                     title="Log Other Outcome (Follow-up, Bill-to-Bill, Unpaid, Closed, Note)"
-                    className="p-1.5 rounded-xl bg-[#1B1B20] hover:bg-white/[0.08] text-zinc-300 hover:text-white border border-white/[0.08] transition-colors"
+                    className="p-1.5 rounded-xl bg-[#1E293B] hover:bg-white/[0.08] text-zinc-300 hover:text-white border border-white/[0.08] transition-colors"
                   >
                     <MoreHorizontal size={15} />
                   </button>
@@ -264,7 +264,7 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
               <button
                 type="button"
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="p-1.5 text-[#8C8C96] hover:text-[#F4F4F6] rounded-lg transition-colors"
+                className="p-1.5 text-[#94A3B8] hover:text-[#F8FAFC] rounded-lg transition-colors"
               >
                 <ChevronRight
                   size={16}
@@ -276,9 +276,9 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
 
           {/* Expanded Drawer: Itemized adjustments & cash dues entry */}
           {isExpanded && (
-            <div className="p-4 border-t border-white/[0.06] bg-[#0A0A0C]/50 space-y-4">
+            <div className="p-4 border-t border-white/[0.06] bg-[#0B0F19]/50 space-y-4">
               <div>
-                <div className="text-[11px] font-mono uppercase tracking-wider text-[#8C8C96] mb-2">
+                <div className="text-[11px] font-mono uppercase tracking-wider text-[#94A3B8] mb-2">
                   Verify Crate Counts & Stock Feedback
                 </div>
                 {item.dueProducts.map((p) => {
@@ -314,21 +314,21 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
               </div>
 
               {/* Payment collected at doorstep */}
-              <div className="p-3.5 bg-[#1B1B20] border border-white/[0.08] rounded-xl flex items-center justify-between gap-3">
+              <div className="p-3.5 bg-[#1E293B] border border-white/[0.08] rounded-xl flex items-center justify-between gap-3">
                 <div>
-                  <div className="text-xs font-bold text-[#F4F4F6]">Doorstep Payment Collected</div>
-                  <div className="text-[11px] text-[#8C8C96] font-mono">
+                  <div className="text-xs font-bold text-[#F8FAFC]">Doorstep Payment Collected</div>
+                  <div className="text-[11px] text-[#94A3B8] font-mono">
                     Prior ledger balance: ₹{(item.shop.balance_due || 0).toLocaleString("en-IN")}
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-[#8C8C96]">₹</span>
+                  <span className="text-xs text-[#94A3B8]">₹</span>
                   <input
                     type="number"
                     placeholder="0"
                     value={paymentInput}
                     onChange={(e) => setPaymentInput(e.target.value)}
-                    className="w-24 px-2.5 py-1.5 text-xs font-mono font-bold text-right bg-[#131316] border border-white/[0.12] rounded-lg text-[#F4F4F6] focus:outline-none focus:border-[#B5F23D]"
+                    className="w-24 px-2.5 py-1.5 text-xs font-mono font-bold text-right bg-[#111827] border border-white/[0.12] rounded-lg text-[#F8FAFC] focus:outline-none focus:border-[#2563EB]"
                   />
                 </div>
               </div>
@@ -338,7 +338,7 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowSnoozeMenu(!showSnoozeMenu)}
-                  className="text-xs text-[#8C8C96] hover:text-[#F4F4F6] font-medium flex items-center gap-1"
+                  className="text-xs text-[#94A3B8] hover:text-[#F8FAFC] font-medium flex items-center gap-1"
                 >
                   <Clock size={13} />
                   <span>Snooze Drop</span>
@@ -348,7 +348,7 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
                   type="button"
                   onClick={handleDetailedSubmit}
                   disabled={isSubmitting}
-                  className="px-4 py-2 rounded-xl bg-[#B5F23D] hover:bg-[#A3DE30] text-[#0C1004] text-xs font-bold transition-all shadow-sm"
+                  className="px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-bold transition-all shadow-sm"
                 >
                   Confirm Delivery & Log Payment
                 </button>
@@ -356,27 +356,27 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
 
               {/* Snooze popover menu */}
               {showSnoozeMenu && (
-                <div className="p-3 bg-[#1B1B20] border border-white/[0.12] rounded-xl text-xs space-y-2">
-                  <div className="font-bold text-[#F4F4F6]">Snooze Delivery Round</div>
+                <div className="p-3 bg-[#1E293B] border border-white/[0.12] rounded-xl text-xs space-y-2">
+                  <div className="font-bold text-[#F8FAFC]">Snooze Delivery Round</div>
                   <div className="flex flex-wrap gap-2">
                     <button
                       type="button"
                       onClick={() => handleSnooze(1, "Shop closed today")}
-                      className="px-2.5 py-1 rounded-lg bg-[#131316] hover:bg-white/[0.06] text-[#F4F4F6] border border-white/[0.08]"
+                      className="px-2.5 py-1 rounded-lg bg-[#111827] hover:bg-white/[0.06] text-[#F8FAFC] border border-white/[0.08]"
                     >
                       +1 Day (Shop Closed)
                     </button>
                     <button
                       type="button"
                       onClick={() => handleSnooze(2, "Owner requested weekend drop")}
-                      className="px-2.5 py-1 rounded-lg bg-[#131316] hover:bg-white/[0.06] text-[#F4F4F6] border border-white/[0.08]"
+                      className="px-2.5 py-1 rounded-lg bg-[#111827] hover:bg-white/[0.06] text-[#F8FAFC] border border-white/[0.08]"
                     >
                       +2 Days (Owner Request)
                     </button>
                     <button
                       type="button"
                       onClick={() => handleSnooze(7, "Excess inventory on hand")}
-                      className="px-2.5 py-1 rounded-lg bg-[#131316] hover:bg-white/[0.06] text-[#F4F4F6] border border-white/[0.08]"
+                      className="px-2.5 py-1 rounded-lg bg-[#111827] hover:bg-white/[0.06] text-[#F8FAFC] border border-white/[0.08]"
                     >
                       +7 Days (Full Rack)
                     </button>

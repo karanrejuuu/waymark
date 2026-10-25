@@ -11,7 +11,7 @@ import { downloadDatabaseBackup, restoreDatabaseBackup } from "@/lib/db/backup";
 
 const ShopMap = dynamic(() => import("@/components/shop/ShopMap"), {
   ssr: false,
-  loading: () => <div className="h-44 bg-[#131316] rounded-2xl border border-white/[0.08] flex items-center justify-center text-xs text-[#8C8C96] font-mono">Loading godown map...</div>,
+  loading: () => <div className="h-44 bg-[#111827] rounded-2xl border border-white/[0.08] flex items-center justify-center text-xs text-[#94A3B8] font-mono">Loading godown map...</div>,
 });
 
 export default function SettingsPage() {
@@ -130,17 +130,17 @@ export default function SettingsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-white/[0.08] mb-6 gap-3">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="w-2 h-2 rounded-full bg-[#B5F23D]" />
-            <span className="text-[11px] font-mono uppercase tracking-wider text-[#8C8C96]">
+            <span className="w-2 h-2 rounded-full bg-[#2563EB]" />
+            <span className="text-[11px] font-mono uppercase tracking-wider text-[#94A3B8]">
               Agency Configuration & Data Durability
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#F4F4F6]">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#F8FAFC]">
             Agency Settings
           </h1>
         </div>
         {saveStatus && (
-          <span className="text-xs font-mono text-[#B5F23D] inline-flex items-center gap-1 font-bold px-3 py-1 rounded-full bg-[#B5F23D]/10 border border-[#B5F23D]/30">
+          <span className="text-xs font-mono text-[#3B82F6] inline-flex items-center gap-1 font-bold px-3 py-1 rounded-full bg-[#2563EB]/15 border border-[#3B82F6]/35">
             <CheckCircle2 size={14} />
             <span>{saveStatus}</span>
           </span>
@@ -149,11 +149,11 @@ export default function SettingsPage() {
 
       <div className="space-y-6">
         {/* SECTION: DATA DURABILITY & 1-CLICK BACKUP */}
-        <div className="bg-[#131316] border border-white/[0.08] rounded-2xl p-5 shadow-lift">
+        <div className="bg-[#111827] border border-white/[0.08] rounded-2xl p-5 shadow-lift">
           <div className="flex items-center justify-between mb-3 pb-3 border-b border-white/[0.06]">
             <div className="flex items-center gap-2">
-              <ShieldCheck size={18} className="text-[#B5F23D]" />
-              <span className="font-bold text-sm text-[#F4F4F6]">
+              <ShieldCheck size={18} className="text-[#3B82F6]" />
+              <span className="font-bold text-sm text-[#F8FAFC]">
                 Data Durability & Offline Protection
               </span>
             </div>
@@ -162,12 +162,12 @@ export default function SettingsPage() {
             </span>
           </div>
 
-          <p className="text-xs text-[#8C8C96] mb-4 leading-relaxed">
+          <p className="text-xs text-[#94A3B8] mb-4 leading-relaxed">
             Your shops, replenishment cadences, and cash tallies are stored in browser IndexedDB and guaranteed against automatic mobile disk cleaning. You can export a snapshot backup at any time.
           </p>
 
           {backupNotice && (
-            <div className="mb-4 p-3 rounded-xl bg-[#B5F23D]/10 border border-[#B5F23D]/30 text-xs font-mono text-[#B5F23D]">
+            <div className="mb-4 p-3 rounded-xl bg-[#2563EB]/15 border border-[#3B82F6]/35 text-xs font-mono text-[#3B82F6]">
               {backupNotice}
             </div>
           )}
@@ -176,7 +176,7 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={downloadDatabaseBackup}
-              className="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-[#B5F23D] text-[#0C1004] hover:bg-[#A3DE30] inline-flex items-center gap-2 transition-all shadow-sm active:scale-95"
+              className="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-[#2563EB] text-white hover:bg-[#1D4ED8] inline-flex items-center gap-2 transition-all shadow-sm active:scale-95"
             >
               <Download size={14} />
               <span>Download Backup (JSON)</span>
@@ -185,7 +185,7 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-[#1B1B20] text-[#F4F4F6] hover:bg-[#26262D] border border-white/[0.1] inline-flex items-center gap-2 transition-all"
+              className="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-[#1E293B] text-[#F8FAFC] hover:bg-[#283548] border border-white/[0.1] inline-flex items-center gap-2 transition-all"
             >
               <Upload size={14} />
               <span>Restore from Backup</span>
@@ -201,15 +201,15 @@ export default function SettingsPage() {
         </div>
 
         {/* SECTION: VEHICLE & EXPENSES */}
-        <div className="bg-[#131316] border border-white/[0.08] rounded-2xl p-5 shadow-lift">
-          <div className="text-[11px] font-mono font-bold text-[#B5F23D] tracking-wider uppercase mb-3">
+        <div className="bg-[#111827] border border-white/[0.08] rounded-2xl p-5 shadow-lift">
+          <div className="text-[11px] font-mono font-bold text-[#3B82F6] tracking-wider uppercase mb-3">
             Vehicle & Fuel Expenses
           </div>
           <div className="divide-y divide-white/[0.06] text-xs">
             <div className="py-3 flex items-center justify-between gap-4">
               <div>
-                <div className="font-bold text-[#F4F4F6]">Average Tempo Mileage</div>
-                <div className="text-[#8C8C96] text-[11px] font-mono mt-0.5">Kilometers per litre (km/L)</div>
+                <div className="font-bold text-[#F8FAFC]">Average Tempo Mileage</div>
+                <div className="text-[#94A3B8] text-[11px] font-mono mt-0.5">Kilometers per litre (km/L)</div>
               </div>
               <input
                 type="number"
@@ -218,14 +218,14 @@ export default function SettingsPage() {
                 value={mileage}
                 onChange={(e) => setMileage(parseFloat(e.target.value) || 20)}
                 onBlur={handleSaveVehicleSettings}
-                className="w-28 px-3 py-1.5 text-right font-mono font-bold border border-white/[0.12] rounded-xl bg-[#1B1B20] text-[#F4F4F6] focus:outline-none focus:border-[#B5F23D]"
+                className="w-28 px-3 py-1.5 text-right font-mono font-bold border border-white/[0.12] rounded-xl bg-[#1E293B] text-[#F8FAFC] focus:outline-none focus:border-[#2563EB]"
               />
             </div>
 
             <div className="py-3 flex items-center justify-between gap-4">
               <div>
-                <div className="font-bold text-[#F4F4F6]">Current Fuel Price</div>
-                <div className="text-[#8C8C96] text-[11px] font-mono mt-0.5">Rupees per litre (₹/L)</div>
+                <div className="font-bold text-[#F8FAFC]">Current Fuel Price</div>
+                <div className="text-[#94A3B8] text-[11px] font-mono mt-0.5">Rupees per litre (₹/L)</div>
               </div>
               <input
                 type="number"
@@ -234,18 +234,18 @@ export default function SettingsPage() {
                 value={petrolPrice}
                 onChange={(e) => setPetrolPrice(parseFloat(e.target.value) || 100)}
                 onBlur={handleSaveVehicleSettings}
-                className="w-28 px-3 py-1.5 text-right font-mono font-bold border border-white/[0.12] rounded-xl bg-[#1B1B20] text-[#F4F4F6] focus:outline-none focus:border-[#B5F23D]"
+                className="w-28 px-3 py-1.5 text-right font-mono font-bold border border-white/[0.12] rounded-xl bg-[#1E293B] text-[#F8FAFC] focus:outline-none focus:border-[#2563EB]"
               />
             </div>
           </div>
         </div>
 
         {/* SECTION: CENTRAL GODOWN LOCATION */}
-        <div className="bg-[#131316] border border-white/[0.08] rounded-2xl p-5 shadow-lift">
-          <div className="text-[11px] font-mono font-bold text-[#B5F23D] tracking-wider uppercase mb-1">
+        <div className="bg-[#111827] border border-white/[0.08] rounded-2xl p-5 shadow-lift">
+          <div className="text-[11px] font-mono font-bold text-[#3B82F6] tracking-wider uppercase mb-1">
             Central Warehouse / Godown Location
           </div>
-          <p className="text-[#8C8C96] text-xs mb-3">
+          <p className="text-[#94A3B8] text-xs mb-3">
             Used to calculate trip distance and estimated fuel burn for each shop.
           </p>
           <ShopMap
@@ -259,19 +259,19 @@ export default function SettingsPage() {
         </div>
 
         {/* SECTION: PRODUCTS CATALOG */}
-        <div className="bg-[#131316] border border-white/[0.08] rounded-2xl p-5 shadow-lift">
+        <div className="bg-[#111827] border border-white/[0.08] rounded-2xl p-5 shadow-lift">
           <div className="flex items-center justify-between mb-3 pb-3 border-b border-white/[0.06]">
             <div>
-              <div className="text-[11px] font-mono font-bold text-[#B5F23D] tracking-wider uppercase">
+              <div className="text-[11px] font-mono font-bold text-[#3B82F6] tracking-wider uppercase">
                 Products Catalog ({products.length})
               </div>
-              <div className="text-[#8C8C96] text-xs mt-0.5">
+              <div className="text-[#94A3B8] text-xs mt-0.5">
                 Supplied FMCG SKUs and default restock intervals
               </div>
             </div>
             <Link
               href="/products/new"
-              className="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-[#B5F23D] text-[#0C1004] hover:bg-[#A3DE30] inline-flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
+              className="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-[#2563EB] text-white hover:bg-[#1D4ED8] inline-flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
             >
               <Plus size={14} />
               <span>Add SKU</span>
@@ -280,21 +280,21 @@ export default function SettingsPage() {
 
           <div className="divide-y divide-white/[0.04] text-xs">
             {products.length === 0 ? (
-              <div className="py-6 text-center text-[#8C8C96] font-mono">
+              <div className="py-6 text-center text-[#94A3B8] font-mono">
                 No products in catalog. Add your supplied FMCG items.
               </div>
             ) : (
               products.map((p) => (
-                <div key={p.id} className="py-3 flex items-center justify-between hover:bg-[#1B1B20]/40 transition-colors">
+                <div key={p.id} className="py-3 flex items-center justify-between hover:bg-[#1E293B]/40 transition-colors">
                   <div>
-                    <div className="font-bold text-[#F4F4F6] text-xs sm:text-sm">{p.name}</div>
-                    <div className="text-[#8C8C96] text-[11px] font-mono mt-0.5">
+                    <div className="font-bold text-[#F8FAFC] text-xs sm:text-sm">{p.name}</div>
+                    <div className="text-[#94A3B8] text-[11px] font-mono mt-0.5">
                       Replenishment cycle: Every {p.default_interval} days
                     </div>
                   </div>
                   <Link
                     href={`/products/${p.id}/edit`}
-                    className="px-3 py-1 rounded-lg border border-white/[0.1] text-xs font-mono font-bold text-[#F4F4F6] hover:bg-white/[0.06]"
+                    className="px-3 py-1 rounded-lg border border-white/[0.1] text-xs font-mono font-bold text-[#F8FAFC] hover:bg-white/[0.06]"
                   >
                     Edit
                   </Link>
@@ -305,28 +305,28 @@ export default function SettingsPage() {
         </div>
 
         {/* SECTION: NOTIFICATIONS */}
-        <div className="bg-[#131316] border border-white/[0.08] rounded-2xl p-5 shadow-lift">
-          <div className="text-[11px] font-mono font-bold text-[#B5F23D] tracking-wider uppercase mb-3">
+        <div className="bg-[#111827] border border-white/[0.08] rounded-2xl p-5 shadow-lift">
+          <div className="text-[11px] font-mono font-bold text-[#3B82F6] tracking-wider uppercase mb-3">
             Morning Dispatch Reminders
           </div>
           <div className="divide-y divide-white/[0.06] text-xs">
             <div className="py-3 flex items-center justify-between gap-4">
               <div>
-                <div className="font-bold text-[#F4F4F6]">Morning Round Reminder</div>
-                <div className="text-[#8C8C96] text-[11px] font-mono mt-0.5">Daily dispatch notification of shops due</div>
+                <div className="font-bold text-[#F8FAFC]">Morning Round Reminder</div>
+                <div className="text-[#94A3B8] text-[11px] font-mono mt-0.5">Daily dispatch notification of shops due</div>
               </div>
               <input
                 type="time"
                 value={reminderTime}
                 onChange={(e) => setReminderTime(e.target.value)}
-                className="px-3 py-1.5 border border-white/[0.12] rounded-xl bg-[#1B1B20] text-xs font-mono font-bold text-[#F4F4F6]"
+                className="px-3 py-1.5 border border-white/[0.12] rounded-xl bg-[#1E293B] text-xs font-mono font-bold text-[#F8FAFC]"
               />
             </div>
 
             <div className="py-3 flex items-center justify-between gap-4">
               <div>
-                <div className="font-bold text-[#F4F4F6]">Web Push Notifications</div>
-                <div className="text-[#8C8C96] text-[11px] font-mono mt-0.5">
+                <div className="font-bold text-[#F8FAFC]">Web Push Notifications</div>
+                <div className="text-[#94A3B8] text-[11px] font-mono mt-0.5">
                   {notificationsEnabled ? "Active on this device" : "Receive background reminders"}
                 </div>
               </div>
@@ -336,7 +336,7 @@ export default function SettingsPage() {
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all ${
                   notificationsEnabled
                     ? "bg-[#22C55E]/15 border border-[#22C55E]/30 text-[#22C55E] cursor-default"
-                    : "bg-[#B5F23D] text-[#0C1004] hover:bg-[#A3DE30]"
+                    : "bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
                 }`}
               >
                 {notificationsEnabled ? "Active" : "Enable Push"}

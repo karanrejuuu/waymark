@@ -10,7 +10,7 @@ import { RemindOffsetSlider } from "./RemindOffsetSlider";
 
 const ShopMap = dynamic(() => import("./ShopMap"), {
   ssr: false,
-  loading: () => <div className="h-44 bg-[#1B1B20] rounded-xl border border-white/[0.08] flex items-center justify-center text-xs text-[#8C8C96] font-mono">Loading map...</div>,
+  loading: () => <div className="h-44 bg-[#1E293B] rounded-xl border border-white/[0.08] flex items-center justify-center text-xs text-[#94A3B8] font-mono">Loading map...</div>,
 });
 
 interface ShopFormProps {
@@ -139,9 +139,9 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Basic properties */}
-      <div className="bg-[#131316] border border-white/[0.08] rounded-2xl p-5 shadow-lift space-y-4">
+      <div className="bg-[#111827] border border-white/[0.08] rounded-2xl p-5 shadow-lift space-y-4">
         <div>
-          <label className="block text-xs font-mono font-bold text-[#F4F4F6] mb-1.5">
+          <label className="block text-xs font-mono font-bold text-[#F8FAFC] mb-1.5">
             Store Name *
           </label>
           <input
@@ -150,19 +150,19 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
             placeholder="e.g. Laxmi General Store"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full text-xs px-3.5 py-2.5 border border-white/[0.12] rounded-xl bg-[#1B1B20] text-[#F4F4F6] placeholder:text-[#54545E] font-medium focus:outline-none focus:border-[#B5F23D]"
+            className="w-full text-xs px-3.5 py-2.5 border border-white/[0.12] rounded-xl bg-[#1E293B] text-[#F8FAFC] placeholder:text-[#64748B] font-medium focus:outline-none focus:border-[#2563EB]"
           />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-mono font-bold text-[#F4F4F6] mb-1.5">
+            <label className="block text-xs font-mono font-bold text-[#F8FAFC] mb-1.5">
               Route / Territory Sector
             </label>
             <select
               value={regionId}
               onChange={(e) => setRegionId(e.target.value)}
-              className="w-full text-xs px-3.5 py-2.5 border border-white/[0.12] rounded-xl bg-[#1B1B20] text-[#F4F4F6] font-mono focus:outline-none focus:border-[#B5F23D]"
+              className="w-full text-xs px-3.5 py-2.5 border border-white/[0.12] rounded-xl bg-[#1E293B] text-[#F8FAFC] font-mono focus:outline-none focus:border-[#2563EB]"
             >
               <option value="">Select a route sector...</option>
               {allRegions.map((r) => (
@@ -174,7 +174,7 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
           </div>
 
           <div>
-            <label className="block text-xs font-mono font-bold text-[#F4F4F6] mb-1.5">
+            <label className="block text-xs font-mono font-bold text-[#F8FAFC] mb-1.5">
               Storekeeper Phone
             </label>
             <input
@@ -182,13 +182,13 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
               placeholder="e.g. 9820012345"
               value={contact}
               onChange={(e) => setContact(e.target.value)}
-              className="w-full text-xs px-3.5 py-2.5 border border-white/[0.12] rounded-xl bg-[#1B1B20] text-[#F4F4F6] placeholder:text-[#54545E] font-mono focus:outline-none focus:border-[#B5F23D]"
+              className="w-full text-xs px-3.5 py-2.5 border border-white/[0.12] rounded-xl bg-[#1E293B] text-[#F8FAFC] placeholder:text-[#64748B] font-mono focus:outline-none focus:border-[#2563EB]"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-mono font-bold text-[#F4F4F6] mb-1.5">
+          <label className="block text-xs font-mono font-bold text-[#F8FAFC] mb-1.5">
             Dispatcher & Delivery Notes
           </label>
           <textarea
@@ -196,14 +196,14 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
             placeholder="e.g. Prefers morning deliveries before 11 AM, rear loading gate..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="w-full text-xs px-3.5 py-2.5 border border-white/[0.12] rounded-xl bg-[#1B1B20] text-[#F4F4F6] placeholder:text-[#54545E] font-medium focus:outline-none focus:border-[#B5F23D] resize-none"
+            className="w-full text-xs px-3.5 py-2.5 border border-white/[0.12] rounded-xl bg-[#1E293B] text-[#F8FAFC] placeholder:text-[#64748B] font-medium focus:outline-none focus:border-[#2563EB] resize-none"
           />
         </div>
       </div>
 
       {/* Map location pin */}
-      <div className="bg-[#131316] border border-white/[0.08] rounded-2xl p-5 shadow-lift">
-        <label className="block text-xs font-mono font-bold text-[#B5F23D] uppercase tracking-wider mb-2">
+      <div className="bg-[#111827] border border-white/[0.08] rounded-2xl p-5 shadow-lift">
+        <label className="block text-xs font-mono font-bold text-[#3B82F6] uppercase tracking-wider mb-2">
           Store Coordinates & Pin Location
         </label>
         <ShopMap
@@ -218,27 +218,27 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
           placeholder="Search road, store name, or area..."
         />
         {lat !== null && lng !== null && (
-          <div className="text-[11px] font-mono text-[#8C8C96] mt-2">
+          <div className="text-[11px] font-mono text-[#94A3B8] mt-2">
             GPS Pin: {lat.toFixed(5)}, {lng.toFixed(5)}
           </div>
         )}
       </div>
 
       {/* Products & Intervals */}
-      <div className="bg-[#131316] border border-white/[0.08] rounded-2xl p-5 shadow-lift">
+      <div className="bg-[#111827] border border-white/[0.08] rounded-2xl p-5 shadow-lift">
         <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/[0.06]">
           <div>
-            <div className="text-xs font-mono font-bold text-[#B5F23D] uppercase tracking-wider">
+            <div className="text-xs font-mono font-bold text-[#3B82F6] uppercase tracking-wider">
               Stocked Products & Delivery Cadence
             </div>
-            <div className="text-[#8C8C96] text-[11px] font-mono mt-0.5">
+            <div className="text-[#94A3B8] text-[11px] font-mono mt-0.5">
               Configure baseline intervals per SKU
             </div>
           </div>
           <button
             type="button"
             onClick={handleAddProduct}
-            className="text-xs font-mono text-[#0C1004] bg-[#B5F23D] hover:bg-[#A3DE30] px-3 py-1.5 rounded-xl font-bold inline-flex items-center gap-1 transition-all active:scale-95"
+            className="text-xs font-mono text-white bg-[#2563EB] hover:bg-[#1D4ED8] px-3 py-1.5 rounded-xl font-bold inline-flex items-center gap-1 transition-all active:scale-95"
           >
             <Plus size={13} strokeWidth={2.5} />
             <span>Add SKU</span>
@@ -246,7 +246,7 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
         </div>
 
         {configuredProducts.length === 0 ? (
-          <div className="p-5 border border-white/[0.08] border-dashed rounded-xl text-center text-xs text-[#8C8C96] font-mono">
+          <div className="p-5 border border-white/[0.08] border-dashed rounded-xl text-center text-xs text-[#94A3B8] font-mono">
             No products configured. Click &quot;Add SKU&quot; to set replenishment days.
           </div>
         ) : (
@@ -255,7 +255,7 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
               return (
                 <div
                   key={idx}
-                  className="p-3.5 border border-white/[0.08] rounded-xl bg-[#1B1B20] space-y-3"
+                  className="p-3.5 border border-white/[0.08] rounded-xl bg-[#1E293B] space-y-3"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <select
@@ -275,7 +275,7 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
                           )
                         );
                       }}
-                      className="text-xs font-mono font-bold bg-[#131316] border border-white/[0.12] rounded-lg px-2.5 py-1.5 flex-1 text-[#F4F4F6] focus:border-[#B5F23D]"
+                      className="text-xs font-mono font-bold bg-[#111827] border border-white/[0.12] rounded-lg px-2.5 py-1.5 flex-1 text-[#F8FAFC] focus:border-[#2563EB]"
                     >
                       {allProducts.map((p) => (
                         <option key={p.id} value={p.id}>
@@ -287,7 +287,7 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
                     <button
                       type="button"
                       onClick={() => handleRemoveProduct(idx)}
-                      className="p-1.5 text-[#8C8C96] hover:text-[#F43F5E] rounded-lg transition-colors"
+                      className="p-1.5 text-[#94A3B8] hover:text-[#F43F5E] rounded-lg transition-colors"
                     >
                       <Trash2 size={14} />
                     </button>
@@ -295,7 +295,7 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
 
                   <div className="grid grid-cols-2 gap-3 text-xs font-mono">
                     <div>
-                      <span className="text-[#8C8C96] block mb-1 text-[11px]">
+                      <span className="text-[#94A3B8] block mb-1 text-[11px]">
                         Default Drop Qty
                       </span>
                       <input
@@ -310,12 +310,12 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
                             )
                           );
                         }}
-                        className="w-full text-xs px-2.5 py-1.5 bg-[#131316] border border-white/[0.12] rounded-lg font-bold text-[#F4F4F6] focus:border-[#B5F23D]"
+                        className="w-full text-xs px-2.5 py-1.5 bg-[#111827] border border-white/[0.12] rounded-lg font-bold text-[#F8FAFC] focus:border-[#2563EB]"
                       />
                     </div>
 
                     <div>
-                      <span className="text-[#8C8C96] block mb-1 text-[11px]">
+                      <span className="text-[#94A3B8] block mb-1 text-[11px]">
                         Cycle Interval (days)
                       </span>
                       <input
@@ -331,7 +331,7 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
                             )
                           );
                         }}
-                        className="w-full text-xs px-2.5 py-1.5 bg-[#131316] border border-white/[0.12] rounded-lg font-bold text-[#F4F4F6] focus:border-[#B5F23D]"
+                        className="w-full text-xs px-2.5 py-1.5 bg-[#111827] border border-white/[0.12] rounded-lg font-bold text-[#F8FAFC] focus:border-[#2563EB]"
                       />
                     </div>
                   </div>
@@ -361,14 +361,14 @@ export const ShopForm: React.FC<ShopFormProps> = ({ initialShop }) => {
         <button
           type="button"
           onClick={() => router.back()}
-          className="px-4 py-2.5 text-xs font-mono font-semibold text-[#8C8C96] hover:text-[#F4F4F6] rounded-xl"
+          className="px-4 py-2.5 text-xs font-mono font-semibold text-[#94A3B8] hover:text-[#F8FAFC] rounded-xl"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={submitting}
-          className="px-6 py-2.5 text-xs font-mono font-bold text-[#0C1004] bg-[#B5F23D] hover:bg-[#A3DE30] rounded-xl transition-all shadow-sm active:scale-95"
+          className="px-6 py-2.5 text-xs font-mono font-bold text-white bg-[#2563EB] hover:bg-[#1D4ED8] rounded-xl transition-all shadow-sm active:scale-95"
         >
           {submitting ? "Saving..." : initialShop ? "Save Changes" : "Create Kirana Store"}
         </button>

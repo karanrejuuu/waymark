@@ -19,7 +19,7 @@ export const BottomTabBar: React.FC = () => {
     <nav
       role="tablist"
       aria-label="Mobile Navigation"
-      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0D0D11]/90 backdrop-blur-xl border-t border-white/[0.08] flex items-center justify-around h-16 pb-[env(safe-area-inset-bottom)] shadow-float select-none"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0B0F19]/90 backdrop-blur-xl border-t border-white/[0.08] flex items-center justify-around h-16 pb-[env(safe-area-inset-bottom)] shadow-float select-none"
     >
       {tabs.map((tab) => {
         const Icon = tab.icon;
@@ -33,11 +33,11 @@ export const BottomTabBar: React.FC = () => {
             aria-selected={isActive}
             className={`flex-1 flex flex-col items-center justify-center h-full min-h-[44px] gap-1 text-[11px] font-mono transition-colors ${
               isActive
-                ? "text-[#B5F23D] font-bold"
-                : "text-[#8C8C96] hover:text-[#F4F4F6]"
+                ? "text-[#3B82F6] font-bold"
+                : "text-[#94A3B8] hover:text-[#F8FAFC]"
             }`}
           >
-            <Icon size={18} className={isActive ? "text-[#B5F23D]" : "text-[#8C8C96]"} />
+            <Icon size={18} className={isActive ? "text-[#3B82F6]" : "text-[#94A3B8]"} />
             <span>{tab.label}</span>
           </Link>
         );

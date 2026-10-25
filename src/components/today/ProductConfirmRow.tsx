@@ -20,10 +20,10 @@ export const ProductConfirmRow: React.FC<ProductConfirmRowProps> = ({
   onFeedbackChange,
 }) => {
   return (
-    <div className="py-2.5 px-3.5 bg-[#1B1B20] border border-white/[0.08] rounded-xl mb-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs shadow-sm">
+    <div className="py-2.5 px-3.5 bg-[#1E293B] border border-white/[0.08] rounded-xl mb-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs shadow-sm">
       <div className="flex-1 min-w-0">
-        <div className="font-bold text-[#F4F4F6] truncate">{product.name}</div>
-        <div className="text-[11px] text-[#8C8C96] font-mono mt-0.5">
+        <div className="font-bold text-[#F8FAFC] truncate">{product.name}</div>
+        <div className="text-[11px] text-[#94A3B8] font-mono mt-0.5">
           Cadence: Every {shopProduct.interval_days}d · Default: {shopProduct.default_qty} units
         </div>
       </div>
@@ -31,7 +31,7 @@ export const ProductConfirmRow: React.FC<ProductConfirmRowProps> = ({
       <div className="flex items-center gap-3">
         {/* Quantity input */}
         <div className="flex items-center gap-1.5">
-          <label htmlFor={`qty-${product.id}`} className="text-xs font-semibold text-[#8C8C96]">
+          <label htmlFor={`qty-${product.id}`} className="text-xs font-semibold text-[#94A3B8]">
             Qty:
           </label>
           <input
@@ -44,13 +44,13 @@ export const ProductConfirmRow: React.FC<ProductConfirmRowProps> = ({
               const val = parseInt(e.target.value, 10);
               onQtyChange(val);
             }}
-            className="w-16 h-8 px-2 text-center text-xs font-mono font-bold bg-[#131316] border border-white/[0.12] rounded-lg text-[#F4F4F6] focus:outline-none focus:border-[#B5F23D]"
+            className="w-16 h-8 px-2 text-center text-xs font-mono font-bold bg-[#111827] border border-white/[0.12] rounded-lg text-[#F8FAFC] focus:outline-none focus:border-[#2563EB]"
           />
         </div>
 
         {/* Professional Stock Feedback Selector (Clean SVG Dot Pills, Zero Emojis) */}
         <div
-          className="flex items-center gap-1 bg-[#131316] border border-white/[0.08] rounded-lg p-1"
+          className="flex items-center gap-1 bg-[#111827] border border-white/[0.08] rounded-lg p-1"
           role="group"
           aria-label="Stock level feedback"
         >
@@ -62,7 +62,7 @@ export const ProductConfirmRow: React.FC<ProductConfirmRowProps> = ({
             className={`px-2 py-1 rounded text-[11px] font-bold flex items-center gap-1 transition-all ${
               feedback === "low"
                 ? "bg-[#F43F5E]/20 text-[#F43F5E] border border-[#F43F5E]/40"
-                : "text-[#8C8C96] hover:text-[#F4F4F6]"
+                : "text-[#94A3B8] hover:text-[#F8FAFC]"
             }`}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-[#F43F5E]" />
@@ -77,7 +77,7 @@ export const ProductConfirmRow: React.FC<ProductConfirmRowProps> = ({
             className={`px-2 py-1 rounded text-[11px] font-bold flex items-center gap-1 transition-all ${
               feedback === "fine"
                 ? "bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/40"
-                : "text-[#8C8C96] hover:text-[#F4F4F6]"
+                : "text-[#94A3B8] hover:text-[#F8FAFC]"
             }`}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
@@ -92,7 +92,7 @@ export const ProductConfirmRow: React.FC<ProductConfirmRowProps> = ({
             className={`px-2 py-1 rounded text-[11px] font-bold flex items-center gap-1 transition-all ${
               feedback === "plenty"
                 ? "bg-[#22C55E]/20 text-[#22C55E] border border-[#22C55E]/40"
-                : "text-[#8C8C96] hover:text-[#F4F4F6]"
+                : "text-[#94A3B8] hover:text-[#F8FAFC]"
             }`}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E]" />

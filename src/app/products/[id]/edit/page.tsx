@@ -63,7 +63,7 @@ export default function EditProductPage() {
         <p className="text-xs text-rose-400 font-medium">Product SKU not found.</p>
         <Link
           href="/settings"
-          className="text-xs text-[#B5F23D] hover:underline mt-2 inline-block font-mono"
+          className="text-xs text-[#3B82F6] hover:underline mt-2 inline-block font-mono"
         >
           ← Back to Settings
         </Link>
@@ -82,7 +82,7 @@ export default function EditProductPage() {
           <span>Back to Settings</span>
         </Link>
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#1B1B20] border border-white/[0.08] flex items-center justify-center text-[#B5F23D]">
+          <div className="w-10 h-10 rounded-xl bg-[#1E293B] border border-white/[0.08] flex items-center justify-center text-[#3B82F6]">
             <Edit3 size={18} />
           </div>
           <div>
@@ -96,7 +96,7 @@ export default function EditProductPage() {
         </div>
       </div>
 
-      <div className="bg-[#131316] border border-white/[0.08] rounded-2xl p-6 sm:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+      <div className="bg-[#111827] border border-white/[0.08] rounded-2xl p-6 sm:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-xs font-medium text-zinc-300 mb-1.5">
@@ -107,7 +107,7 @@ export default function EditProductPage() {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full text-xs px-3.5 py-3 border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#B5F23D] transition-colors"
+              className="w-full text-xs px-3.5 py-3 border border-white/[0.1] rounded-xl bg-[#1E293B] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#2563EB] transition-colors"
             />
           </div>
 
@@ -122,7 +122,7 @@ export default function EditProductPage() {
               required
               value={defaultInterval}
               onChange={(e) => setDefaultInterval(parseInt(e.target.value, 10) || 7)}
-              className="w-full text-xs font-mono px-3.5 py-3 border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#B5F23D] transition-colors"
+              className="w-full text-xs font-mono px-3.5 py-3 border border-white/[0.1] rounded-xl bg-[#1E293B] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#2563EB] transition-colors"
             />
           </div>
 
@@ -137,7 +137,7 @@ export default function EditProductPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="px-5 py-2.5 text-xs font-semibold text-[#0C1004] bg-[#B5F23D] hover:bg-[#c4f84c] rounded-xl shadow-xs transition-colors disabled:opacity-50"
+              className="px-5 py-2.5 text-xs font-semibold text-white bg-[#2563EB] hover:bg-[#1D4ED8] rounded-xl shadow-xs transition-colors disabled:opacity-50"
             >
               {submitting ? "Saving..." : "Save Changes"}
             </button>

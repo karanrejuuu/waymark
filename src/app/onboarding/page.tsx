@@ -32,7 +32,7 @@ import { useAuth } from "@/context/AuthContext";
 const ShopMap = dynamic(() => import("@/components/shop/ShopMap"), {
   ssr: false,
   loading: () => (
-    <div className="h-56 bg-[#1B1B20] rounded-xl border border-white/[0.08] flex items-center justify-center text-xs text-zinc-500 font-mono">
+    <div className="h-56 bg-[#1E293B] rounded-xl border border-white/[0.08] flex items-center justify-center text-xs text-zinc-500 font-mono">
       Loading interactive godown map...
     </div>
   ),
@@ -251,13 +251,13 @@ export default function OnboardingExperiencePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0A0A0C] text-zinc-100 py-8 px-4 flex flex-col justify-between">
+    <div className="min-h-screen bg-[#0B0F19] text-zinc-100 py-8 px-4 flex flex-col justify-between">
       <div className="max-w-2xl mx-auto w-full">
         {/* Top Header & Gamified Progress Indicator */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2.5">
-              <span className="w-8 h-8 rounded-xl bg-[#B5F23D] text-[#0C1004] flex items-center justify-center font-bold text-sm font-mono shadow-sm">
+              <span className="w-8 h-8 rounded-xl bg-[#2563EB] text-white flex items-center justify-center font-bold text-sm font-mono shadow-sm">
                 W
               </span>
               <div>
@@ -275,14 +275,14 @@ export default function OnboardingExperiencePage() {
                 type="button"
                 onClick={() => setSoundEnabled(!soundEnabled)}
                 title={soundEnabled ? "Mute audio cues" : "Enable tactile audio cues"}
-                className="p-1.5 rounded-lg text-zinc-400 hover:text-white bg-[#1B1B20] border border-white/[0.06] transition-colors"
+                className="p-1.5 rounded-lg text-zinc-400 hover:text-white bg-[#1E293B] border border-white/[0.06] transition-colors"
               >
-                {soundEnabled ? <Volume2 size={14} className="text-[#B5F23D]" /> : <VolumeX size={14} />}
+                {soundEnabled ? <Volume2 size={14} className="text-[#3B82F6]" /> : <VolumeX size={14} />}
               </button>
               <button
                 type="button"
                 onClick={() => handleCompleteOnboarding("sample")}
-                className="text-xs font-mono text-zinc-400 hover:text-[#B5F23D] px-2 py-1 rounded transition-colors"
+                className="text-xs font-mono text-zinc-400 hover:text-[#3B82F6] px-2 py-1 rounded transition-colors"
               >
                 Skip to Day 1 →
               </button>
@@ -290,9 +290,9 @@ export default function OnboardingExperiencePage() {
           </div>
 
           {/* Duolingo Progress Bar */}
-          <div className="w-full h-2 bg-[#1B1B20] rounded-full overflow-hidden border border-white/[0.04]">
+          <div className="w-full h-2 bg-[#1E293B] rounded-full overflow-hidden border border-white/[0.04]">
             <div
-              className="h-full bg-[#B5F23D] transition-all duration-300 ease-out"
+              className="h-full bg-[#2563EB] transition-all duration-300 ease-out"
               style={{ width: `${(currentStep / totalSteps) * 100}%` }}
             />
           </div>
@@ -304,7 +304,7 @@ export default function OnboardingExperiencePage() {
           {currentStep === 1 && (
             <div className="space-y-6">
               <div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#B5F23D]/10 border border-[#B5F23D]/25 text-[#B5F23D] text-xs font-mono font-bold uppercase tracking-wider mb-2">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#2563EB]/15 border border-[#3B82F6]/30 text-[#3B82F6] text-xs font-mono font-bold uppercase tracking-wider mb-2">
                   <Sparkles size={11} />
                   <span>Category Intelligence</span>
                 </div>
@@ -351,8 +351,8 @@ export default function OnboardingExperiencePage() {
                       onClick={() => toggleCategory(cat.name)}
                       className={`p-3.5 rounded-xl border text-left transition-all flex items-start justify-between gap-2.5 ${
                         isSelected
-                          ? "bg-[#1B1B20] border-[#B5F23D] ring-1 ring-[#B5F23D]"
-                          : "bg-[#1B1B20]/40 border-white/[0.06] hover:border-white/[0.15]"
+                          ? "bg-[#1E293B] border-[#2563EB] ring-1 ring-[#2563EB]"
+                          : "bg-[#1E293B]/40 border-white/[0.06] hover:border-white/[0.15]"
                       }`}
                     >
                       <div>
@@ -362,8 +362,8 @@ export default function OnboardingExperiencePage() {
                       <div
                         className={`w-5 h-5 rounded-full shrink-0 flex items-center justify-center border ${
                           isSelected
-                            ? "bg-[#B5F23D] text-[#0C1004] border-[#B5F23D]"
-                            : "border-white/[0.1] bg-[#131316]"
+                            ? "bg-[#2563EB] text-white border-[#2563EB]"
+                            : "border-white/[0.1] bg-[#111827]"
                         }`}
                       >
                         {isSelected && <Check size={12} strokeWidth={3} />}
@@ -374,8 +374,8 @@ export default function OnboardingExperiencePage() {
               </div>
 
               {/* Duolingo-style insight box */}
-              <div className="p-3.5 rounded-xl bg-[#1B1B20] border border-white/[0.06] text-xs text-zinc-300 font-mono flex items-start gap-2.5">
-                <span className="text-[#B5F23D] font-bold shrink-0">Distributor Insight:</span>
+              <div className="p-3.5 rounded-xl bg-[#1E293B] border border-white/[0.06] text-xs text-zinc-300 font-mono flex items-start gap-2.5">
+                <span className="text-[#3B82F6] font-bold shrink-0">Distributor Insight:</span>
                 <span>
                   High turnover goods (biscuits & drinks) lose 18% volume when reorder calls depend on storekeeper memory. Waymark auto-schedules repeat drops before counters run dry.
                 </span>
@@ -387,7 +387,7 @@ export default function OnboardingExperiencePage() {
           {currentStep === 2 && (
             <div className="space-y-6">
               <div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#B5F23D]/10 border border-[#B5F23D]/25 text-[#B5F23D] text-xs font-mono font-bold uppercase tracking-wider mb-2">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#2563EB]/15 border border-[#3B82F6]/30 text-[#3B82F6] text-xs font-mono font-bold uppercase tracking-wider mb-2">
                   <Layers size={11} />
                   <span>Routine Diagnostics</span>
                 </div>
@@ -437,15 +437,15 @@ export default function OnboardingExperiencePage() {
                       }}
                       className={`w-full p-4 rounded-xl border text-left transition-all flex items-start justify-between gap-3 ${
                         isSelected
-                          ? "bg-[#1B1B20] border-[#B5F23D] ring-1 ring-[#B5F23D]"
-                          : "bg-[#1B1B20]/40 border-white/[0.06] hover:border-white/[0.15]"
+                          ? "bg-[#1E293B] border-[#2563EB] ring-1 ring-[#2563EB]"
+                          : "bg-[#1E293B]/40 border-white/[0.06] hover:border-white/[0.15]"
                       }`}
                     >
                       <div className="min-w-0">
                         <div className="font-semibold text-xs sm:text-sm text-zinc-100">{item.title}</div>
                         <div className="text-xs text-zinc-400 mt-0.5">{item.subtitle}</div>
                         {isSelected && (
-                          <div className="mt-2 text-xs font-mono text-[#B5F23D] bg-[#B5F23D]/10 p-2 rounded-lg border border-[#B5F23D]/20">
+                          <div className="mt-2 text-xs font-mono text-[#3B82F6] bg-[#2563EB]/15 p-2 rounded-lg border border-[#3B82F6]/25">
                             {item.insight}
                           </div>
                         )}
@@ -453,8 +453,8 @@ export default function OnboardingExperiencePage() {
                       <div
                         className={`w-5 h-5 rounded-full shrink-0 flex items-center justify-center border mt-0.5 ${
                           isSelected
-                            ? "bg-[#B5F23D] text-[#0C1004] border-[#B5F23D]"
-                            : "border-white/[0.1] bg-[#131316]"
+                            ? "bg-[#2563EB] text-white border-[#2563EB]"
+                            : "border-white/[0.1] bg-[#111827]"
                         }`}
                       >
                         {isSelected && <Check size={12} strokeWidth={3} />}
@@ -470,7 +470,7 @@ export default function OnboardingExperiencePage() {
           {currentStep === 3 && (
             <div className="space-y-6">
               <div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#B5F23D]/10 border border-[#B5F23D]/25 text-[#B5F23D] text-xs font-mono font-bold uppercase tracking-wider mb-2">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#2563EB]/15 border border-[#3B82F6]/30 text-[#3B82F6] text-xs font-mono font-bold uppercase tracking-wider mb-2">
                   <TrendingDown size={11} />
                   <span>Cost Elimination</span>
                 </div>
@@ -520,15 +520,15 @@ export default function OnboardingExperiencePage() {
                       }}
                       className={`w-full p-4 rounded-xl border text-left transition-all flex items-start justify-between gap-3 ${
                         isSelected
-                          ? "bg-[#1B1B20] border-[#B5F23D] ring-1 ring-[#B5F23D]"
-                          : "bg-[#1B1B20]/40 border-white/[0.06] hover:border-white/[0.15]"
+                          ? "bg-[#1E293B] border-[#2563EB] ring-1 ring-[#2563EB]"
+                          : "bg-[#1E293B]/40 border-white/[0.06] hover:border-white/[0.15]"
                       }`}
                     >
                       <div className="min-w-0">
                         <div className="font-semibold text-xs sm:text-sm text-zinc-100">{leak.title}</div>
                         <div className="text-xs text-zinc-400 mt-0.5">{leak.desc}</div>
                         {isSelected && (
-                          <div className="mt-2 text-xs font-mono text-[#B5F23D] bg-[#B5F23D]/10 p-2 rounded-lg border border-[#B5F23D]/20">
+                          <div className="mt-2 text-xs font-mono text-[#3B82F6] bg-[#2563EB]/15 p-2 rounded-lg border border-[#3B82F6]/25">
                             {leak.solution}
                           </div>
                         )}
@@ -536,8 +536,8 @@ export default function OnboardingExperiencePage() {
                       <div
                         className={`w-5 h-5 rounded-full shrink-0 flex items-center justify-center border mt-0.5 ${
                           isSelected
-                            ? "bg-[#B5F23D] text-[#0C1004] border-[#B5F23D]"
-                            : "border-white/[0.1] bg-[#131316]"
+                            ? "bg-[#2563EB] text-white border-[#2563EB]"
+                            : "border-white/[0.1] bg-[#111827]"
                         }`}
                       >
                         {isSelected && <Check size={12} strokeWidth={3} />}
@@ -553,7 +553,7 @@ export default function OnboardingExperiencePage() {
           {currentStep === 4 && (
             <div className="space-y-6">
               <div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#B5F23D]/10 border border-[#B5F23D]/25 text-[#B5F23D] text-xs font-mono font-bold uppercase tracking-wider mb-2">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#2563EB]/15 border border-[#3B82F6]/30 text-[#3B82F6] text-xs font-mono font-bold uppercase tracking-wider mb-2">
                   <Store size={11} />
                   <span>Market Footprint</span>
                 </div>
@@ -599,8 +599,8 @@ export default function OnboardingExperiencePage() {
                       }}
                       className={`p-4 rounded-xl border text-left transition-all ${
                         isSelected
-                          ? "bg-[#1B1B20] border-[#B5F23D] ring-1 ring-[#B5F23D]"
-                          : "bg-[#1B1B20]/40 border-white/[0.06] hover:border-white/[0.15]"
+                          ? "bg-[#1E293B] border-[#2563EB] ring-1 ring-[#2563EB]"
+                          : "bg-[#1E293B]/40 border-white/[0.06] hover:border-white/[0.15]"
                       }`}
                     >
                       <div className="font-bold text-sm text-zinc-100 mb-1">{scale.range}</div>
@@ -610,7 +610,7 @@ export default function OnboardingExperiencePage() {
                 })}
               </div>
 
-              <div className="p-3.5 rounded-xl bg-[#1B1B20] border border-white/[0.06] text-xs text-zinc-300 font-mono">
+              <div className="p-3.5 rounded-xl bg-[#1E293B] border border-white/[0.06] text-xs text-zinc-300 font-mono">
                 Waymark is tested and benchmarked with sub-100ms offline query speeds across 500+ shops and 10,000 ledger entries.
               </div>
             </div>
@@ -620,7 +620,7 @@ export default function OnboardingExperiencePage() {
           {currentStep === 5 && (
             <div className="space-y-6">
               <div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#B5F23D]/10 border border-[#B5F23D]/25 text-[#B5F23D] text-xs font-mono font-bold uppercase tracking-wider mb-2">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#2563EB]/15 border border-[#3B82F6]/30 text-[#3B82F6] text-xs font-mono font-bold uppercase tracking-wider mb-2">
                   <CreditCard size={11} />
                   <span>Settlement Terms</span>
                 </div>
@@ -659,8 +659,8 @@ export default function OnboardingExperiencePage() {
                       onClick={() => togglePaymentTerm(item.term)}
                       className={`p-3.5 rounded-xl border text-left transition-all flex items-start justify-between gap-2.5 ${
                         isSelected
-                          ? "bg-[#1B1B20] border-[#B5F23D] ring-1 ring-[#B5F23D]"
-                          : "bg-[#1B1B20]/40 border-white/[0.06] hover:border-white/[0.15]"
+                          ? "bg-[#1E293B] border-[#2563EB] ring-1 ring-[#2563EB]"
+                          : "bg-[#1E293B]/40 border-white/[0.06] hover:border-white/[0.15]"
                       }`}
                     >
                       <div>
@@ -670,8 +670,8 @@ export default function OnboardingExperiencePage() {
                       <div
                         className={`w-5 h-5 rounded-full shrink-0 flex items-center justify-center border ${
                           isSelected
-                            ? "bg-[#B5F23D] text-[#0C1004] border-[#B5F23D]"
-                            : "border-white/[0.1] bg-[#131316]"
+                            ? "bg-[#2563EB] text-white border-[#2563EB]"
+                            : "border-white/[0.1] bg-[#111827]"
                         }`}
                       >
                         {isSelected && <Check size={12} strokeWidth={3} />}
@@ -681,7 +681,7 @@ export default function OnboardingExperiencePage() {
                 })}
               </div>
 
-              <div className="p-3.5 rounded-xl bg-[#1B1B20] border border-white/[0.06] text-xs text-zinc-300 font-mono">
+              <div className="p-3.5 rounded-xl bg-[#1E293B] border border-white/[0.06] text-xs text-zinc-300 font-mono">
                 Drivers can toggle between Cash, UPI QR, or Khata credit at any doorstep in 1 tap.
               </div>
             </div>
@@ -691,7 +691,7 @@ export default function OnboardingExperiencePage() {
           {currentStep === 6 && (
             <div className="space-y-5">
               <div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#B5F23D]/10 border border-[#B5F23D]/25 text-[#B5F23D] text-xs font-mono font-bold uppercase tracking-wider mb-2">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#2563EB]/15 border border-[#3B82F6]/30 text-[#3B82F6] text-xs font-mono font-bold uppercase tracking-wider mb-2">
                   <Building2 size={11} />
                   <span>Agency Identity</span>
                 </div>
@@ -715,7 +715,7 @@ export default function OnboardingExperiencePage() {
                       placeholder="e.g. Apex FMCG Agency"
                       value={agencyName}
                       onChange={(e) => setAgencyName(e.target.value)}
-                      className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-white/[0.1] bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#B5F23D]"
+                      className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-white/[0.1] bg-[#1E293B] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#2563EB]"
                     />
                   </div>
 
@@ -728,7 +728,7 @@ export default function OnboardingExperiencePage() {
                       placeholder="e.g. Rajesh Sharma"
                       value={operatorName}
                       onChange={(e) => setOwnerName(e.target.value)}
-                      className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-white/[0.1] bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#B5F23D]"
+                      className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-white/[0.1] bg-[#1E293B] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#2563EB]"
                     />
                   </div>
                 </div>
@@ -743,7 +743,7 @@ export default function OnboardingExperiencePage() {
                       placeholder="e.g. Main Mandi Beat"
                       value={primaryRoute}
                       onChange={(e) => setPrimaryRoute(e.target.value)}
-                      className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-white/[0.1] bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#B5F23D]"
+                      className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-white/[0.1] bg-[#1E293B] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#2563EB]"
                     />
                   </div>
 
@@ -756,7 +756,7 @@ export default function OnboardingExperiencePage() {
                       placeholder="e.g. Tata Ace (Chhota Hathi)"
                       value={vehicleType}
                       onChange={(e) => setVehicleType(e.target.value)}
-                      className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-white/[0.1] bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#B5F23D]"
+                      className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-white/[0.1] bg-[#1E293B] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#2563EB]"
                     />
                   </div>
                 </div>
@@ -786,7 +786,7 @@ export default function OnboardingExperiencePage() {
           {currentStep === 7 && (
             <div className="space-y-6">
               <div className="text-center py-2">
-                <div className="w-14 h-14 rounded-2xl bg-[#B5F23D] text-[#0C1004] flex items-center justify-center mx-auto mb-3 shadow-md">
+                <div className="w-14 h-14 rounded-2xl bg-[#2563EB] text-white flex items-center justify-center mx-auto mb-3 shadow-md">
                   <Trophy size={28} />
                 </div>
                 <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
@@ -798,14 +798,14 @@ export default function OnboardingExperiencePage() {
               </div>
 
               {/* Personalized Profile Card */}
-              <div className="p-4 rounded-xl bg-[#1B1B20] border border-[#B5F23D]/30 space-y-2.5 text-xs font-mono">
+              <div className="p-4 rounded-xl bg-[#1E293B] border border-[#3B82F6]/35 space-y-2.5 text-xs font-mono">
                 <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
                   <span className="text-zinc-400">Agency:</span>
                   <span className="font-bold text-white">{agencyName}</span>
                 </div>
                 <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
                   <span className="text-zinc-400">Primary Beat:</span>
-                  <span className="font-bold text-[#B5F23D]">{primaryRoute}</span>
+                  <span className="font-bold text-[#3B82F6]">{primaryRoute}</span>
                 </div>
                 <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
                   <span className="text-zinc-400">Active Categories:</span>
@@ -829,16 +829,16 @@ export default function OnboardingExperiencePage() {
                   type="button"
                   disabled={isLaunching}
                   onClick={() => handleCompleteOnboarding("sample")}
-                  className="w-full p-4 rounded-xl border border-[#B5F23D] bg-[#1B1B20] hover:bg-[#222228] text-left transition-all flex items-center justify-between gap-3 ring-1 ring-[#B5F23D] shadow-float active:scale-[0.99]"
+                  className="w-full p-4 rounded-xl border border-[#2563EB] bg-[#1E293B] hover:bg-[#222228] text-left transition-all flex items-center justify-between gap-3 ring-1 ring-[#2563EB] shadow-float active:scale-[0.99]"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#B5F23D] text-[#0C1004] flex items-center justify-center font-bold shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-[#2563EB] text-white flex items-center justify-center font-bold shrink-0">
                       <Sparkles size={20} />
                     </div>
                     <div>
                       <div className="font-bold text-sm text-white flex items-center gap-2">
                         <span>Launch with 4 Sample Kiranas</span>
-                        <span className="text-xs uppercase font-mono px-2 py-0.5 rounded-full bg-[#B5F23D] text-[#0C1004]">
+                        <span className="text-xs uppercase font-mono px-2 py-0.5 rounded-full bg-[#2563EB] text-white">
                           Recommended
                         </span>
                       </div>
@@ -847,17 +847,17 @@ export default function OnboardingExperiencePage() {
                       </div>
                     </div>
                   </div>
-                  <ArrowRight size={18} className="text-[#B5F23D] shrink-0" />
+                  <ArrowRight size={18} className="text-[#3B82F6] shrink-0" />
                 </button>
 
                 <button
                   type="button"
                   disabled={isLaunching}
                   onClick={() => setLaunchMode("import")}
-                  className="w-full p-4 rounded-xl border border-white/[0.08] bg-[#1B1B20]/40 hover:bg-[#1B1B20] text-left transition-all flex items-center justify-between gap-3"
+                  className="w-full p-4 rounded-xl border border-white/[0.08] bg-[#1E293B]/40 hover:bg-[#1E293B] text-left transition-all flex items-center justify-between gap-3"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#131316] text-zinc-300 border border-white/[0.08] flex items-center justify-center font-bold shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-[#111827] text-zinc-300 border border-white/[0.08] flex items-center justify-center font-bold shrink-0">
                       <FileSpreadsheet size={18} />
                     </div>
                     <div>
@@ -905,7 +905,7 @@ export default function OnboardingExperiencePage() {
               <button
                 type="button"
                 onClick={handleNextStep}
-                className="px-6 py-2.5 rounded-xl bg-[#B5F23D] hover:bg-[#c4f84c] text-[#0C1004] font-semibold text-xs transition-colors flex items-center gap-1.5 shadow-sm active:scale-95"
+                className="px-6 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-xs transition-colors flex items-center gap-1.5 shadow-sm active:scale-95"
               >
                 <span>Continue</span>
                 <ArrowRight size={13} />

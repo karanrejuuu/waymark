@@ -15,7 +15,7 @@ import { isDueToday, isEscalated } from "@/lib/scheduling";
 
 const ShopMap = dynamic(() => import("@/components/shop/ShopMap"), {
   ssr: false,
-  loading: () => <div className="h-48 bg-[#1B1B20] rounded-2xl border border-white/[0.08] flex items-center justify-center text-xs text-[#8C8C96] font-mono">Loading store map...</div>,
+  loading: () => <div className="h-48 bg-[#1E293B] rounded-2xl border border-white/[0.08] flex items-center justify-center text-xs text-[#94A3B8] font-mono">Loading store map...</div>,
 });
 
 export default function ShopDetailPage() {
@@ -117,14 +117,14 @@ export default function ShopDetailPage() {
   };
 
   if (loading) {
-    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-xs font-mono text-[#8C8C96]">Loading store details...</div>;
+    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-xs font-mono text-[#94A3B8]">Loading store details...</div>;
   }
 
   if (!shop) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-16 text-center text-xs font-mono text-[#F43F5E]">
         <div>Store not found</div>
-        <Link href="/" className="text-[#B5F23D] font-bold mt-2 inline-block">← Back to Today</Link>
+        <Link href="/" className="text-[#3B82F6] font-bold mt-2 inline-block">← Back to Today</Link>
       </div>
     );
   }
@@ -145,14 +145,14 @@ export default function ShopDetailPage() {
       <div className="flex items-center justify-between mb-5">
         <Link
           href="/"
-          className="text-xs font-mono text-[#8C8C96] hover:text-[#F4F4F6] inline-flex items-center gap-1 transition-colors"
+          className="text-xs font-mono text-[#94A3B8] hover:text-[#F8FAFC] inline-flex items-center gap-1 transition-colors"
         >
           <ArrowLeft size={14} />
           <span>Back to Today&apos;s Dispatch</span>
         </Link>
         <Link
           href={`/shops/${shop.id}/edit`}
-          className="px-3.5 py-1.5 rounded-xl font-mono font-bold text-xs bg-[#B5F23D] text-[#0C1004] hover:bg-[#A3DE30] inline-flex items-center gap-1.5 shadow-sm transition-all active:scale-95"
+          className="px-3.5 py-1.5 rounded-xl font-mono font-bold text-xs bg-[#2563EB] text-white hover:bg-[#1D4ED8] inline-flex items-center gap-1.5 shadow-sm transition-all active:scale-95"
         >
           <Edit3 size={13} />
           <span>Edit Store</span>
@@ -169,13 +169,13 @@ export default function ShopDetailPage() {
             onBlur={handleNameSave}
             onKeyDown={(e) => e.key === "Enter" && handleNameSave()}
             autoFocus
-            className="text-2xl sm:text-3xl font-bold tracking-tight text-[#F4F4F6] bg-transparent border-b-2 border-[#B5F23D] focus:outline-none w-full"
+            className="text-2xl sm:text-3xl font-bold tracking-tight text-[#F8FAFC] bg-transparent border-b-2 border-[#2563EB] focus:outline-none w-full"
           />
         ) : (
           <h1
             onClick={() => setIsEditingName(true)}
             title="Click to rename"
-            className="text-2xl sm:text-3xl font-bold tracking-tight text-[#F4F4F6] hover:bg-white/[0.04] px-2 -mx-2 rounded-xl cursor-text inline-block transition-colors"
+            className="text-2xl sm:text-3xl font-bold tracking-tight text-[#F8FAFC] hover:bg-white/[0.04] px-2 -mx-2 rounded-xl cursor-text inline-block transition-colors"
           >
             {shop.name}
           </h1>
@@ -183,20 +183,20 @@ export default function ShopDetailPage() {
       </div>
 
       {/* Properties Block */}
-      <div className="space-y-2.5 text-xs font-mono bg-[#131316] p-4 sm:p-5 rounded-2xl border border-white/[0.08] shadow-lift mb-6">
+      <div className="space-y-2.5 text-xs font-mono bg-[#111827] p-4 sm:p-5 rounded-2xl border border-white/[0.08] shadow-lift mb-6">
         <div className="flex items-center justify-between py-1 border-b border-white/[0.04]">
-          <span className="text-[#8C8C96]">Route Sector:</span>
-          <span className="text-[#F4F4F6] font-bold">
+          <span className="text-[#94A3B8]">Route Sector:</span>
+          <span className="text-[#F8FAFC] font-bold">
             {region ? region.name : "Unassigned"}
           </span>
         </div>
 
         {shop.contact && (
           <div className="flex items-center justify-between py-1 border-b border-white/[0.04]">
-            <span className="text-[#8C8C96]">Storekeeper Phone:</span>
+            <span className="text-[#94A3B8]">Storekeeper Phone:</span>
             <a
               href={`tel:${shop.contact}`}
-              className="text-[#B5F23D] hover:underline inline-flex items-center gap-1 font-bold"
+              className="text-[#3B82F6] hover:underline inline-flex items-center gap-1 font-bold"
             >
               <Phone size={13} />
               <span>{shop.contact}</span>
@@ -205,7 +205,7 @@ export default function ShopDetailPage() {
         )}
 
         <div className="flex items-center justify-between py-1 border-b border-white/[0.04]">
-          <span className="text-[#8C8C96]">Replenishment Status:</span>
+          <span className="text-[#94A3B8]">Replenishment Status:</span>
           {shop.is_urgent ? (
             <StatusDot variant="urgent" label="Urgent call-in" />
           ) : anyEscalated ? (
@@ -218,20 +218,20 @@ export default function ShopDetailPage() {
         </div>
 
         <div className="flex items-center justify-between py-1 border-b border-white/[0.04]">
-          <span className="text-[#8C8C96]">Current Credit Dues:</span>
+          <span className="text-[#94A3B8]">Current Credit Dues:</span>
           <span className={`font-bold tabular-nums ${shop.balance_due > 0 ? "text-[#F43F5E]" : "text-[#22C55E]"}`}>
             ₹{shop.balance_due.toLocaleString("en-IN")}
           </span>
         </div>
 
         {distanceKm !== null && fuelCost !== null && (
-          <div className="flex items-center justify-between py-1 text-[#8C8C96]">
+          <div className="flex items-center justify-between py-1 text-[#94A3B8]">
             <span>Godown Distance & Fuel:</span>
-            <span className="inline-flex items-center gap-2 text-[#F4F4F6]">
-              <MapPin size={13} className="text-[#B5F23D]" />
+            <span className="inline-flex items-center gap-2 text-[#F8FAFC]">
+              <MapPin size={13} className="text-[#3B82F6]" />
               <span>≈ {distanceKm.toFixed(1)} km</span>
               <span>·</span>
-              <Fuel size={13} className="text-[#B5F23D]" />
+              <Fuel size={13} className="text-[#3B82F6]" />
               <span>₹{Math.round(fuelCost)} fuel burn</span>
             </span>
           </div>
@@ -240,7 +240,7 @@ export default function ShopDetailPage() {
 
       {/* Section 1: Products */}
       <div className="py-6 border-b border-white/[0.08]">
-        <h2 className="text-sm font-mono uppercase tracking-wider font-bold text-[#B5F23D] mb-3">
+        <h2 className="text-sm font-mono uppercase tracking-wider font-bold text-[#3B82F6] mb-3">
           Products & Restock Cadence
         </h2>
         <ProductsTable
@@ -251,7 +251,7 @@ export default function ShopDetailPage() {
 
       {/* Section 2: Notes */}
       <div className="py-6 border-b border-white/[0.08]">
-        <h2 className="text-sm font-mono uppercase tracking-wider font-bold text-[#B5F23D] mb-2">
+        <h2 className="text-sm font-mono uppercase tracking-wider font-bold text-[#3B82F6] mb-2">
           Dispatcher Notes
         </h2>
         <textarea
@@ -260,13 +260,13 @@ export default function ShopDetailPage() {
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           onBlur={handleNotesBlur}
-          className="w-full text-xs p-3.5 rounded-2xl bg-[#131316] border border-white/[0.08] text-[#F4F4F6] focus:border-[#B5F23D] focus:outline-none transition-colors resize-none placeholder:text-[#54545E] shadow-sm font-medium"
+          className="w-full text-xs p-3.5 rounded-2xl bg-[#111827] border border-white/[0.08] text-[#F8FAFC] focus:border-[#2563EB] focus:outline-none transition-colors resize-none placeholder:text-[#64748B] shadow-sm font-medium"
         />
       </div>
 
       {/* Section 3: History */}
       <div className="py-6 border-b border-white/[0.08]">
-        <h2 className="text-sm font-mono uppercase tracking-wider font-bold text-[#B5F23D] mb-3">
+        <h2 className="text-sm font-mono uppercase tracking-wider font-bold text-[#3B82F6] mb-3">
           Delivery History & Tally Log
         </h2>
         <DeliveryHistory deliveries={deliveries} productMap={productMap} />
@@ -274,7 +274,7 @@ export default function ShopDetailPage() {
 
       {/* Section 4: Map */}
       <div className="py-6">
-        <h2 className="text-sm font-mono uppercase tracking-wider font-bold text-[#B5F23D] mb-3">
+        <h2 className="text-sm font-mono uppercase tracking-wider font-bold text-[#3B82F6] mb-3">
           Kirana Store Coordinates
         </h2>
         <ShopMap lat={shop.lat} lng={shop.lng} editable={false} height="220px" />

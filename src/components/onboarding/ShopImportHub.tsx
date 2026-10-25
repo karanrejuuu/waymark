@@ -188,13 +188,13 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
   return (
     <div className="space-y-4">
       {/* Tab selection */}
-      <div className="grid grid-cols-3 gap-1 bg-[#1B1B20] p-1 rounded-xl text-xs font-medium border border-white/[0.06]">
+      <div className="grid grid-cols-3 gap-1 bg-[#1E293B] p-1 rounded-xl text-xs font-medium border border-white/[0.06]">
         <button
           type="button"
           onClick={() => setTab("table")}
           className={`py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5 ${
             tab === "table"
-              ? "bg-[#B5F23D] text-[#0C1004] font-semibold shadow-xs"
+              ? "bg-[#2563EB] text-white font-semibold shadow-xs"
               : "text-zinc-400 hover:text-white"
           }`}
         >
@@ -206,7 +206,7 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
           onClick={() => setTab("csv")}
           className={`py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5 ${
             tab === "csv"
-              ? "bg-[#B5F23D] text-[#0C1004] font-semibold shadow-xs"
+              ? "bg-[#2563EB] text-white font-semibold shadow-xs"
               : "text-zinc-400 hover:text-white"
           }`}
         >
@@ -218,7 +218,7 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
           onClick={() => setTab("skip")}
           className={`py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5 ${
             tab === "skip"
-              ? "bg-[#B5F23D] text-[#0C1004] font-semibold shadow-xs"
+              ? "bg-[#2563EB] text-white font-semibold shadow-xs"
               : "text-zinc-400 hover:text-white"
           }`}
         >
@@ -240,10 +240,10 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
             Type or edit shops directly. Hit + Add Row for next shop:
           </div>
 
-          <div className="overflow-x-auto border border-white/[0.08] rounded-xl bg-[#131316]">
+          <div className="overflow-x-auto border border-white/[0.08] rounded-xl bg-[#111827]">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-[#1B1B20] border-b border-white/[0.08] text-zinc-400 font-mono text-[11px]">
+                <tr className="bg-[#1E293B] border-b border-white/[0.08] text-zinc-400 font-mono text-[11px]">
                   <th className="py-2.5 px-3">Shop Name *</th>
                   <th className="py-2.5 px-2">Route / Area</th>
                   <th className="py-2.5 px-2 w-20">Days</th>
@@ -261,7 +261,7 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
                         placeholder="e.g. Ramesh Kirana"
                         value={row.name}
                         onChange={(e) => handleUpdateRow(idx, "name", e.target.value)}
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-white/[0.1] bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#B5F23D]"
+                        className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-white/[0.1] bg-[#1E293B] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#2563EB]"
                       />
                     </td>
                     <td className="py-2 px-2">
@@ -270,7 +270,7 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
                         placeholder="Route"
                         value={row.region}
                         onChange={(e) => handleUpdateRow(idx, "region", e.target.value)}
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-white/[0.1] bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#B5F23D]"
+                        className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-white/[0.1] bg-[#1E293B] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#2563EB]"
                       />
                     </td>
                     <td className="py-2 px-2">
@@ -280,7 +280,7 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
                         max={60}
                         value={row.intervalDays}
                         onChange={(e) => handleUpdateRow(idx, "intervalDays", parseInt(e.target.value, 10) || 7)}
-                        className="w-full px-2.5 py-1.5 text-xs font-mono rounded-lg border border-white/[0.1] bg-[#1B1B20] text-zinc-100 focus:outline-none focus:border-[#B5F23D]"
+                        className="w-full px-2.5 py-1.5 text-xs font-mono rounded-lg border border-white/[0.1] bg-[#1E293B] text-zinc-100 focus:outline-none focus:border-[#2563EB]"
                       />
                     </td>
                     <td className="py-2 px-2">
@@ -289,7 +289,7 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
                         placeholder="98..."
                         value={row.contact}
                         onChange={(e) => handleUpdateRow(idx, "contact", e.target.value)}
-                        className="w-full px-2.5 py-1.5 text-xs font-mono rounded-lg border border-white/[0.1] bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#B5F23D]"
+                        className="w-full px-2.5 py-1.5 text-xs font-mono rounded-lg border border-white/[0.1] bg-[#1E293B] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#2563EB]"
                       />
                     </td>
                     <td className="py-2 px-2">
@@ -298,7 +298,7 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
                         placeholder="0"
                         value={row.balanceDue}
                         onChange={(e) => handleUpdateRow(idx, "balanceDue", parseFloat(e.target.value) || 0)}
-                        className="w-full px-2.5 py-1.5 text-xs font-mono rounded-lg border border-white/[0.1] bg-[#1B1B20] text-zinc-100 focus:outline-none focus:border-[#B5F23D]"
+                        className="w-full px-2.5 py-1.5 text-xs font-mono rounded-lg border border-white/[0.1] bg-[#1E293B] text-zinc-100 focus:outline-none focus:border-[#2563EB]"
                       />
                     </td>
                     <td className="py-2 px-2 text-center">
@@ -322,7 +322,7 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
             <button
               type="button"
               onClick={handleAddRow}
-              className="px-3 py-1.5 rounded-lg border border-white/[0.08] bg-[#1B1B20] text-xs font-medium text-zinc-300 hover:text-white flex items-center gap-1 transition-colors"
+              className="px-3 py-1.5 rounded-lg border border-white/[0.08] bg-[#1E293B] text-xs font-medium text-zinc-300 hover:text-white flex items-center gap-1 transition-colors"
             >
               <Plus size={13} />
               Add Row
@@ -332,7 +332,7 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
               type="button"
               disabled={isImporting}
               onClick={handleTableSubmit}
-              className="px-5 py-2.5 rounded-xl bg-[#B5F23D] hover:bg-[#c4f84c] text-[#0C1004] text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors disabled:opacity-50"
             >
               {isImporting ? "Importing..." : "Save & Generate Route →"}
             </button>
@@ -345,7 +345,7 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
         <div className="space-y-3">
           <div className="text-xs text-zinc-400">
             Copy rows from Excel or Google Sheets and paste here:
-            <span className="block font-mono text-[11px] text-[#B5F23D] mt-0.5">
+            <span className="block font-mono text-[11px] text-[#3B82F6] mt-0.5">
               Format: Shop Name, Route, Interval Days, Phone, Due Amount
             </span>
           </div>
@@ -355,14 +355,14 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
             value={csvText}
             onChange={(e) => setCsvText(e.target.value)}
             placeholder="Gupta Kirana, North Market, 7, 9820011223, 1450"
-            className="w-full p-3 font-mono text-xs border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#B5F23D]"
+            className="w-full p-3 font-mono text-xs border border-white/[0.1] rounded-xl bg-[#1E293B] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#2563EB]"
           />
 
           <button
             type="button"
             disabled={isImporting}
             onClick={handleCsvSubmit}
-            className="w-full py-2.5 rounded-xl bg-[#B5F23D] hover:bg-[#c4f84c] text-[#0C1004] text-xs font-semibold flex items-center justify-center gap-1.5 shadow-xs transition-colors disabled:opacity-50"
+            className="w-full py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-xs transition-colors disabled:opacity-50"
           >
             {isImporting ? "Importing shops..." : "Import CSV & Generate Route →"}
           </button>
@@ -371,8 +371,8 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
 
       {/* 3. Skip / Add as I Visit View */}
       {tab === "skip" && (
-        <div className="p-6 border border-white/[0.08] rounded-xl bg-[#1B1B20]/60 text-center space-y-3">
-          <div className="w-10 h-10 rounded-full bg-[#B5F23D]/10 text-[#B5F23D] flex items-center justify-center mx-auto border border-[#B5F23D]/20">
+        <div className="p-6 border border-white/[0.08] rounded-xl bg-[#1E293B]/60 text-center space-y-3">
+          <div className="w-10 h-10 rounded-full bg-[#2563EB]/15 text-[#3B82F6] flex items-center justify-center mx-auto border border-[#3B82F6]/25">
             <CheckCircle2 size={20} />
           </div>
           <div>
@@ -386,7 +386,7 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
             type="button"
             disabled={isImporting}
             onClick={() => onComplete(0)}
-            className="px-6 py-2.5 rounded-xl bg-[#B5F23D] hover:bg-[#c4f84c] text-[#0C1004] text-xs font-semibold transition-colors"
+            className="px-6 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-semibold transition-colors"
           >
             Launch Today Route →
           </button>
