@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Check, ChevronRight, Clock, IndianRupee, MapPin } from "lucide-react";
+import { Check, ChevronRight, Clock, IndianRupee, MapPin, MoreHorizontal } from "lucide-react";
 import { TodayShopItem } from "@/hooks/useTodayList";
 import { ProductConfirmRow } from "./ProductConfirmRow";
 import { markDelivered } from "@/lib/actions/markDelivered";
 import { snoozeShop } from "@/lib/actions/snoozeShop";
 import { StockFeedback } from "@/lib/supabase/types";
+import { VisitOutcomeModal } from "./VisitOutcomeModal";
 
 interface VerticalRouteStopProps {
   item: TodayShopItem;
@@ -28,6 +29,7 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [justDelivered, setJustDelivered] = useState(false);
   const [showSnoozeMenu, setShowSnoozeMenu] = useState(false);
+  const [showOutcomeModal, setShowOutcomeModal] = useState(false);
   const [paymentInput, setPaymentInput] = useState<string>("");
 
   // Product delivery states
@@ -232,17 +234,27 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
             </div>
 
             {/* Quick Action Button */}
-            <div className="flex items-center gap-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-1.5 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
               {!isDeliveredState ? (
-                <button
-                  type="button"
-                  onClick={handleQuickTick}
-                  disabled={isSubmitting}
-                  className="px-3.5 py-1.5 rounded-xl bg-[#B5F23D] hover:bg-[#A3DE30] text-[#0C1004] text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm active:scale-95"
-                >
-                  <Check size={14} strokeWidth={3} />
-                  <span className="hidden sm:inline">Delivered</span>
-                </button>
+                <>
+                  <button
+                    type="button"
+                    onClick={handleQuickTick}
+                    disabled={isSubmitting}
+                    className="px-3 py-1.5 rounded-xl bg-[#B5F23D] hover:bg-[#A3DE30] text-[#0C1004] text-xs font-bold transition-all flex items-center gap-1 shadow-sm active:scale-95"
+                  >
+                    <Check size={14} strokeWidth={3} />
+                    <span className="hidden sm:inline">Delivered</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowOutcomeModal(true)}
+                    title="Log Other Outcome (Follow-up, Bill-to-Bill, Unpaid, Closed, Note)"
+                    className="p-1.5 rounded-xl bg-[#1B1B20] hover:bg-white/[0.08] text-zinc-300 hover:text-white border border-white/[0.08] transition-colors"
+                  >
+                    <MoreHorizontal size={15} />
+                  </button>
+                </>
               ) : (
                 <span className="text-xs font-mono text-[#22C55E] font-semibold inline-flex items-center gap-1">
                   <Check size={13} strokeWidth={2.5} /> Logged
@@ -375,6 +387,21 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
           )}
         </div>
       </div>
+
+      {showOutcomeModal && (
+        <VisitOutcomeModal
+          shop={item.shop}
+          shopProducts={item.dueProducts.map((p) => ({
+            shopProduct: p.shopProduct,
+            product: p.product,
+          }))}
+          onClose={() => setShowOutcomeModal(false)}
+          onSuccess={() => {
+            setJustDelivered(true);
+            onDelivered?.(item.shop.id);
+          }}
+        />
+      )}
     </div>
   );
 };

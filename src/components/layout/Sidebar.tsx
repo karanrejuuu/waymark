@@ -43,7 +43,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole = "owner" }) => {
               WAYMARK
             </span>
           </Link>
-          <span className="text-[10px] font-mono font-bold text-[#B5F23D] px-2 py-0.5 rounded-full bg-[#B5F23D]/10 border border-[#B5F23D]/25">
+          <span className="text-xs font-mono font-bold text-[#B5F23D] px-2 py-0.5 rounded-full bg-[#B5F23D]/10 border border-[#B5F23D]/25">
             FMCG
           </span>
         </div>
@@ -91,7 +91,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole = "owner" }) => {
             <div className="truncate font-bold text-[#F4F4F6]">
               {user?.user_metadata?.name || user?.email?.split("@")[0] || "Agency Dispatcher"}
             </div>
-            <div className="truncate text-[11px] text-[#54545E]">
+            <div className="truncate text-xs text-zinc-400">
               {user?.email || "Offline Account"}
             </div>
           </div>
@@ -99,12 +99,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole = "owner" }) => {
             type="button"
             onClick={signOut}
             title="Sign out of agency"
-            className="p-1.5 text-[#8C8C96] hover:text-[#F43F5E] rounded-lg hover:bg-[#1B1B20] transition-colors"
+            className="p-1.5 text-[#8C8C96] hover:text-[#FDA4AF] rounded-lg hover:bg-[#1B1B20] transition-colors"
           >
             <LogOut size={15} />
           </button>
         </div>
-        <div className="flex items-center justify-between text-[11px] pt-2 border-t border-white/[0.06]">
+        <div className="flex items-center justify-between text-xs pt-2 border-t border-white/[0.06]">
           <span className="text-[#8C8C96]">IndexedDB Offline Engine</span>
           <span className="w-2 h-2 rounded-full bg-[#22C55E]" />
         </div>

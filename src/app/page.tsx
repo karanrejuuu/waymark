@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useTodayList } from "@/hooks/useTodayList";
 import { VerticalRouteStop } from "@/components/today/VerticalRouteStop";
 import { UrgentButton } from "@/components/today/UrgentButton";
-import { db, LocalRegion } from "@/lib/db/dexie";
+import { db, LocalRegion, LocalShop, LocalShopProduct, LocalProduct } from "@/lib/db/dexie";
 import { drainQueue } from "@/lib/db/sync";
 import { formatDateOnly } from "@/lib/scheduling";
 import {
@@ -18,10 +18,17 @@ import {
   Package,
   Layers,
   ArrowRight,
+  Search,
+  X,
+  MessageSquare,
+  FileCheck2,
 } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { LandingShowcase } from "@/components/landing/LandingShowcase";
+import { VisitOutcomeModal } from "@/components/today/VisitOutcomeModal";
+import { VisitOutcome } from "@/lib/actions/visitActions";
+import { seedDemoData } from "@/lib/db/seedDemoData";
 
 export default function RootOrTodayPage() {
   const { user, isLoading: authLoading } = useAuth();
@@ -44,6 +51,14 @@ function TodayDispatchCockpit() {
   const [totalShopCount, setTotalShopCount] = useState<number | null>(null);
   const [completedShopIds, setCompletedShopIds] = useState<Set<string>>(new Set());
 
+  // Search & Global Visit Outcome State
+  const [searchQuery, setSearchQuery] = useState("");
+  const [allDbShops, setAllDbShops] = useState<LocalShop[]>([]);
+  const [selectedModalShop, setSelectedModalShop] = useState<LocalShop | null>(null);
+  const [selectedShopProducts, setSelectedShopProducts] = useState<
+    Array<{ shopProduct: LocalShopProduct; product?: LocalProduct }>
+  >([]);
+
   useEffect(() => {
     setIsOnline(typeof navigator !== "undefined" ? navigator.onLine : true);
 
@@ -57,12 +72,14 @@ function TodayDispatchCockpit() {
     window.addEventListener("offline", handleOffline);
 
     async function checkStats() {
-      const [count, allRegs] = await Promise.all([
+      const [count, allRegs, shops] = await Promise.all([
         db.shops.count(),
         db.regions.orderBy("sort_order").toArray(),
+        db.shops.filter((s) => !s.is_archived).toArray(),
       ]);
       setTotalShopCount(count);
       setRegions(allRegs);
+      setAllDbShops(shops);
       setHasInitialized(true);
     }
     checkStats();
@@ -128,6 +145,34 @@ function TodayDispatchCockpit() {
     return regions.find((r) => r.id === selectedRouteId) || null;
   }, [selectedRouteId, regions]);
 
+  // Search Results across all shops in DB
+  const searchResults = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return [];
+    return allDbShops
+      .filter(
+        (s) =>
+          s.name.toLowerCase().includes(q) ||
+          (s.contact && s.contact.includes(q)) ||
+          (s.notes && s.notes.toLowerCase().includes(q))
+      )
+      .slice(0, 8);
+  }, [allDbShops, searchQuery]);
+
+  const handleOpenVisitModal = async (shop: LocalShop) => {
+    const [spList, prodList] = await Promise.all([
+      db.shop_products.where({ shop_id: shop.id }).toArray(),
+      db.products.toArray(),
+    ]);
+    const prodMap = new Map(prodList.map((p) => [p.id, p]));
+    const enriched = spList.map((sp) => ({
+      shopProduct: sp,
+      product: prodMap.get(sp.product_id),
+    }));
+    setSelectedModalShop(shop);
+    setSelectedShopProducts(enriched);
+  };
+
   // Metrics for active view
   const urgentCount = filteredItems.filter((i) => i.isUrgent).length;
   const overdueCount = filteredItems.filter((i) => (i.daysOverdue ?? 0) > 0).length;
@@ -180,6 +225,118 @@ function TodayDispatchCockpit() {
             </button>
           )}
         </div>
+      </div>
+
+      {/* ── GLOBAL SHOP SEARCH & VISIT LOG BAR ── */}
+      <div className="relative mb-5 z-20">
+        <div className="relative">
+          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+          <input
+            type="text"
+            placeholder="Search any shop in database to mark visit, log bill, or add note..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-[#131316] border border-white/[0.08] text-xs font-mono text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#B5F23D] transition-colors shadow-sm"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-white"
+            >
+              <X size={13} />
+            </button>
+          )}
+        </div>
+
+        {/* Search Results Dropdown Panel */}
+        {searchQuery.trim().length > 0 && (
+          <div className="absolute top-full left-0 right-0 mt-2 bg-[#131316] border border-white/[0.1] rounded-2xl p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.9)] max-h-96 overflow-y-auto space-y-1 z-30">
+            <div className="flex items-center justify-between px-2.5 py-1 text-[11px] font-mono text-zinc-400 border-b border-white/[0.04]">
+              <span>Matching Shops in Database ({searchResults.length})</span>
+              <span>Tap to log visit or mention update</span>
+            </div>
+
+            {searchResults.length === 0 ? (
+              <div className="py-6 text-center text-xs text-zinc-500 font-mono">
+                No shops matching &quot;{searchQuery}&quot; found in database.
+                <div className="mt-2">
+                  <Link
+                    href={`/shops/new?name=${encodeURIComponent(searchQuery)}`}
+                    className="text-xs font-bold text-[#B5F23D] hover:underline"
+                  >
+                    + Add New Shop &quot;{searchQuery}&quot; →
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              searchResults.map((shop) => {
+                const reg = regions.find((r) => r.id === shop.region_id);
+                return (
+                  <div
+                    key={shop.id}
+                    className="p-2.5 rounded-xl bg-[#1B1B20]/60 hover:bg-[#1B1B20] border border-white/[0.04] flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors"
+                  >
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-xs text-zinc-100 truncate">{shop.name}</span>
+                        {reg && (
+                          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-zinc-400">
+                            {reg.name}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-3 text-[11px] font-mono text-zinc-400 mt-0.5">
+                        {shop.contact && <span>Ph: {shop.contact}</span>}
+                        <span>
+                          Dues:{" "}
+                          <strong className={shop.balance_due > 0 ? "text-[#FDA4AF]" : "text-[#4ADE80]"}>
+                            ₹{(shop.balance_due || 0).toLocaleString("en-IN")}
+                          </strong>
+                        </span>
+                        {shop.notes && <span className="truncate max-w-[200px]">· {shop.notes}</span>}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleOpenVisitModal(shop);
+                          setSearchQuery("");
+                        }}
+                        className="px-2.5 py-1.5 rounded-lg bg-[#B5F23D] hover:bg-[#c4f84c] text-[#0C1004] text-xs font-mono font-bold transition-all flex items-center gap-1 shadow-xs"
+                      >
+                        <FileCheck2 size={13} />
+                        <span>Log Visit</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleOpenVisitModal(shop);
+                          setSearchQuery("");
+                        }}
+                        className="px-2.5 py-1.5 rounded-lg bg-[#1B1B20] hover:bg-white/[0.08] text-zinc-300 hover:text-white border border-white/[0.08] text-xs font-mono font-medium transition-colors flex items-center gap-1"
+                      >
+                        <MessageSquare size={13} />
+                        <span>Update Note</span>
+                      </button>
+
+                      <Link
+                        href={`/shops/${shop.id}`}
+                        className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/[0.05] transition-colors"
+                        title="View Full Ledger"
+                      >
+                        <ArrowRight size={14} />
+                      </Link>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        )}
       </div>
 
       {/* ── ROUTE SEGMENTED PILL SELECTOR (Cadnex Pill Design) ── */}
@@ -380,189 +537,19 @@ function TodayDispatchCockpit() {
           </Link>
         </div>
       )}
+
+      {/* Global Visit Outcome Modal */}
+      {selectedModalShop && (
+        <VisitOutcomeModal
+          shop={selectedModalShop}
+          shopProducts={selectedShopProducts}
+          onClose={() => setSelectedModalShop(null)}
+          onSuccess={() => {
+            // Refresh shop list in local state
+            db.shops.filter((s) => !s.is_archived).toArray().then(setAllDbShops);
+          }}
+        />
+      )}
     </div>
   );
-}
-
-/**
- * Seed sample FMCG shops, products, and intervals
- */
-async function seedDemoData() {
-  const now = new Date();
-  const todayStr = formatDateOnly(now);
-
-  const yesterday = new Date(now);
-  yesterday.setDate(yesterday.getDate() - 1);
-  const yesterdayStr = formatDateOnly(yesterday);
-
-  const threeDaysAgo = new Date(now);
-  threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-  const threeDaysAgoStr = formatDateOnly(threeDaysAgo);
-
-  const demoOrgId = "org-waymark-demo";
-
-  await db.organisations.put({
-    id: demoOrgId,
-    name: "Apex FMCG Distributors",
-    currency: "INR",
-    created_at: now.toISOString(),
-  });
-
-  const rNorth = { id: "reg-north", organisation_id: demoOrgId, owner_id: "demo-user", name: "North Market", sort_order: 1, created_at: now.toISOString() };
-  const rStation = { id: "reg-station", organisation_id: demoOrgId, owner_id: "demo-user", name: "Station Road", sort_order: 2, created_at: now.toISOString() };
-  await db.regions.bulkPut([rNorth, rStation]);
-
-  await db.godowns.put({
-    id: "godown-1",
-    organisation_id: demoOrgId,
-    owner_id: "demo-user",
-    lat: 19.0760,
-    lng: 72.8777,
-    vehicle_mileage_kmpl: 25.0,
-    petrol_price_per_l: 104.5,
-    created_at: now.toISOString(),
-  });
-
-  const p1 = { id: "p-parle", organisation_id: demoOrgId, owner_id: "demo-user", name: "Parle-G Glucose (Case of 24)", default_interval: 5, created_at: now.toISOString() };
-  const p2 = { id: "p-frooti", organisation_id: demoOrgId, owner_id: "demo-user", name: "Frooti Mango 200ml (Crate)", default_interval: 7, created_at: now.toISOString() };
-  const p3 = { id: "p-maggi", organisation_id: demoOrgId, owner_id: "demo-user", name: "Maggi 2-Minute Noodles (Box of 48)", default_interval: 6, created_at: now.toISOString() };
-  const p4 = { id: "p-tata-tea", organisation_id: demoOrgId, owner_id: "demo-user", name: "Tata Tea Gold 250g (Pack of 12)", default_interval: 10, created_at: now.toISOString() };
-  await db.products.bulkPut([p1, p2, p3, p4]);
-
-  const s1 = {
-    id: "shop-gupta",
-    organisation_id: demoOrgId,
-    owner_id: "demo-user",
-    region_id: rNorth.id,
-    name: "Gupta Kirana & General Store",
-    contact: "9820011223",
-    lat: 19.0820,
-    lng: 72.8830,
-    notes: "Prefers morning delivery before 11 AM. Cash on delivery.",
-    is_urgent: true,
-    sort_order: 1,
-    balance_due: 1450.00,
-    is_archived: false,
-    created_at: now.toISOString(),
-    updated_at: now.toISOString(),
-  };
-
-  const s2 = {
-    id: "shop-laxmi",
-    organisation_id: demoOrgId,
-    owner_id: "demo-user",
-    region_id: rNorth.id,
-    name: "Laxmi Supermarket",
-    contact: "9820044556",
-    lat: 19.0890,
-    lng: 72.8890,
-    notes: "Counter in rear lane. Key is with cashier.",
-    is_urgent: false,
-    sort_order: 2,
-    balance_due: 3200.00,
-    is_archived: false,
-    created_at: now.toISOString(),
-    updated_at: now.toISOString(),
-  };
-
-  const s3 = {
-    id: "shop-anand",
-    organisation_id: demoOrgId,
-    owner_id: "demo-user",
-    region_id: rStation.id,
-    name: "Anand Tea Depot",
-    contact: "9820077889",
-    lat: 19.0710,
-    lng: 72.8720,
-    notes: "High tea consumption. Check stock every Friday.",
-    is_urgent: false,
-    sort_order: 3,
-    balance_due: 0,
-    is_archived: false,
-    created_at: now.toISOString(),
-    updated_at: now.toISOString(),
-  };
-
-  const s4 = {
-    id: "shop-bharat",
-    organisation_id: demoOrgId,
-    owner_id: "demo-user",
-    region_id: rStation.id,
-    name: "Bharat Daily Needs",
-    contact: "9820099001",
-    lat: 19.0680,
-    lng: 72.8650,
-    notes: "Closed on Tuesdays.",
-    is_urgent: false,
-    sort_order: 4,
-    balance_due: 850.00,
-    is_archived: false,
-    created_at: now.toISOString(),
-    updated_at: now.toISOString(),
-  };
-
-  await db.shops.bulkPut([s1, s2, s3, s4]);
-
-  await db.shop_products.bulkPut([
-    {
-      id: "sp-g-1",
-      organisation_id: demoOrgId,
-      shop_id: s1.id,
-      product_id: p1.id,
-      default_qty: 3,
-      interval_days: 5,
-      remind_offset_days: 0,
-      next_due_date: todayStr,
-      snooze_until: null,
-      created_at: now.toISOString(),
-    },
-    {
-      id: "sp-g-2",
-      organisation_id: demoOrgId,
-      shop_id: s1.id,
-      product_id: p2.id,
-      default_qty: 2,
-      interval_days: 7,
-      remind_offset_days: 1,
-      next_due_date: todayStr,
-      snooze_until: null,
-      created_at: now.toISOString(),
-    },
-    {
-      id: "sp-l-1",
-      organisation_id: demoOrgId,
-      shop_id: s2.id,
-      product_id: p3.id,
-      default_qty: 4,
-      interval_days: 6,
-      remind_offset_days: 0,
-      next_due_date: threeDaysAgoStr,
-      snooze_until: null,
-      created_at: now.toISOString(),
-    },
-    {
-      id: "sp-a-1",
-      organisation_id: demoOrgId,
-      shop_id: s3.id,
-      product_id: p4.id,
-      default_qty: 5,
-      interval_days: 10,
-      remind_offset_days: 2,
-      next_due_date: todayStr,
-      snooze_until: null,
-      created_at: now.toISOString(),
-    },
-    {
-      id: "sp-b-1",
-      organisation_id: demoOrgId,
-      shop_id: s4.id,
-      product_id: p1.id,
-      default_qty: 2,
-      interval_days: 7,
-      remind_offset_days: 0,
-      next_due_date: formatDateOnly(new Date(now.getTime() + 5 * 86400000)),
-      snooze_until: null,
-      created_at: now.toISOString(),
-    },
-  ]);
 }
