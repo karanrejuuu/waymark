@@ -41,7 +41,10 @@ export async function drainQueue(clientOverride?: any): Promise<{ synced: number
   for (const item of queue) {
     try {
       if (item.op === "upsert") {
-        const onConflict = item.table === "deliveries" ? "client_id" : "id";
+        const onConflict =
+          (item.table === "deliveries" || item.table === "payments") && item.payload.client_id
+            ? "client_id"
+            : "id";
         const { error } = await supabase
           .from(item.table)
           .upsert(item.payload, { onConflict });
@@ -86,6 +89,8 @@ export async function mergeServerState(clientOverride?: any): Promise<void> {
   const supabase = clientOverride || createBrowserClient();
 
   const tables = [
+    "organisations",
+    "organisation_members",
     "profiles",
     "godowns",
     "regions",
@@ -93,6 +98,7 @@ export async function mergeServerState(clientOverride?: any): Promise<void> {
     "products",
     "shop_products",
     "deliveries",
+    "payments",
   ];
 
   for (const tableName of tables) {

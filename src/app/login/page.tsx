@@ -3,7 +3,20 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { KeyRound, Mail, Lock, Building, User, Eye, EyeOff, Sparkles, Check, AlertCircle, ArrowLeft } from "lucide-react";
+import {
+  KeyRound,
+  Mail,
+  Lock,
+  Building,
+  User,
+  Eye,
+  EyeOff,
+  Sparkles,
+  Check,
+  AlertCircle,
+  ArrowLeft,
+  ShieldCheck,
+} from "lucide-react";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { db } from "@/lib/db/dexie";
 
@@ -32,7 +45,6 @@ export default function LoginPage() {
     for (let i = 0; i < 12; i++) {
       gen += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    // Ensure at least 1 digit
     if (!/\d/.test(gen)) gen += "7";
 
     setPassword(gen);
@@ -42,11 +54,10 @@ export default function LoginPage() {
     setTimeout(() => setGeneratedNotice(false), 3000);
   };
 
-  // Natural Validation Rules
   const validateForm = (): string | null => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email.trim() || !emailRegex.test(email.trim())) {
-      return "Please enter a valid email address (e.g., rajesh@agency.com).";
+      return "Please enter a valid email address (e.g. rajesh@agency.com).";
     }
 
     if (password.length < 8) {
@@ -59,7 +70,7 @@ export default function LoginPage() {
 
     if (mode === "signup") {
       if (!fullName.trim()) {
-        return "Please enter your name.";
+        return "Please enter your full name.";
       }
       if (password !== confirmPassword) {
         return "Passwords do not match.";
@@ -84,7 +95,9 @@ export default function LoginPage() {
 
     try {
       const supabase = createBrowserClient();
-      const isLocalDummy = !process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL.includes("dummy");
+      const isLocalDummy =
+        !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+        process.env.NEXT_PUBLIC_SUPABASE_URL.includes("dummy");
 
       if (mode === "signup") {
         if (!isLocalDummy) {
@@ -101,7 +114,7 @@ export default function LoginPage() {
           if (error) throw error;
 
           if (data?.user && !data.session) {
-            setSuccessMsg("Account created! Check your email to confirm, or proceed directly.");
+            setSuccessMsg("Account created. Check your email or proceed directly.");
           }
         }
 
@@ -118,7 +131,6 @@ export default function LoginPage() {
 
         router.push("/onboarding");
       } else {
-        // Mode === "login"
         if (!isLocalDummy) {
           const { error } = await supabase.auth.signInWithPassword({
             email: email.trim(),
@@ -131,50 +143,55 @@ export default function LoginPage() {
       }
     } catch (err: any) {
       console.error("Auth error:", err);
-      setErrorMsg(err.message || "Authentication failed. Please check credentials.");
+      setErrorMsg(err.message || "Authentication failed. Please verify your credentials.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#0A0A0C] text-zinc-100 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         {/* Back Link */}
         <div className="mb-6">
           <Link
-            href="/welcome"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#475569] hover:text-[#0F172A] transition-colors"
+            href="/"
+            className="inline-flex items-center gap-1.5 text-xs font-mono text-zinc-400 hover:text-white transition-colors"
           >
-            <ArrowLeft size={14} />
-            Back to Waymark Overview
+            <ArrowLeft size={13} />
+            <span>Back to Waymark Overview</span>
           </Link>
         </div>
 
-        {/* Brand Logo & Title */}
-        <div className="flex items-center gap-2.5 mb-2">
-          <div className="w-8 h-8 rounded-xl bg-[#92400E] text-white flex items-center justify-center font-bold text-base shadow-xs font-heading">
+        {/* Brand Header */}
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-9 h-9 rounded-xl bg-[#B5F23D] text-[#0C1004] flex items-center justify-center font-bold text-base shadow-[0_0_25px_rgba(181,242,61,0.25)]">
             W
           </div>
-          <span className="font-heading font-extrabold text-2xl tracking-tight text-[#0F172A]">
-            Waymark
-          </span>
+          <div>
+            <span className="font-bold text-xl tracking-tight text-white block">
+              Waymark
+            </span>
+            <span className="text-[11px] font-mono text-zinc-400">
+              Wholesale FMCG Dispatch Cockpit
+            </span>
+          </div>
         </div>
 
-        <h2 className="text-xl sm:text-2xl font-extrabold font-heading text-[#0F172A]">
-          {mode === "login" ? "Sign in to your distributor account" : "Create your agency account"}
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+          {mode === "login" ? "Sign in to Dispatch" : "Set up your Agency Account"}
         </h2>
-        <p className="mt-1 text-xs text-[#475569] font-medium">
+        <p className="mt-1 text-xs text-zinc-400">
           {mode === "login"
-            ? "Access your daily routes, shop orders, and dues ledger"
-            : "Set up delivery tracking for your wholesale rounds in 2 minutes"}
+            ? "Access your route cockpit, LIFO crate counts, and dues ledger."
+            : "Deploy offline route sequencing for your delivery rounds in 2 minutes."}
         </p>
       </div>
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-6 sm:px-8 shadow-xs border border-[#CBD5E1] rounded-2xl">
+        <div className="bg-[#131316] py-8 px-6 sm:px-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/[0.08] rounded-2xl">
           {/* Mode Switcher Tabs */}
-          <div className="grid grid-cols-2 gap-1 bg-[#F1F5F9] p-1 rounded-xl mb-6 text-xs font-bold">
+          <div className="grid grid-cols-2 gap-1 bg-[#1B1B20] p-1 rounded-xl mb-6 text-xs font-medium border border-white/[0.06]">
             <button
               type="button"
               onClick={() => {
@@ -182,7 +199,9 @@ export default function LoginPage() {
                 setErrorMsg(null);
               }}
               className={`py-2 rounded-lg transition-colors ${
-                mode === "login" ? "bg-white text-[#0F172A] shadow-xs" : "text-[#475569] hover:text-[#0F172A]"
+                mode === "login"
+                  ? "bg-[#B5F23D] text-[#0C1004] font-semibold shadow-xs"
+                  : "text-zinc-400 hover:text-white"
               }`}
             >
               Sign In
@@ -194,7 +213,9 @@ export default function LoginPage() {
                 setErrorMsg(null);
               }}
               className={`py-2 rounded-lg transition-colors ${
-                mode === "signup" ? "bg-white text-[#0F172A] shadow-xs" : "text-[#475569] hover:text-[#0F172A]"
+                mode === "signup"
+                  ? "bg-[#B5F23D] text-[#0C1004] font-semibold shadow-xs"
+                  : "text-zinc-400 hover:text-white"
               }`}
             >
               Create Account
@@ -203,15 +224,15 @@ export default function LoginPage() {
 
           {/* Feedback messages */}
           {errorMsg && (
-            <div className="mb-4 p-3 rounded-xl bg-[#FEF2F2] border border-[#FECACA] text-xs text-[#DC2626] font-semibold flex items-start gap-2">
-              <AlertCircle size={15} className="shrink-0 mt-0.5" />
+            <div className="mb-5 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-300 font-medium flex items-start gap-2.5">
+              <AlertCircle size={15} className="shrink-0 mt-0.5 text-rose-400" />
               <span>{errorMsg}</span>
             </div>
           )}
 
           {successMsg && (
-            <div className="mb-4 p-3 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] text-xs text-[#065F46] font-semibold flex items-start gap-2">
-              <Check size={15} className="shrink-0 mt-0.5" />
+            <div className="mb-5 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300 font-medium flex items-start gap-2.5">
+              <Check size={15} className="shrink-0 mt-0.5 text-emerald-400" />
               <span>{successMsg}</span>
             </div>
           )}
@@ -220,12 +241,12 @@ export default function LoginPage() {
             {mode === "signup" && (
               <>
                 <div>
-                  <label className="block text-xs font-bold text-[#0F172A] mb-1">
+                  <label className="block text-xs font-medium text-zinc-300 mb-1.5">
                     Your Full Name
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#64748B]">
-                      <User size={15} />
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                      <User size={14} />
                     </div>
                     <input
                       type="text"
@@ -233,25 +254,25 @@ export default function LoginPage() {
                       placeholder="e.g. Ramesh Patel"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2 text-xs border border-[#CBD5E1] rounded-xl bg-[#FAF8F5] text-[#0F172A] placeholder:text-[#475569] focus:outline-none focus:border-[#92400E]"
+                      className="w-full pl-9 pr-3 py-2.5 text-xs border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#B5F23D] transition-colors"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#0F172A] mb-1">
-                    Business / Agency Name (Optional)
+                  <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+                    Agency / Wholesale Name (Optional)
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#64748B]">
-                      <Building size={15} />
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                      <Building size={14} />
                     </div>
                     <input
                       type="text"
                       placeholder="e.g. Apex FMCG Agency"
                       value={businessName}
                       onChange={(e) => setBusinessName(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2 text-xs border border-[#CBD5E1] rounded-xl bg-[#FAF8F5] text-[#0F172A] placeholder:text-[#475569] focus:outline-none focus:border-[#92400E]"
+                      className="w-full pl-9 pr-3 py-2.5 text-xs border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#B5F23D] transition-colors"
                     />
                   </div>
                 </div>
@@ -259,12 +280,12 @@ export default function LoginPage() {
             )}
 
             <div>
-              <label className="block text-xs font-bold text-[#0F172A] mb-1">
+              <label className="block text-xs font-medium text-zinc-300 mb-1.5">
                 Email Address
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#64748B]">
-                  <Mail size={15} />
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                  <Mail size={14} />
                 </div>
                 <input
                   type="email"
@@ -272,30 +293,30 @@ export default function LoginPage() {
                   placeholder="ramesh@distributors.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-xs border border-[#CBD5E1] rounded-xl bg-[#FAF8F5] text-[#0F172A] placeholder:text-[#475569] focus:outline-none focus:border-[#92400E]"
+                  className="w-full pl-9 pr-3 py-2.5 text-xs border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#B5F23D] transition-colors"
                 />
               </div>
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-xs font-bold text-[#0F172A]">
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-medium text-zinc-300">
                   Password
                 </label>
                 {mode === "signup" && (
                   <button
                     type="button"
                     onClick={handleGeneratePassword}
-                    className="text-xs font-bold text-[#92400E] hover:underline flex items-center gap-1"
+                    className="text-[11px] font-mono text-[#B5F23D] hover:underline flex items-center gap-1"
                   >
-                    <Sparkles size={13} />
-                    Suggest Strong Password
+                    <Sparkles size={11} />
+                    Suggest Strong
                   </button>
                 )}
               </div>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#64748B]">
-                  <Lock size={15} />
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                  <Lock size={14} />
                 </div>
                 <input
                   type={showPassword ? "text" : "password"}
@@ -303,31 +324,31 @@ export default function LoginPage() {
                   placeholder="Min. 8 characters with 1 number"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-9 pr-9 py-2 text-xs border border-[#CBD5E1] rounded-xl bg-[#FAF8F5] text-[#0F172A] placeholder:text-[#475569] focus:outline-none focus:border-[#92400E]"
+                  className="w-full pl-9 pr-9 py-2.5 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#B5F23D] transition-colors"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#64748B] hover:text-[#0F172A]"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-400 hover:text-white"
                 >
                   {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                 </button>
               </div>
               {generatedNotice && (
-                <span className="text-xs text-[#065F46] font-semibold mt-1 block">
-                  ✓ Strong password generated and filled!
+                <span className="text-[11px] text-emerald-400 font-mono mt-1 block">
+                  Strong password auto-filled
                 </span>
               )}
             </div>
 
             {mode === "signup" && (
               <div>
-                <label className="block text-xs font-bold text-[#0F172A] mb-1">
+                <label className="block text-xs font-medium text-zinc-300 mb-1.5">
                   Confirm Password
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#64748B]">
-                    <KeyRound size={15} />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                    <KeyRound size={14} />
                   </div>
                   <input
                     type={showPassword ? "text" : "password"}
@@ -335,7 +356,7 @@ export default function LoginPage() {
                     placeholder="Repeat password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 text-xs border border-[#CBD5E1] rounded-xl bg-[#FAF8F5] text-[#0F172A] placeholder:text-[#475569] focus:outline-none focus:border-[#92400E]"
+                    className="w-full pl-9 pr-3 py-2.5 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#B5F23D] transition-colors"
                   />
                 </div>
               </div>
@@ -344,10 +365,10 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-2 py-3 rounded-xl bg-[#0F172A] hover:bg-[#92400E] text-white font-bold text-xs transition-all flex items-center justify-center gap-2 shadow-sm"
+              className="w-full mt-2 py-3 rounded-xl bg-[#B5F23D] hover:bg-[#c4f84c] text-[#0C1004] font-semibold text-xs transition-colors flex items-center justify-center gap-2 shadow-xs disabled:opacity-50"
             >
               {isLoading
-                ? "Processing..."
+                ? "Verifying..."
                 : mode === "login"
                 ? "Sign In to Waymark"
                 : "Create Account & Start Onboarding"}
@@ -355,8 +376,9 @@ export default function LoginPage() {
           </form>
 
           {/* Offline local note */}
-          <div className="mt-6 pt-4 border-t border-[#E2E8F0] text-center text-xs text-[#475569] font-medium">
-            <span>100% Offline Capable · Works without internet once opened</span>
+          <div className="mt-6 pt-5 border-t border-white/[0.08] text-center text-xs text-zinc-500 font-mono flex items-center justify-center gap-1.5">
+            <ShieldCheck size={13} className="text-[#B5F23D]" />
+            <span>Offline First Architecture · Works without internet</span>
           </div>
         </div>
       </div>

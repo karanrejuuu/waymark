@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Check, ChevronRight, Clock, Banknote, AlertCircle } from "lucide-react";
+import { Check, ChevronRight, Clock, IndianRupee, MapPin } from "lucide-react";
 import { TodayShopItem } from "@/hooks/useTodayList";
 import { ProductConfirmRow } from "./ProductConfirmRow";
 import { markDelivered } from "@/lib/actions/markDelivered";
@@ -8,6 +8,7 @@ import { StockFeedback } from "@/lib/supabase/types";
 
 interface VerticalRouteStopProps {
   item: TodayShopItem;
+  stopNumber: number;
   isFirst: boolean;
   isLast: boolean;
   isNextUp: boolean;
@@ -17,6 +18,7 @@ interface VerticalRouteStopProps {
 
 export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
   item,
+  stopNumber,
   isFirst,
   isLast,
   isNextUp,
@@ -56,8 +58,7 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
         feedback: null,
       }));
 
-      // 200ms tally-style tick animation per spec
-      await new Promise((r) => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 160));
       await markDelivered(item.shop.id, payload);
       onDelivered?.(item.shop.id);
     } catch (err) {
@@ -86,7 +87,7 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
 
       const collected = parseFloat(paymentInput) || 0;
 
-      await new Promise((r) => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 160));
       await markDelivered(item.shop.id, payload, null, {
         paymentCollected: collected > 0 ? collected : undefined,
       });
@@ -109,291 +110,267 @@ export const VerticalRouteStop: React.FC<VerticalRouteStopProps> = ({
     }
   };
 
-  // Dot styling based on spec
   const isDeliveredState = justDelivered;
-  const isChilliUrgent = item.isUrgent && !isDeliveredState;
+  const isUrgent = item.isUrgent && !isDeliveredState;
 
   return (
     <div className="relative flex items-stretch select-none group">
-      {/* ── VERTICAL ROUTE CONNECTOR LINE & STOP DOT ── */}
+      {/* Vertical Spine Line */}
       <div className="flex flex-col items-center w-10 flex-shrink-0 relative">
-        {/* Top half connector */}
         <div
           className={`w-0.5 flex-1 transition-colors duration-200 ${
             isFirst
               ? "opacity-0"
               : isDeliveredState
-              ? "bg-success"
-              : "bg-lines"
+              ? "bg-[#22C55E]"
+              : "bg-white/[0.08]"
           }`}
         />
 
-        {/* Transit Stop Dot */}
-        <div
+        {/* Stop Number / Completion Indicator */}
+        <button
+          type="button"
           onClick={handleQuickTick}
-          title={isDeliveredState ? "Delivered" : "Tap to mark stop delivered"}
-          className={`w-5 h-5 rounded-full flex items-center justify-center cursor-pointer my-1 z-10 transition-all duration-200 ${
+          title={isDeliveredState ? "Delivered" : "Tap to stamp stop delivered"}
+          className={`w-6 h-6 rounded-full flex items-center justify-center cursor-pointer my-1 z-10 transition-all duration-200 text-xs font-mono font-bold ${
             isDeliveredState
-              ? "bg-success text-white scale-110 shadow-sm"
-              : isChilliUrgent
-              ? "bg-urgent ring-4 ring-urgent/20 text-white"
+              ? "bg-[#B5F23D] text-[#0C1004] scale-110 shadow-sm"
+              : isUrgent
+              ? "border-2 border-[#F43F5E] bg-[#F43F5E]/20 text-[#F43F5E] ring-2 ring-[#F43F5E]/20"
               : isNextUp
-              ? "bg-bg border-2 border-accent ring-4 ring-accent-faint"
-              : "bg-bg border-2 border-lines hover:border-text-secondary"
+              ? "border-2 border-[#B5F23D] bg-[#B5F23D]/10 text-[#B5F23D] ring-2 ring-[#B5F23D]/25"
+              : "border border-white/[0.16] bg-[#1B1B20] text-[#8C8C96] hover:border-white/40"
           }`}
         >
           {isDeliveredState ? (
-            <Check size={12} className="stroke-[3.5]" />
-          ) : isChilliUrgent ? (
-            <span className="w-1.5 h-1.5 rounded-full bg-white" />
-          ) : isNextUp ? (
-            <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+            <Check size={13} strokeWidth={3} />
+          ) : isUrgent ? (
+            "!"
           ) : (
-            <span className="w-1.5 h-1.5 rounded-full bg-lines group-hover:bg-text-tertiary" />
+            stopNumber
           )}
-        </div>
+        </button>
 
-        {/* Bottom half connector */}
         <div
           className={`w-0.5 flex-1 transition-colors duration-200 ${
             isLast
               ? "opacity-0"
               : isDeliveredState
-              ? "bg-success"
-              : "bg-lines"
+              ? "bg-[#22C55E]"
+              : "bg-white/[0.08]"
           }`}
         />
       </div>
 
-      {/* ── STOP CARD CONTENT ── */}
-      <div className="flex-1 pb-4 min-w-0">
+      {/* Stop Card */}
+      <div className="flex-1 pb-3.5 min-w-0">
         <div
-          className={`border rounded-xl transition-all duration-150 overflow-hidden ${
-            isNextUp && !isDeliveredState
-              ? "bg-accent-faint border-accent/40 shadow-soft"
-              : "bg-card border-lines hover:border-text-secondary/30"
+          className={`border rounded-2xl transition-all duration-150 overflow-hidden ${
+            isDeliveredState
+              ? "bg-[#131316]/50 border-white/[0.04] opacity-75"
+              : isNextUp
+              ? "bg-[#16161B] border-[#B5F23D]/40 shadow-float ring-1 ring-[#B5F23D]/20"
+              : "bg-[#131316] border-white/[0.08] hover:border-white/[0.18]"
           }`}
         >
-          {/* Main Stop Header */}
+          {/* Stop Header */}
           <div
             role="button"
             tabIndex={0}
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-3.5 flex items-center justify-between gap-3 cursor-pointer min-h-[52px]"
+            className="p-4 flex items-center justify-between gap-3 cursor-pointer min-h-[56px]"
           >
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="font-heading font-semibold text-sm text-ink truncate">
+                <span
+                  className={`font-sans font-bold text-sm tracking-tight truncate ${
+                    isDeliveredState ? "line-through text-[#8C8C96]" : "text-[#F4F4F6]"
+                  }`}
+                >
                   {item.shop.name}
                 </span>
 
-                {isChilliUrgent && (
-                  <span className="px-2 py-0.5 rounded text-xs font-bold bg-[#FEF2F2] text-[#991B1B] border border-[#FECACA]">
+                {isUrgent && (
+                  <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-[#F43F5E]/20 text-[#F43F5E] border border-[#F43F5E]/30">
                     Urgent
                   </span>
                 )}
 
-                {item.daysOverdue >= 1 && !isChilliUrgent && (
-                  <span className="px-2 py-0.5 rounded text-xs font-bold bg-[#FFFBEB] text-[#78350F] border border-[#FDE68A] tabular-nums">
+                {item.daysOverdue >= 1 && !isUrgent && (
+                  <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 font-mono tabular-nums">
                     {item.daysOverdue}d overdue
+                  </span>
+                )}
+
+                {isDeliveredState && (
+                  <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-[#22C55E]/20 text-[#22C55E] border border-[#22C55E]/30">
+                    Delivered
                   </span>
                 )}
               </div>
 
-              {/* Sub-meta: Region and Balance Due */}
-              <div className="flex items-center gap-2 text-xs text-text-secondary mt-1">
-                {item.region && <span>{item.region.name}</span>}
-                {item.shop.balance_due > 0 && (
-                  <>
-                    <span>·</span>
-                    <span className="text-urgent font-medium tabular-nums flex items-center gap-1">
-                      <Banknote size={12} />
-                      ₹{item.shop.balance_due.toLocaleString("en-IN")} pending
-                    </span>
-                  </>
-                )}
+              {/* SKU Order Pills */}
+              <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                {item.dueProducts.map((p) => (
+                  <span
+                    key={p.product.id}
+                    className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-lg bg-[#1B1B20] text-[#F4F4F6] border border-white/[0.06] font-mono"
+                  >
+                    <span className="truncate max-w-[150px]">{p.product.name}</span>
+                    <span className="text-[#B5F23D] font-bold">×{p.shopProduct.default_qty}</span>
+                  </span>
+                ))}
               </div>
+
+              {/* Outstanding Dues */}
+              {(item.shop.balance_due || 0) > 0 && !isDeliveredState && (
+                <div className="mt-2 text-xs font-mono font-bold text-[#F43F5E] flex items-center gap-1">
+                  <IndianRupee size={12} />
+                  <span>Dues: ₹{(item.shop.balance_due || 0).toLocaleString("en-IN")}</span>
+                </div>
+              )}
             </div>
 
-            {/* Quick Action Buttons */}
-            <div className="flex items-center gap-2 flex-shrink-0">
-              {/* Snooze Button */}
-              <div className="relative">
+            {/* Quick Action Button */}
+            <div className="flex items-center gap-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+              {!isDeliveredState ? (
                 <button
                   type="button"
-                  title="Snooze visit"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowSnoozeMenu(!showSnoozeMenu);
-                  }}
-                  className="p-1.5 text-text-tertiary hover:text-ink rounded-lg hover:bg-bg-subtle transition-colors"
+                  onClick={handleQuickTick}
+                  disabled={isSubmitting}
+                  className="px-3.5 py-1.5 rounded-xl bg-[#B5F23D] hover:bg-[#A3DE30] text-[#0C1004] text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm active:scale-95"
                 >
-                  <Clock size={16} />
+                  <Check size={14} strokeWidth={3} />
+                  <span className="hidden sm:inline">Delivered</span>
                 </button>
+              ) : (
+                <span className="text-xs font-mono text-[#22C55E] font-semibold inline-flex items-center gap-1">
+                  <Check size={13} strokeWidth={2.5} /> Logged
+                </span>
+              )}
 
-                {/* Snooze Popover Menu */}
-                {showSnoozeMenu && (
-                  <div
-                    onClick={(e) => e.stopPropagation()}
-                    className="absolute right-0 top-8 z-30 w-48 bg-card border border-lines rounded-xl shadow-lg p-1.5 text-xs text-ink"
-                  >
-                    <div className="px-2 py-1 text-[11px] font-semibold text-text-tertiary uppercase tracking-wider">
-                      Snooze Stop
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleSnooze(1, "Tomorrow")}
-                      className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-bg-subtle font-medium"
-                    >
-                      Tomorrow (+1 day)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleSnooze(2, "In 2 days")}
-                      className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-bg-subtle font-medium"
-                    >
-                      In 2 days (+2 days)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleSnooze(1, "Shop closed today")}
-                      className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-bg-subtle text-text-secondary"
-                    >
-                      Shop closed today
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleSnooze(3, "Next week / Thursday")}
-                      className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-bg-subtle text-text-secondary"
-                    >
-                      Shopkeeper asked later (+3d)
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {/* Expand caret */}
-              <ChevronRight
-                size={16}
-                className={`text-text-tertiary transition-transform duration-200 ${
-                  isExpanded ? "rotate-90 text-ink" : ""
-                }`}
-              />
-
-              {/* Tally-Style Quick Tick Button */}
               <button
                 type="button"
-                aria-label={`Mark ${item.shop.name} delivered`}
-                onClick={handleQuickTick}
-                disabled={isSubmitting}
-                className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-all duration-200 ${
-                  isDeliveredState
-                    ? "bg-[#065F46] border-[#065F46] text-white scale-105 shadow-xs"
-                    : isNextUp
-                    ? "border-[#92400E] bg-[#92400E] text-white hover:bg-[#78350F]"
-                    : "border-[#CBD5E1] bg-white hover:border-[#94A3B8]"
-                }`}
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="p-1.5 text-[#8C8C96] hover:text-[#F4F4F6] rounded-lg transition-colors"
               >
-                <Check
-                  size={15}
-                  className={isDeliveredState ? "stroke-[3.5]" : isNextUp ? "stroke-[2.5]" : "text-transparent"}
+                <ChevronRight
+                  size={16}
+                  className={`transform transition-transform ${isExpanded ? "rotate-90" : ""}`}
                 />
               </button>
             </div>
           </div>
 
-          {/* ── INLINE DETAILED EXPANSION ── */}
+          {/* Expanded Drawer: Itemized adjustments & cash dues entry */}
           {isExpanded && (
-            <div className="p-4 border-t border-[#E2E8F0] bg-[#FAF8F5]/80 text-xs">
-              <form onSubmit={handleDetailedSubmit} className="space-y-4">
-                <div>
-                  <div className="font-bold text-[#0F172A] mb-2 uppercase tracking-wide text-xs">
-                    Products Due for Restock
-                  </div>
-
-                  {item.dueProducts.map((p) => {
-                    const state = productStates[p.product.id] || {
-                      qty: p.shopProduct.default_qty,
-                      feedback: null,
-                    };
-
-                    return (
-                      <ProductConfirmRow
-                        key={p.product.id}
-                        product={p.product}
-                        shopProduct={p.shopProduct}
-                        qty={state.qty}
-                        feedback={state.feedback}
-                        onQtyChange={(newQty) =>
-                          setProductStates((prev) => ({
-                            ...prev,
-                            [p.product.id]: { ...state, qty: newQty },
-                          }))
-                        }
-                        onFeedbackChange={(newFeedback) =>
-                          setProductStates((prev) => ({
-                            ...prev,
-                            [p.product.id]: { ...state, feedback: newFeedback },
-                          }))
-                        }
-                      />
-                    );
-                  })}
+            <div className="p-4 border-t border-white/[0.06] bg-[#0A0A0C]/50 space-y-4">
+              <div>
+                <div className="text-[11px] font-mono uppercase tracking-wider text-[#8C8C96] mb-2">
+                  Verify Crate Counts & Stock Feedback
                 </div>
-
-                {/* Payments / Dues Collection field */}
-                <div className="p-3.5 bg-white border border-[#CBD5E1] rounded-xl space-y-2 shadow-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-[#0F172A] flex items-center gap-1.5">
-                      <Banknote size={15} className="text-[#92400E]" />
-                      Collect Payment at Counter
-                    </span>
-                    <span className="text-xs text-[#475569] font-medium tabular-nums">
-                      Balance: ₹{item.shop.balance_due.toLocaleString("en-IN")}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-[#0F172A]">₹</span>
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      min={0}
-                      placeholder={item.shop.balance_due > 0 ? `${item.shop.balance_due}` : "0"}
-                      value={paymentInput}
-                      onChange={(e) => setPaymentInput(e.target.value)}
-                      className="w-full px-3 py-1.5 border border-[#CBD5E1] rounded-lg bg-[#FAF8F5] font-bold text-sm tabular-nums text-[#0F172A] focus:outline-none focus:border-[#92400E]"
+                {item.dueProducts.map((p) => {
+                  const state = productStates[p.product.id];
+                  return (
+                    <ProductConfirmRow
+                      key={p.product.id}
+                      product={p.product}
+                      shopProduct={p.shopProduct}
+                      qty={state?.qty ?? p.shopProduct.default_qty}
+                      feedback={state?.feedback ?? null}
+                      onQtyChange={(qty) =>
+                        setProductStates((prev) => ({
+                          ...prev,
+                          [p.product.id]: {
+                            ...prev[p.product.id],
+                            qty,
+                          },
+                        }))
+                      }
+                      onFeedbackChange={(feedback) =>
+                        setProductStates((prev) => ({
+                          ...prev,
+                          [p.product.id]: {
+                            ...prev[p.product.id],
+                            feedback,
+                          },
+                        }))
+                      }
                     />
-                    {item.shop.balance_due > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => setPaymentInput(String(item.shop.balance_due))}
-                        className="px-3 py-1.5 rounded-lg bg-[#F1F5F9] text-xs font-bold text-[#334155] hover:text-[#0F172A] flex-shrink-0"
-                      >
-                        Full
-                      </button>
-                    )}
+                  );
+                })}
+              </div>
+
+              {/* Payment collected at doorstep */}
+              <div className="p-3.5 bg-[#1B1B20] border border-white/[0.08] rounded-xl flex items-center justify-between gap-3">
+                <div>
+                  <div className="text-xs font-bold text-[#F4F4F6]">Doorstep Payment Collected</div>
+                  <div className="text-[11px] text-[#8C8C96] font-mono">
+                    Prior ledger balance: ₹{(item.shop.balance_due || 0).toLocaleString("en-IN")}
                   </div>
                 </div>
-
-                {/* Actions */}
-                <div className="flex items-center justify-end gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setIsExpanded(false)}
-                    className="px-4 py-2 rounded-xl text-[#475569] hover:text-[#0F172A] font-semibold text-xs"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="px-5 py-2.5 rounded-xl font-bold text-xs text-white bg-[#92400E] hover:bg-[#78350F] transition-all flex items-center gap-1.5 shadow-sm"
-                  >
-                    {isSubmitting ? "Marking stop..." : "Mark Delivered & Update Dues"}
-                  </button>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-[#8C8C96]">₹</span>
+                  <input
+                    type="number"
+                    placeholder="0"
+                    value={paymentInput}
+                    onChange={(e) => setPaymentInput(e.target.value)}
+                    className="w-24 px-2.5 py-1.5 text-xs font-mono font-bold text-right bg-[#131316] border border-white/[0.12] rounded-lg text-[#F4F4F6] focus:outline-none focus:border-[#B5F23D]"
+                  />
                 </div>
-              </form>
+              </div>
+
+              {/* Actions row */}
+              <div className="flex items-center justify-between pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowSnoozeMenu(!showSnoozeMenu)}
+                  className="text-xs text-[#8C8C96] hover:text-[#F4F4F6] font-medium flex items-center gap-1"
+                >
+                  <Clock size={13} />
+                  <span>Snooze Drop</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleDetailedSubmit}
+                  disabled={isSubmitting}
+                  className="px-4 py-2 rounded-xl bg-[#B5F23D] hover:bg-[#A3DE30] text-[#0C1004] text-xs font-bold transition-all shadow-sm"
+                >
+                  Confirm Delivery & Log Payment
+                </button>
+              </div>
+
+              {/* Snooze popover menu */}
+              {showSnoozeMenu && (
+                <div className="p-3 bg-[#1B1B20] border border-white/[0.12] rounded-xl text-xs space-y-2">
+                  <div className="font-bold text-[#F4F4F6]">Snooze Delivery Round</div>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleSnooze(1, "Shop closed today")}
+                      className="px-2.5 py-1 rounded-lg bg-[#131316] hover:bg-white/[0.06] text-[#F4F4F6] border border-white/[0.08]"
+                    >
+                      +1 Day (Shop Closed)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleSnooze(2, "Owner requested weekend drop")}
+                      className="px-2.5 py-1 rounded-lg bg-[#131316] hover:bg-white/[0.06] text-[#F4F4F6] border border-white/[0.08]"
+                    >
+                      +2 Days (Owner Request)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleSnooze(7, "Excess inventory on hand")}
+                      className="px-2.5 py-1 rounded-lg bg-[#131316] hover:bg-white/[0.06] text-[#F4F4F6] border border-white/[0.08]"
+                    >
+                      +7 Days (Full Rack)
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -5,13 +5,22 @@ import { usePathname } from "next/navigation";
 import { Sidebar } from "./Sidebar";
 import { BottomTabBar } from "./BottomTabBar";
 import { InstallPrompt } from "../ui/InstallPrompt";
+import { requestPersistentStorage } from "@/lib/db/durability";
+import { useAuth } from "@/context/AuthContext";
 
 export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const pathname = usePathname();
-  const isStandalonePage = pathname === "/welcome" || pathname === "/login";
+  const { user, isLoading } = useAuth();
+  const isStandalonePage =
+    pathname === "/welcome" ||
+    pathname === "/login" ||
+    (pathname === "/" && !user && !isLoading);
 
   useEffect(() => {
-    // Register service worker on mount in production/PWA mode
+    // 1. Request persistent storage from browser to prevent automatic cache/IndexedDB eviction
+    requestPersistentStorage();
+
+    // 2. Register service worker on mount in production/PWA mode
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js").catch((err) => {
         console.warn("ServiceWorker registration failed:", err);

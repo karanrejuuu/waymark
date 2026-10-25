@@ -2,77 +2,118 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'GeistSans';
+  src: url('/fonts/Geist-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GeistMono';
+  src: url('/fonts/GeistMono-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
 :root {
-  /* Impeccable Tactile Wholesale Palette */
-  --bg: #FAF8F5;
-  --ink: #0F172A;
-  --text-primary: #0F172A;
-  --text-secondary: #334155;
-  --text-tertiary: #475569;
-  
-  /* High-contrast Turmeric Amber Accent */
-  --accent: #92400E;
-  --accent-gold: #D97706;
-  --accent-hover: #78350F;
-  --accent-faint: #FEF3C7;
+  /* Cadnex Precision Dark Theme */
+  color-scheme: dark;
+  --bg: #0A0A0C;
+  --surface: #131316;
+  --surface-2: #1B1B20;
+  --surface-3: #26262D;
+  --ink: #F4F4F6;
+  --mute: #8C8C96;
+  --faint: #54545E;
+  --line: rgba(255, 255, 255, 0.08);
 
-  /* Status Tokens (WCAG Compliant) */
-  --success: #065F46;
-  --green-soft: #ECFDF5;
-  --urgent: #DC2626;
-  --red-soft: #FEF2F2;
-  --yellow-soft: #FEF3C7;
+  /* Signature Electric Lime & High-Contrast Accents */
+  --lime: #B5F23D;
+  --on-lime: #0C1004;
+  --pill: #B5F23D;
+  --on-pill: #0C1004;
 
-  /* Line & Surface Tokens */
-  --lines: #E2E8F0;
-  --border: #CBD5E1;
-  --bg-subtle: #F1F5F9;
-  --bg-hover: #E2E8F0;
-  --card: #FFFFFF;
+  /* Status Colors */
+  --up: #22C55E;
+  --down: #F43F5E;
+  --warn: #F59E0B;
+
+  /* Shadows & Glass */
+  --shadow-lift: inset 0 1px 0 0 rgba(255, 255, 255, 0.07), 0 20px 48px -20px rgba(0, 0, 0, 0.8);
+  --shadow-float: inset 0 1px 0 0 rgba(255, 255, 255, 0.09), 0 16px 40px -12px rgba(0, 0, 0, 0.7);
+
+  /* Font variables */
+  --font-geist-sans: 'GeistSans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-geist-mono: 'GeistMono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 @layer base {
   * {
-    border-color: var(--lines);
+    border-color: var(--line);
   }
-  body {
+  html, body {
     margin: 0;
     padding: 0;
     background-color: var(--bg);
     color: var(--ink);
-    font-family: var(--font-body), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: var(--font-geist-sans);
     -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.012em;
   }
   p {
     text-wrap: pretty;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-heading), -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--font-geist-sans);
+    font-weight: 700;
+    letter-spacing: -0.03em;
     text-wrap: balance;
   }
   button, input, select, textarea, [role="button"], a {
     touch-action: manipulation;
   }
-  /* Tabular numerals for counts and money */
+  /* Tabular numerals for counts, currency, and metrics */
   .tabular-nums, .num, [data-num] {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+  .mono {
+    font-family: var(--font-geist-mono);
     font-variant-numeric: tabular-nums;
   }
 }
 
-/* Custom crisp scrollbar */
+/* Glass & Card Foundations */
+.glass {
+  background: rgba(19, 19, 22, 0.72);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08), 0 16px 40px -12px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card {
+  background-color: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow-lift);
+  border-radius: 24px;
+}
+
+/* Custom dark scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #FAF8F5;
+  background: #0A0A0C;
 }
 ::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
+  background: #26262D;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
+  background: #383845;
 }
 
 /* Reduced motion preference */

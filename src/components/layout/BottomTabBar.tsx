@@ -3,15 +3,15 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarCheck, Compass, PlusCircle, Settings } from "lucide-react";
+import { CalendarCheck, Compass, Plus, Settings } from "lucide-react";
 
 export const BottomTabBar: React.FC = () => {
   const pathname = usePathname();
 
   const tabs = [
-    { href: "/", label: "Today", icon: CalendarCheck },
+    { href: "/", label: "Dispatch", icon: CalendarCheck },
     { href: "/routes", label: "Routes", icon: Compass },
-    { href: "/shops/new", label: "Add Shop", icon: PlusCircle },
+    { href: "/shops/new", label: "New Store", icon: Plus },
     { href: "/settings", label: "Settings", icon: Settings },
   ];
 
@@ -19,7 +19,7 @@ export const BottomTabBar: React.FC = () => {
     <nav
       role="tablist"
       aria-label="Mobile Navigation"
-      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#CBD5E1] flex items-center justify-around h-14 pb-[env(safe-area-inset-bottom)] shadow-[0_-2px_8px_rgba(15,23,42,0.04)] select-none"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0D0D11]/90 backdrop-blur-xl border-t border-white/[0.08] flex items-center justify-around h-16 pb-[env(safe-area-inset-bottom)] shadow-float select-none"
     >
       {tabs.map((tab) => {
         const Icon = tab.icon;
@@ -31,13 +31,13 @@ export const BottomTabBar: React.FC = () => {
             href={tab.href}
             role="tab"
             aria-selected={isActive}
-            className={`flex-1 flex flex-col items-center justify-center h-full min-h-[44px] gap-0.5 text-xs transition-colors ${
+            className={`flex-1 flex flex-col items-center justify-center h-full min-h-[44px] gap-1 text-[11px] font-mono transition-colors ${
               isActive
-                ? "text-[#92400E] font-bold"
-                : "text-[#475569] hover:text-[#0F172A]"
+                ? "text-[#B5F23D] font-bold"
+                : "text-[#8C8C96] hover:text-[#F4F4F6]"
             }`}
           >
-            <Icon size={19} className={isActive ? "text-[#92400E]" : "text-[#475569]"} />
+            <Icon size={18} className={isActive ? "text-[#B5F23D]" : "text-[#8C8C96]"} />
             <span>{tab.label}</span>
           </Link>
         );

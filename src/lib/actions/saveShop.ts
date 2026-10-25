@@ -9,6 +9,8 @@ export interface ShopProductConfigInput {
   remindOffsetDays: number;
 }
 
+export type ConfiguredProductInput = ShopProductConfigInput;
+
 export interface SaveShopInput {
   id?: string;
   name: string;

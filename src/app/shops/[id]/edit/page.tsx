@@ -23,39 +23,43 @@ export default function EditShopPage() {
   }, [shopId]);
 
   if (loading) {
-    return <div className="max-w-2xl mx-auto px-4 py-8 text-xs text-[#475569] font-medium">Loading store details...</div>;
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-16 text-center text-xs font-mono text-[#8C8C96]">
+        Loading store details...
+      </div>
+    );
   }
 
   if (!shop) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-8 text-xs text-[#DC2626]">
-        <div>Shop not found.</div>
-        <Link href="/" className="text-[#92400E] font-bold mt-2 inline-block">← Back to Today</Link>
+      <div className="max-w-3xl mx-auto px-4 py-12 text-center text-xs font-mono text-[#F43F5E]">
+        <div>Store not found.</div>
+        <Link href="/" className="text-[#B5F23D] font-bold mt-2 inline-block">
+          ← Back to Today&apos;s Dispatch
+        </Link>
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6">
-      <div className="mb-5">
+    <div className="max-w-3xl mx-auto px-4 py-6 sm:py-8">
+      <div className="mb-6">
         <Link
           href={`/shops/${shop.id}`}
-          className="text-xs font-semibold text-[#475569] hover:text-[#0F172A] inline-flex items-center gap-1 mb-2"
+          className="text-xs font-mono text-[#8C8C96] hover:text-[#F4F4F6] inline-flex items-center gap-1 mb-2 transition-colors"
         >
           <ArrowLeft size={14} />
           <span>Back to Store Profile</span>
         </Link>
-        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A] font-heading">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#F4F4F6]">
           Edit {shop.name}
         </h1>
-        <p className="text-xs text-[#475569] mt-1 font-medium">
-          Update store location, contact details, assigned route, and product inventory intervals.
+        <p className="text-xs text-[#8C8C96] mt-1 font-mono">
+          Update store location, contact details, assigned sector route, and product inventory cadences.
         </p>
       </div>
 
-      <div className="space-y-6">
-        <ShopForm initialShop={shop} />
-      </div>
+      <ShopForm initialShop={shop} />
     </div>
   );
 }

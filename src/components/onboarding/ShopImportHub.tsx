@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Upload, Table, Plus, Check, FileText, ArrowRight, Trash2 } from "lucide-react";
+import { Table, Plus, FileText, ArrowRight, Trash2, CheckCircle2 } from "lucide-react";
 import { db } from "@/lib/db/dexie";
 import { enqueueWrite } from "@/lib/db/sync";
 import { formatDateOnly } from "@/lib/scheduling";
@@ -28,7 +28,7 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
   const [tab, setTab] = useState<"table" | "csv" | "skip">("table");
   const [isImporting, setIsImporting] = useState(false);
 
-  // 1. Rapid Table State (clean empty entry rows)
+  // 1. Rapid Table State
   const [rows, setRows] = useState<RapidShopRow[]>([
     { name: "", region: defaultRegion, intervalDays: 7, contact: "", balanceDue: 0 },
     { name: "", region: defaultRegion, intervalDays: 7, contact: "", balanceDue: 0 },
@@ -130,7 +130,7 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
           default_qty: 2,
           interval_days: item.intervalDays || 7,
           remind_offset_days: 0,
-          next_due_date: todayStr, // immediately ready for today!
+          next_due_date: todayStr,
           snooze_until: null,
           created_at: now.toISOString(),
         };
@@ -188,41 +188,47 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
   return (
     <div className="space-y-4">
       {/* Tab selection */}
-      <div className="grid grid-cols-3 gap-1 bg-[#E6E9EF]/60 p-1 rounded-xl text-xs font-semibold">
+      <div className="grid grid-cols-3 gap-1 bg-[#1B1B20] p-1 rounded-xl text-xs font-medium border border-white/[0.06]">
         <button
           type="button"
           onClick={() => setTab("table")}
           className={`py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5 ${
-            tab === "table" ? "bg-white text-[#0F172A] shadow-xs" : "text-[#475569] hover:text-[#0F172A]"
+            tab === "table"
+              ? "bg-[#B5F23D] text-[#0C1004] font-semibold shadow-xs"
+              : "text-zinc-400 hover:text-white"
           }`}
         >
-          <Table size={14} />
+          <Table size={13} />
           Rapid Table
         </button>
         <button
           type="button"
           onClick={() => setTab("csv")}
           className={`py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5 ${
-            tab === "csv" ? "bg-white text-[#0F172A] shadow-xs" : "text-[#475569] hover:text-[#0F172A]"
+            tab === "csv"
+              ? "bg-[#B5F23D] text-[#0C1004] font-semibold shadow-xs"
+              : "text-zinc-400 hover:text-white"
           }`}
         >
-          <FileText size={14} />
-          Paste CSV / Excel
+          <FileText size={13} />
+          Paste CSV
         </button>
         <button
           type="button"
           onClick={() => setTab("skip")}
           className={`py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5 ${
-            tab === "skip" ? "bg-white text-[#0F172A] shadow-xs" : "text-[#475569] hover:text-[#0F172A]"
+            tab === "skip"
+              ? "bg-[#B5F23D] text-[#0C1004] font-semibold shadow-xs"
+              : "text-zinc-400 hover:text-white"
           }`}
         >
-          <ArrowRight size={14} />
+          <ArrowRight size={13} />
           Add as I Visit
         </button>
       </div>
 
       {csvError && (
-        <div className="p-2.5 bg-[#D64545]/10 border border-[#D64545]/30 rounded-lg text-xs text-[#D64545]">
+        <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-300 font-medium">
           {csvError}
         </div>
       )}
@@ -230,77 +236,77 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
       {/* 1. Rapid Table View */}
       {tab === "table" && (
         <div className="space-y-3">
-          <div className="text-xs text-[#475569]">
+          <div className="text-xs text-zinc-400">
             Type or edit shops directly. Hit + Add Row for next shop:
           </div>
 
-          <div className="overflow-x-auto border border-[#CBD5E1] rounded-xl bg-white shadow-xs">
+          <div className="overflow-x-auto border border-white/[0.08] rounded-xl bg-[#131316]">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-[#FAF8F5] border-b border-[#CBD5E1] text-[#475569] font-semibold">
-                  <th className="py-2 px-3">Shop Name *</th>
-                  <th className="py-2 px-2">Route / Area</th>
-                  <th className="py-2 px-2 w-20">Days</th>
-                  <th className="py-2 px-2">Phone</th>
-                  <th className="py-2 px-2 w-24">Due (₹)</th>
-                  <th className="py-2 px-2 w-8"></th>
+                <tr className="bg-[#1B1B20] border-b border-white/[0.08] text-zinc-400 font-mono text-[11px]">
+                  <th className="py-2.5 px-3">Shop Name *</th>
+                  <th className="py-2.5 px-2">Route / Area</th>
+                  <th className="py-2.5 px-2 w-20">Days</th>
+                  <th className="py-2.5 px-2">Phone</th>
+                  <th className="py-2.5 px-2 w-24">Due (₹)</th>
+                  <th className="py-2.5 px-2 w-8"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E6E9EF]">
+              <tbody className="divide-y divide-white/[0.06]">
                 {rows.map((row, idx) => (
-                  <tr key={idx} className="hover:bg-[#FAF8F5]/60">
-                    <td className="py-1.5 px-3">
+                  <tr key={idx} className="hover:bg-white/[0.02]">
+                    <td className="py-2 px-3">
                       <input
                         type="text"
                         placeholder="e.g. Ramesh Kirana"
                         value={row.name}
                         onChange={(e) => handleUpdateRow(idx, "name", e.target.value)}
-                        className="w-full px-2 py-1 text-xs border border-[#CBD5E1] rounded-md placeholder:text-[#475569] focus:outline-none focus:border-[#92400E]"
+                        className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-white/[0.1] bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#B5F23D]"
                       />
                     </td>
-                    <td className="py-1.5 px-2">
+                    <td className="py-2 px-2">
                       <input
                         type="text"
                         placeholder="Route"
                         value={row.region}
                         onChange={(e) => handleUpdateRow(idx, "region", e.target.value)}
-                        className="w-full px-2 py-1 text-xs border border-[#CBD5E1] rounded-md placeholder:text-[#475569] focus:outline-none focus:border-[#92400E]"
+                        className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-white/[0.1] bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#B5F23D]"
                       />
                     </td>
-                    <td className="py-1.5 px-2">
+                    <td className="py-2 px-2">
                       <input
                         type="number"
                         min={1}
                         max={60}
                         value={row.intervalDays}
                         onChange={(e) => handleUpdateRow(idx, "intervalDays", parseInt(e.target.value, 10) || 7)}
-                        className="w-full px-2 py-1 text-xs border border-[#CBD5E1] rounded-md placeholder:text-[#475569] focus:outline-none focus:border-[#92400E] tabular-nums"
+                        className="w-full px-2.5 py-1.5 text-xs font-mono rounded-lg border border-white/[0.1] bg-[#1B1B20] text-zinc-100 focus:outline-none focus:border-[#B5F23D]"
                       />
                     </td>
-                    <td className="py-1.5 px-2">
+                    <td className="py-2 px-2">
                       <input
                         type="tel"
                         placeholder="98..."
                         value={row.contact}
                         onChange={(e) => handleUpdateRow(idx, "contact", e.target.value)}
-                        className="w-full px-2 py-1 text-xs border border-[#CBD5E1] rounded-md placeholder:text-[#475569] focus:outline-none focus:border-[#92400E] tabular-nums"
+                        className="w-full px-2.5 py-1.5 text-xs font-mono rounded-lg border border-white/[0.1] bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#B5F23D]"
                       />
                     </td>
-                    <td className="py-1.5 px-2">
+                    <td className="py-2 px-2">
                       <input
                         type="number"
                         placeholder="0"
                         value={row.balanceDue}
                         onChange={(e) => handleUpdateRow(idx, "balanceDue", parseFloat(e.target.value) || 0)}
-                        className="w-full px-2 py-1 text-xs border border-[#CBD5E1] rounded-md placeholder:text-[#475569] focus:outline-none focus:border-[#92400E] tabular-nums"
+                        className="w-full px-2.5 py-1.5 text-xs font-mono rounded-lg border border-white/[0.1] bg-[#1B1B20] text-zinc-100 focus:outline-none focus:border-[#B5F23D]"
                       />
                     </td>
-                    <td className="py-1.5 px-2 text-center">
+                    <td className="py-2 px-2 text-center">
                       {rows.length > 1 && (
                         <button
                           type="button"
                           onClick={() => handleRemoveRow(idx)}
-                          className="text-[#475569] hover:text-[#D64545] p-1"
+                          className="text-zinc-500 hover:text-rose-400 p-1 transition-colors"
                         >
                           <Trash2 size={13} />
                         </button>
@@ -312,11 +318,11 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
             </table>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between pt-1">
             <button
               type="button"
               onClick={handleAddRow}
-              className="px-3 py-1.5 rounded-lg border border-[#CBD5E1] bg-white text-xs font-semibold text-[#0F172A] hover:bg-[#E6E9EF]/40 flex items-center gap-1 shadow-2xs"
+              className="px-3 py-1.5 rounded-lg border border-white/[0.08] bg-[#1B1B20] text-xs font-medium text-zinc-300 hover:text-white flex items-center gap-1 transition-colors"
             >
               <Plus size={13} />
               Add Row
@@ -326,9 +332,9 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
               type="button"
               disabled={isImporting}
               onClick={handleTableSubmit}
-              className="px-5 py-2 rounded-xl bg-[#0F172A] text-white text-xs font-bold hover:bg-[#92400E] hover:opacity-90 transition-opacity flex items-center gap-1.5 shadow-sm"
+              className="px-5 py-2.5 rounded-xl bg-[#B5F23D] hover:bg-[#c4f84c] text-[#0C1004] text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors disabled:opacity-50"
             >
-              {isImporting ? "Importing..." : "Save & Generate Today's Route →"}
+              {isImporting ? "Importing..." : "Save & Generate Route →"}
             </button>
           </div>
         </div>
@@ -337,9 +343,9 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
       {/* 2. CSV / Paste View */}
       {tab === "csv" && (
         <div className="space-y-3">
-          <div className="text-xs text-[#475569]">
-            Copy columns from Excel or Google Sheets and paste here:
-            <span className="block font-mono text-[11px] text-[#0F172A] mt-0.5">
+          <div className="text-xs text-zinc-400">
+            Copy rows from Excel or Google Sheets and paste here:
+            <span className="block font-mono text-[11px] text-[#B5F23D] mt-0.5">
               Format: Shop Name, Route, Interval Days, Phone, Due Amount
             </span>
           </div>
@@ -349,30 +355,30 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
             value={csvText}
             onChange={(e) => setCsvText(e.target.value)}
             placeholder="Gupta Kirana, North Market, 7, 9820011223, 1450"
-            className="w-full p-3 font-mono text-xs border border-[#CBD5E1] rounded-xl bg-white placeholder:text-[#475569] focus:outline-none focus:border-[#92400E]"
+            className="w-full p-3 font-mono text-xs border border-white/[0.1] rounded-xl bg-[#1B1B20] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#B5F23D]"
           />
 
           <button
             type="button"
             disabled={isImporting}
             onClick={handleCsvSubmit}
-            className="w-full py-2.5 rounded-xl bg-[#0F172A] text-white text-xs font-bold hover:bg-[#92400E] hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5 shadow-sm"
+            className="w-full py-2.5 rounded-xl bg-[#B5F23D] hover:bg-[#c4f84c] text-[#0C1004] text-xs font-semibold flex items-center justify-center gap-1.5 shadow-xs transition-colors disabled:opacity-50"
           >
-            {isImporting ? "Importing shops..." : "Import CSV & Generate Today's Route →"}
+            {isImporting ? "Importing shops..." : "Import CSV & Generate Route →"}
           </button>
         </div>
       )}
 
       {/* 3. Skip / Add as I Visit View */}
       {tab === "skip" && (
-        <div className="p-5 border border-[#CBD5E1] rounded-xl bg-white text-center space-y-3">
-          <div className="w-10 h-10 rounded-full bg-[#FEF3C7] text-[#92400E] flex items-center justify-center mx-auto">
-            <ArrowRight size={18} />
+        <div className="p-6 border border-white/[0.08] rounded-xl bg-[#1B1B20]/60 text-center space-y-3">
+          <div className="w-10 h-10 rounded-full bg-[#B5F23D]/10 text-[#B5F23D] flex items-center justify-center mx-auto border border-[#B5F23D]/20">
+            <CheckCircle2 size={20} />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-[#0F172A] font-heading">Add shops as you ride</h4>
-            <p className="text-xs text-[#475569] mt-1 max-w-sm mx-auto">
-              You can skip importing right now and enter your app with a clean dashboard. Add your shops anytime as you visit retailers.
+            <h4 className="text-sm font-bold text-white">Add shops as you visit</h4>
+            <p className="text-xs text-zinc-400 mt-1 max-w-sm mx-auto">
+              You can start with a fresh blank route. Add retailers anytime from your mobile device while visiting shops.
             </p>
           </div>
 
@@ -380,9 +386,9 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
             type="button"
             disabled={isImporting}
             onClick={() => onComplete(0)}
-            className="px-6 py-2.5 rounded-xl bg-[#0F172A] text-white text-xs font-bold hover:bg-[#92400E] hover:opacity-90 transition-opacity"
+            className="px-6 py-2.5 rounded-xl bg-[#B5F23D] hover:bg-[#c4f84c] text-[#0C1004] text-xs font-semibold transition-colors"
           >
-            Launch Today's Route →
+            Launch Today Route →
           </button>
         </div>
       )}

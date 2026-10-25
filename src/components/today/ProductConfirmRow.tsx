@@ -20,18 +20,18 @@ export const ProductConfirmRow: React.FC<ProductConfirmRowProps> = ({
   onFeedbackChange,
 }) => {
   return (
-    <div className="py-2.5 px-3.5 bg-white border border-[#CBD5E1] rounded-xl mb-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-sm shadow-xs">
+    <div className="py-2.5 px-3.5 bg-[#1B1B20] border border-white/[0.08] rounded-xl mb-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs shadow-sm">
       <div className="flex-1 min-w-0">
-        <div className="font-bold text-[#0F172A] truncate">{product.name}</div>
-        <div className="text-xs text-[#475569] font-medium">
-          Interval: {shopProduct.interval_days}d · Default: {shopProduct.default_qty}
+        <div className="font-bold text-[#F4F4F6] truncate">{product.name}</div>
+        <div className="text-[11px] text-[#8C8C96] font-mono mt-0.5">
+          Cadence: Every {shopProduct.interval_days}d · Default: {shopProduct.default_qty} units
         </div>
       </div>
 
       <div className="flex items-center gap-3">
         {/* Quantity input */}
         <div className="flex items-center gap-1.5">
-          <label htmlFor={`qty-${product.id}`} className="text-xs font-semibold text-[#334155]">
+          <label htmlFor={`qty-${product.id}`} className="text-xs font-semibold text-[#8C8C96]">
             Qty:
           </label>
           <input
@@ -44,44 +44,59 @@ export const ProductConfirmRow: React.FC<ProductConfirmRowProps> = ({
               const val = parseInt(e.target.value, 10);
               onQtyChange(val);
             }}
-            className="w-16 h-8 px-2 text-center text-sm font-bold bg-[#FAF8F5] border border-[#CBD5E1] rounded-lg text-[#0F172A] focus:outline-none focus:border-[#92400E]"
+            className="w-16 h-8 px-2 text-center text-xs font-mono font-bold bg-[#131316] border border-white/[0.12] rounded-lg text-[#F4F4F6] focus:outline-none focus:border-[#B5F23D]"
           />
         </div>
 
-        {/* Stock feedback selector (the spec-allowed 🔴🟡🟢 emoji exception) */}
-        <div className="flex items-center gap-1 bg-[#FAF8F5] border border-[#CBD5E1] rounded-lg p-0.5" role="group" aria-label="Stock level feedback">
+        {/* Professional Stock Feedback Selector (Clean SVG Dot Pills, Zero Emojis) */}
+        <div
+          className="flex items-center gap-1 bg-[#131316] border border-white/[0.08] rounded-lg p-1"
+          role="group"
+          aria-label="Stock level feedback"
+        >
           <button
             type="button"
-            title="Stock low (decreases interval next round)"
+            title="Stock low (shortens replenishment cycle)"
             aria-label="Stock low"
             onClick={() => onFeedbackChange(feedback === "low" ? null : "low")}
-            className={`w-7 h-7 flex items-center justify-center rounded text-xs transition-opacity ${
-              feedback === "low" ? "bg-red-soft/20 ring-1 ring-red-soft" : "opacity-40 hover:opacity-100"
+            className={`px-2 py-1 rounded text-[11px] font-bold flex items-center gap-1 transition-all ${
+              feedback === "low"
+                ? "bg-[#F43F5E]/20 text-[#F43F5E] border border-[#F43F5E]/40"
+                : "text-[#8C8C96] hover:text-[#F4F4F6]"
             }`}
           >
-            🔴
+            <span className="w-1.5 h-1.5 rounded-full bg-[#F43F5E]" />
+            <span>Low</span>
           </button>
+
           <button
             type="button"
-            title="Stock fine (no interval change)"
-            aria-label="Stock fine"
+            title="Stock normal (preserves cadence)"
+            aria-label="Stock normal"
             onClick={() => onFeedbackChange(feedback === "fine" ? null : "fine")}
-            className={`w-7 h-7 flex items-center justify-center rounded text-xs transition-opacity ${
-              feedback === "fine" ? "bg-yellow-soft/20 ring-1 ring-yellow-soft" : "opacity-40 hover:opacity-100"
+            className={`px-2 py-1 rounded text-[11px] font-bold flex items-center gap-1 transition-all ${
+              feedback === "fine"
+                ? "bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/40"
+                : "text-[#8C8C96] hover:text-[#F4F4F6]"
             }`}
           >
-            🟡
+            <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
+            <span>OK</span>
           </button>
+
           <button
             type="button"
-            title="Stock plenty (increases interval next round)"
+            title="Stock plenty (lengthens replenishment cycle)"
             aria-label="Stock plenty"
             onClick={() => onFeedbackChange(feedback === "plenty" ? null : "plenty")}
-            className={`w-7 h-7 flex items-center justify-center rounded text-xs transition-opacity ${
-              feedback === "plenty" ? "bg-green-soft/20 ring-1 ring-green-soft" : "opacity-40 hover:opacity-100"
+            className={`px-2 py-1 rounded text-[11px] font-bold flex items-center gap-1 transition-all ${
+              feedback === "plenty"
+                ? "bg-[#22C55E]/20 text-[#22C55E] border border-[#22C55E]/40"
+                : "text-[#8C8C96] hover:text-[#F4F4F6]"
             }`}
           >
-            🟢
+            <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E]" />
+            <span>High</span>
           </button>
         </div>
       </div>

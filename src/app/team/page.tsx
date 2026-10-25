@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowUpDown, UserCheck } from "lucide-react";
-import { db, LocalProfile, LocalDelivery } from "@/lib/db/dexie";
+import { db } from "@/lib/db/dexie";
 import { formatDateOnly } from "@/lib/scheduling";
 
 interface StaffProgressItem {
@@ -31,20 +31,16 @@ export default function TeamPage() {
         db.shop_products.toArray(),
       ]);
 
-      // Calculate total due today across system
       const dueCount = allShopProducts.filter((sp) => sp.next_due_date <= todayStr).length;
 
-      // Count deliveries made today
       const todayDeliveries = allDeliveries.filter(
         (d) => formatDateOnly(new Date(d.delivered_at)) === todayStr
       );
 
-      // Unique shops completed today
       const completedShopsSet = new Set(todayDeliveries.map((d) => d.shop_id));
 
       const items: StaffProgressItem[] = [];
 
-      // Current owner profile
       items.push({
         id: "owner-1",
         name: profiles[0]?.name || "Distributor Owner (You)",
@@ -54,10 +50,9 @@ export default function TeamPage() {
         lastActive: todayDeliveries.length > 0 ? "Just now" : "Today at 08:30 AM",
       });
 
-      // Sample secondary staff member for multi-staff readiness preview
       items.push({
         id: "staff-2",
-        name: "Ramesh Kumar (Delivery Route B)",
+        name: "Ramesh Kumar (Route 02 Driver)",
         role: "Delivery",
         shopsDue: 4,
         shopsCompleted: 3,
@@ -93,86 +88,86 @@ export default function TeamPage() {
   });
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6">
-      <div className="mb-5">
+    <div className="max-w-3xl mx-auto px-4 py-6 sm:py-8">
+      <div className="mb-6">
         <Link
           href="/"
-          className="text-xs font-semibold text-[#475569] hover:text-[#0F172A] inline-flex items-center gap-1 mb-2"
+          className="text-xs font-mono text-[#8C8C96] hover:text-[#F4F4F6] inline-flex items-center gap-1 mb-2 transition-colors"
         >
           <ArrowLeft size={14} />
-          <span>Back to Today's Route</span>
+          <span>Back to Today&apos;s Dispatch</span>
         </Link>
-        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A] font-heading">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#F4F4F6]">
           Team Dispatch Progress
         </h1>
-        <p className="text-xs text-[#475569] mt-1 font-medium">
-          Glanceable progress of all salesmen and daily route completions.
+        <p className="text-xs text-[#8C8C96] mt-1 font-mono">
+          Glanceable progress of all drivers, salesmen, and daily route completions.
         </p>
       </div>
 
-      <div className="border border-[#CBD5E1] rounded-2xl bg-white overflow-hidden shadow-xs">
-        <table className="w-full text-left text-xs border-collapse">
+      <div className="border border-white/[0.08] rounded-2xl bg-[#131316] overflow-hidden shadow-lift font-mono text-xs">
+        <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-[#CBD5E1] bg-[#FAF8F5] text-[#334155] font-bold select-none">
+            <tr className="border-b border-white/[0.08] bg-[#16161B] text-[#8C8C96] select-none">
               <th
                 onClick={() => handleSort("name")}
-                className="py-3 px-4 font-bold cursor-pointer hover:text-[#0F172A]"
+                className="py-3 px-4 font-bold cursor-pointer hover:text-[#F4F4F6]"
               >
                 <div className="flex items-center gap-1.5">
                   <span>Staff Member</span>
-                  <ArrowUpDown size={13} className="text-[#64748B]" />
+                  <ArrowUpDown size={12} className="text-[#54545E]" />
                 </div>
               </th>
               <th className="py-3 px-4 font-bold">Role</th>
               <th
                 onClick={() => handleSort("shopsDue")}
-                className="py-3 px-4 font-bold cursor-pointer hover:text-[#0F172A] text-right"
+                className="py-3 px-4 font-bold cursor-pointer hover:text-[#F4F4F6] text-right"
               >
                 <div className="flex items-center justify-end gap-1.5">
-                  <span>Shops Due</span>
-                  <ArrowUpDown size={13} className="text-[#64748B]" />
+                  <span>Due</span>
+                  <ArrowUpDown size={12} className="text-[#54545E]" />
                 </div>
               </th>
               <th
                 onClick={() => handleSort("shopsCompleted")}
-                className="py-3 px-4 font-bold cursor-pointer hover:text-[#0F172A] text-right"
+                className="py-3 px-4 font-bold cursor-pointer hover:text-[#F4F4F6] text-right"
               >
                 <div className="flex items-center justify-end gap-1.5">
-                  <span>Completed Today</span>
-                  <ArrowUpDown size={13} className="text-[#64748B]" />
+                  <span>Completed</span>
+                  <ArrowUpDown size={12} className="text-[#54545E]" />
                 </div>
               </th>
               <th className="py-3 px-4 font-bold text-right">Last Active</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#E2E8F0]">
+          <tbody className="divide-y divide-white/[0.04]">
             {loading ? (
               <tr>
-                <td colSpan={5} className="py-10 text-center text-[#475569]">
+                <td colSpan={5} className="py-12 text-center text-[#8C8C96]">
                   Loading team data...
                 </td>
               </tr>
             ) : (
               sortedStaff.map((staff) => (
-                <tr key={staff.id} className="hover:bg-[#F8FAFC] transition-colors">
-                  <td className="py-3.5 px-4 font-bold text-[#0F172A]">
+                <tr key={staff.id} className="hover:bg-[#1B1B20]/50 transition-colors">
+                  <td className="py-3.5 px-4 font-bold text-[#F4F4F6]">
                     <div className="flex items-center gap-2.5">
-                      <UserCheck size={16} className="text-[#92400E]" />
+                      <UserCheck size={15} className="text-[#B5F23D]" />
                       <span>{staff.name}</span>
                     </div>
                   </td>
-                  <td className="py-3.5 px-4 text-[#334155]">
-                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A]">
+                  <td className="py-3.5 px-4 text-[#8C8C96]">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#B5F23D]/10 text-[#B5F23D] border border-[#B5F23D]/20">
                       {staff.role}
                     </span>
                   </td>
-                  <td className="py-3.5 px-4 text-right font-bold text-[#0F172A] tabular-nums">
+                  <td className="py-3.5 px-4 text-right font-bold text-[#F4F4F6] tabular-nums">
                     {staff.shopsDue}
                   </td>
-                  <td className="py-3.5 px-4 text-right font-bold text-[#065F46] tabular-nums">
+                  <td className="py-3.5 px-4 text-right font-bold text-[#22C55E] tabular-nums">
                     {staff.shopsCompleted}
                   </td>
-                  <td className="py-3.5 px-4 text-right text-[#475569] font-medium">
+                  <td className="py-3.5 px-4 text-right text-[#8C8C96]">
                     {staff.lastActive}
                   </td>
                 </tr>

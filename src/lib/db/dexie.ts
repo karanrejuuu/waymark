@@ -35,6 +35,20 @@ export class WaymarkDatabase extends Dexie {
 
   constructor() {
     super("WaymarkDB");
+
+    // Version 1: Original schema (preserves backward compatibility for existing devices)
+    this.version(1).stores({
+      profiles: "id",
+      godowns: "id, owner_id",
+      regions: "id, owner_id, sort_order",
+      shops: "id, owner_id, region_id, is_urgent, sort_order",
+      products: "id, owner_id",
+      shop_products: "id, shop_id, product_id, next_due_date, [shop_id+product_id]",
+      deliveries: "id, &client_id, shop_id, product_id, delivered_at, synced",
+      sync_queue: "++id, table, op, createdAt",
+    });
+
+    // Version 2: Multi-tenant organisation and payments support
     this.version(2).stores({
       organisations: "id",
       organisation_members: "id, organisation_id, user_id",

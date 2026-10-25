@@ -20,7 +20,7 @@ const AuthContext = createContext<AuthContextType>({
   signOut: async () => {},
 });
 
-const PUBLIC_ROUTES = ["/welcome", "/login"];
+const PUBLIC_ROUTES = ["/", "/welcome", "/login"];
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const router = useRouter();
@@ -86,8 +86,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const isPublic = PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
 
     if (!user && !isPublic) {
-      // Unauthenticated user trying to access protected SaaS route -> Redirect to /welcome
-      router.replace("/welcome");
+      // Unauthenticated user trying to access protected SaaS route -> Redirect to login
+      router.replace("/login");
     } else if (user && pathname === "/login") {
       // Authenticated user trying to access login -> Redirect to /
       router.replace("/");
@@ -104,7 +104,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await db.profiles.clear();
     setUser(null);
     setSession(null);
-    router.replace("/welcome");
+    router.replace("/");
   };
 
   return (
