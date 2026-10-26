@@ -13,7 +13,7 @@ interface AuthContextType {
   onboardingCompleted: boolean;
   setOnboardingCompleted: (val: boolean) => Promise<void>;
   signOut: () => Promise<void>;
-  signInOffline: (email: string, name: string, businessName: string, role?: string) => Promise<void>;
+  signInOffline: (email: string, name: string, businessName: string, role?: string, completedOnboarding?: boolean) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -50,34 +50,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (data.session?.user) {
           setSession(data.session);
           setUser(data.session.user);
+          // Check profile onboarding status
+          const existingProfile = await db.profiles.get(data.session.user.id);
+          const hasOnboarded =
+            localOnboarding ||
+            (existingProfile as any)?.onboarding_completed === true;
+          setOnboardingCompletedState(Boolean(hasOnboarded));
         } else {
-          // 2. Check offline session in localStorage or Dexie profiles
+          // 2. Check offline session in localStorage only if user explicitly logged in
           const savedUser = localStorage.getItem("waymark_user_session");
           if (savedUser) {
             try {
               const parsed = JSON.parse(savedUser);
               setUser(parsed);
-            } catch {}
-          } else {
-            const firstProfile = await db.profiles.toCollection().first();
-            if (firstProfile) {
-              const u = {
-                id: firstProfile.id,
-                email: firstProfile.email || "demo@distributor.com",
-                user_metadata: {
-                  name: firstProfile.name,
-                  business_name: (firstProfile as any).business_name,
-                  role: (firstProfile as any).role || "admin",
-                },
-                app_metadata: {},
-                aud: "authenticated",
-                created_at: firstProfile.created_at,
-              } as User;
-              setUser(u);
-              if ((firstProfile as any).onboarding_completed) {
-                setOnboardingCompletedState(true);
-              }
+              const existingProfile = parsed?.id ? await db.profiles.get(parsed.id) : null;
+              const hasOnboarded =
+                localOnboarding ||
+                (existingProfile as any)?.onboarding_completed === true;
+              setOnboardingCompletedState(Boolean(hasOnboarded));
+            } catch {
+              localStorage.removeItem("waymark_user_session");
+              setUser(null);
             }
+          } else {
+            // Unauthenticated: do NOT auto-login from arbitrary Dexie profiles
+            setUser(null);
+            setOnboardingCompletedState(false);
           }
         }
       } catch (err) {
@@ -111,16 +109,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const isPublic = PUBLIC_ROUTES.some((route) => pathname === route || pathname.startsWith(route + "/"));
 
-    if (!user && !isPublic) {
-      // Unauthenticated user -> Redirect to /login
-      router.replace("/login");
-    } else if (user) {
-      if (!onboardingCompleted && pathname !== "/onboarding" && pathname !== "/welcome") {
-        // Logged in but onboarding not done -> Redirect to /onboarding
-        router.replace("/onboarding");
-      } else if (onboardingCompleted && (pathname === "/login" || pathname === "/signup")) {
-        // Logged in & onboarded -> Redirect to home cockpit
-        router.replace("/");
+    if (!user) {
+      // Unauthenticated visitor: protect private routes (/ and /onboarding require login/signup first)
+      if (!isPublic) {
+        router.replace("/login");
+      }
+    } else {
+      // Authenticated visitor:
+      // When visiting dashboard "/", ensure setup is completed
+      if (pathname === "/") {
+        if (!onboardingCompleted) {
+          router.replace("/onboarding");
+        }
       }
     }
   }, [user, isLoading, onboardingCompleted, pathname, router]);
@@ -140,7 +140,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const signInOffline = async (email: string, name: string, businessName: string, role: string = "owner") => {
+  const signInOffline = async (
+    email: string,
+    name: string,
+    businessName: string,
+    role: string = "owner",
+    completedOnboarding: boolean = false
+  ) => {
     const id = `user-${Date.now()}`;
     const nowIso = new Date().toISOString();
     const userRole: "owner" | "staff" | "delivery" =
@@ -154,7 +160,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       role: userRole,
       push_subscription: null,
       business_name: businessName,
-      onboarding_completed: false,
+      onboarding_completed: completedOnboarding,
       created_at: nowIso,
     };
     await db.profiles.put(profileRecord);
@@ -168,6 +174,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } as User;
     setUser(mockUser);
     localStorage.setItem("waymark_user_session", JSON.stringify(mockUser));
+    if (completedOnboarding) {
+      localStorage.setItem("waymark_onboarding_completed", "true");
+      setOnboardingCompletedState(true);
+    } else {
+      localStorage.removeItem("waymark_onboarding_completed");
+      setOnboardingCompletedState(false);
+    }
   };
 
   const signOut = async () => {

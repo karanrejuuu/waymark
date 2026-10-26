@@ -21,6 +21,7 @@ import {
   Store,
   Layers,
   Clock,
+  LogOut,
 } from "lucide-react";
 import { db, LocalRegion, LocalProduct } from "@/lib/db/dexie";
 import { enqueueWrite } from "@/lib/db/sync";
@@ -54,7 +55,7 @@ const DAYS_OF_WEEK = [
 
 export default function OnboardingExperiencePage() {
   const router = useRouter();
-  const { user, setOnboardingCompleted } = useAuth();
+  const { user, setOnboardingCompleted, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -267,6 +268,23 @@ export default function OnboardingExperiencePage() {
         </div>
 
         <div className="flex items-center gap-3">
+          {user?.email && (
+            <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-100 dark:bg-[#181924] border border-black/[0.06] dark:border-white/[0.06] text-[11px] font-mono text-zinc-600 dark:text-zinc-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#D4F638]" />
+              <span>{user.email}</span>
+            </span>
+          )}
+
+          <button
+            type="button"
+            onClick={signOut}
+            title="Log in with another account"
+            className="flex items-center gap-1 text-[11px] font-mono text-zinc-500 hover:text-zinc-950 dark:hover:text-white px-2.5 py-1 rounded-full border border-black/[0.08] dark:border-white/[0.08] hover:bg-zinc-100 dark:hover:bg-[#181924] transition-all"
+          >
+            <LogOut size={12} />
+            <span className="hidden sm:inline">Switch / Sign In</span>
+          </button>
+
           <button
             type="button"
             onClick={toggleTheme}

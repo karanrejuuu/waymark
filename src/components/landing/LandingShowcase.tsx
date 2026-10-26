@@ -59,7 +59,7 @@ export const LandingShowcase: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           {/* Theme Toggle Button */}
           <button
             type="button"
@@ -76,10 +76,17 @@ export const LandingShowcase: React.FC = () => {
           </button>
 
           <Link
-            href="/"
+            href="/login"
+            className="px-3.5 py-1.5 text-xs font-mono font-bold text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white rounded-full border border-black/[0.08] dark:border-white/[0.08] transition-all"
+          >
+            Sign In
+          </Link>
+
+          <Link
+            href="/signup"
             className="px-4 py-2 bg-[#D4F638] hover:bg-[#C2E426] text-[#0A0D02] font-bold text-xs font-mono rounded-full flex items-center gap-1.5 shadow-md transition-all active:scale-95"
           >
-            <span>Launch Cockpit</span>
+            <span>Create Account</span>
             <ArrowRight size={14} strokeWidth={2.5} />
           </Link>
         </div>
@@ -111,18 +118,18 @@ export const LandingShowcase: React.FC = () => {
 
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <Link
-                href="/"
+                href="/signup"
                 className="px-6 py-3.5 bg-[#D4F638] hover:bg-[#C2E426] text-[#0A0D02] font-bold text-xs font-mono rounded-2xl flex items-center gap-2 shadow-lg transition-all active:scale-95"
               >
-                <span>Open Active Fort Kochi Beat</span>
+                <span>Create Agency Account</span>
                 <ArrowRight size={15} strokeWidth={2.5} />
               </Link>
-              <a
-                href="#simulator"
-                className="px-5 py-3.5 bg-white/[0.08] hover:bg-white/[0.14] border border-white/[0.1] text-white font-semibold text-xs font-mono rounded-2xl transition-colors"
+              <Link
+                href="/login"
+                className="px-5 py-3.5 bg-white/[0.08] hover:bg-white/[0.14] border border-white/[0.1] text-white font-semibold text-xs font-mono rounded-2xl transition-colors flex items-center gap-1.5"
               >
-                Try 10-Second Simulator Below &darr;
-              </a>
+                <span>Sign In to Terminal</span>
+              </Link>
             </div>
           </div>
         </div>

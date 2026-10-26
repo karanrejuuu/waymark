@@ -162,6 +162,20 @@ export default function SignupPage() {
 
           {/* Form Box */}
           <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#13141C] border border-black/[0.08] dark:border-white/[0.08] shadow-sm space-y-5 transition-colors">
+            {/* Dual Auth Switcher: Login & Signup Options */}
+            <div className="grid grid-cols-2 p-1 bg-zinc-100 dark:bg-[#181924] rounded-2xl border border-black/[0.06] dark:border-white/[0.06]">
+              <Link
+                href="/login"
+                className="py-2.5 text-center text-xs font-bold rounded-xl text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-all flex items-center justify-center gap-1 font-mono"
+              >
+                <span>Sign In</span>
+              </Link>
+              <div className="py-2.5 text-center text-xs font-bold rounded-xl bg-white dark:bg-[#202230] text-zinc-950 dark:text-white shadow-sm flex items-center justify-center gap-1.5 font-mono">
+                <CheckCircle2 size={13} className="text-[#D4F638]" />
+                <span>Create Account</span>
+              </div>
+            </div>
+
             {errorMsg && (
               <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-500/30 text-rose-700 dark:text-rose-400 text-xs font-mono">
                 {errorMsg}
