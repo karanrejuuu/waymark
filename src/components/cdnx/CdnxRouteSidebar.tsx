@@ -11,6 +11,8 @@ import {
   AlertTriangle,
   IndianRupee,
   ChevronRight,
+  Search,
+  X,
 } from "lucide-react";
 import { LocalRegion } from "@/lib/db/dexie";
 import { db } from "@/lib/db/dexie";
@@ -42,6 +44,8 @@ export const CdnxRouteSidebar: React.FC<CdnxRouteSidebarProps> = ({
   totalShopsCount,
   filterCounts,
 }) => {
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [showAddRoute, setShowAddRoute] = useState(false);
   const [newRouteName, setNewRouteName] = useState("");
 
@@ -55,6 +59,7 @@ export const CdnxRouteSidebar: React.FC<CdnxRouteSidebarProps> = ({
       owner_id: "demo-user",
       name: newRouteName.trim(),
       sort_order: regions.length + 1,
+      active_days: [1, 2, 3, 4, 5],
       created_at: new Date().toISOString(),
     };
 
@@ -64,6 +69,10 @@ export const CdnxRouteSidebar: React.FC<CdnxRouteSidebarProps> = ({
     setShowAddRoute(false);
     onSelectRegion(newRegion.id);
   };
+
+  const displayedRegions = searchQuery.trim()
+    ? regions.filter((r) => r.name.toLowerCase().includes(searchQuery.toLowerCase().trim()))
+    : regions;
 
   return (
     <aside className="w-60 bg-[#F8F9FB] dark:bg-[#0C0D12] border-r border-black/[0.08] dark:border-white/[0.08] p-4 flex flex-col justify-between hidden md:flex select-none h-[calc(100vh-4rem)] sticky top-16 text-xs transition-colors duration-200">
@@ -75,14 +84,46 @@ export const CdnxRouteSidebar: React.FC<CdnxRouteSidebarProps> = ({
               <Compass size={14} className="text-[#D4F638]" />
               Routes &amp; Areas
             </span>
+            {/* Minimalistic Search Lens Icon */}
             <button
-              onClick={() => setShowAddRoute(!showAddRoute)}
-              className="text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-[#D4F638] transition-colors"
-              title="Add New Area"
+              type="button"
+              onClick={() => {
+                setShowSearch(!showSearch);
+                if (showSearch) setSearchQuery("");
+              }}
+              className="w-6 h-6 rounded-md hover:bg-black/[0.05] dark:hover:bg-white/[0.08] flex items-center justify-center text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-[#D4F638] transition-colors"
+              title="Search Areas"
+              aria-label="Search Areas"
             >
-              <Plus size={15} />
+              <Search size={13} strokeWidth={2.2} />
             </button>
           </div>
+
+          {/* Minimalist Inline Route Search Box */}
+          {showSearch && (
+            <div className="mb-2 px-1 animate-in fade-in duration-150">
+              <div className="flex items-center bg-white dark:bg-[#181924] border border-black/[0.1] dark:border-white/[0.1] rounded-xl px-2.5 py-1.5 focus-within:border-indigo-500 dark:focus-within:border-[#D4F638] shadow-sm">
+                <Search size={12} className="text-zinc-400 mr-1.5 flex-shrink-0" />
+                <input
+                  type="text"
+                  autoFocus
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Filter areas..."
+                  className="w-full bg-transparent text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 text-xs focus:outline-none"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery("")}
+                    className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+                  >
+                    <X size={12} />
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Quick Route Add Box */}
           {showAddRoute && (
@@ -100,21 +141,23 @@ export const CdnxRouteSidebar: React.FC<CdnxRouteSidebarProps> = ({
 
           {/* List of Corridors with Counts */}
           <div className="space-y-1">
-            <button
-              onClick={() => onSelectRegion("all")}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-medium transition-all ${
-                selectedRegionId === "all"
-                  ? "bg-white dark:bg-[#181924] text-zinc-950 dark:text-white font-bold border border-black/[0.08] dark:border-white/[0.08] shadow-sm"
-                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.03]"
-              }`}
-            >
-              <span className="truncate">All Areas</span>
-              <span className="font-mono text-[11px] text-zinc-400 dark:text-zinc-500">
-                {totalShopsCount}
-              </span>
-            </button>
+            {!searchQuery.trim() && (
+              <button
+                onClick={() => onSelectRegion("all")}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-medium transition-all ${
+                  selectedRegionId === "all"
+                    ? "bg-white dark:bg-[#181924] text-zinc-950 dark:text-white font-bold border border-black/[0.08] dark:border-white/[0.08] shadow-sm"
+                    : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.03]"
+                }`}
+              >
+                <span className="truncate">All Areas</span>
+                <span className="font-mono text-[11px] text-zinc-400 dark:text-zinc-500">
+                  {totalShopsCount}
+                </span>
+              </button>
+            )}
 
-            {regions.map((reg) => {
+            {displayedRegions.map((reg) => {
               const count = routeShopCounts.get(reg.id) || 0;
               const isSelected = selectedRegionId === reg.id;
 
@@ -139,6 +182,12 @@ export const CdnxRouteSidebar: React.FC<CdnxRouteSidebarProps> = ({
                 </button>
               );
             })}
+
+            {displayedRegions.length === 0 && Boolean(searchQuery.trim()) && (
+              <div className="px-3 py-2 text-[11px] font-mono text-zinc-400">
+                No matching area found
+              </div>
+            )}
           </div>
         </div>
 
