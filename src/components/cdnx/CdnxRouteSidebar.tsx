@@ -24,6 +24,12 @@ interface CdnxRouteSidebarProps {
   activeSubFilter: "all" | "reminders" | "completed" | "dues";
   onSubFilterChange: (filter: "all" | "reminders" | "completed" | "dues") => void;
   totalShopsCount: number;
+  filterCounts?: {
+    all: number;
+    reminders: number;
+    dues: number;
+    completed: number;
+  };
 }
 
 export const CdnxRouteSidebar: React.FC<CdnxRouteSidebarProps> = ({
@@ -34,6 +40,7 @@ export const CdnxRouteSidebar: React.FC<CdnxRouteSidebarProps> = ({
   activeSubFilter,
   onSubFilterChange,
   totalShopsCount,
+  filterCounts,
 }) => {
   const [showAddRoute, setShowAddRoute] = useState(false);
   const [newRouteName, setNewRouteName] = useState("");
@@ -59,18 +66,18 @@ export const CdnxRouteSidebar: React.FC<CdnxRouteSidebarProps> = ({
   };
 
   return (
-    <aside className="w-60 bg-[#0C0D12] border-r border-white/[0.08] p-4 flex flex-col justify-between hidden md:flex select-none h-[calc(100vh-4rem)] sticky top-16 text-xs">
+    <aside className="w-60 bg-[#F8F9FB] dark:bg-[#0C0D12] border-r border-black/[0.08] dark:border-white/[0.08] p-4 flex flex-col justify-between hidden md:flex select-none h-[calc(100vh-4rem)] sticky top-16 text-xs transition-colors duration-200">
       <div className="space-y-6">
-        {/* Header (Matching Image 1: "Sports") */}
+        {/* Header (Corridors / Routes) */}
         <div>
           <div className="flex items-center justify-between px-2 mb-3">
-            <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-2">
+            <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
               <Compass size={14} className="text-[#D4F638]" />
               Routes &amp; Areas
             </span>
             <button
               onClick={() => setShowAddRoute(!showAddRoute)}
-              className="text-zinc-500 hover:text-[#D4F638] transition-colors"
+              className="text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-[#D4F638] transition-colors"
               title="Add New Area"
             >
               <Plus size={15} />
@@ -86,23 +93,23 @@ export const CdnxRouteSidebar: React.FC<CdnxRouteSidebarProps> = ({
                 value={newRouteName}
                 onChange={(e) => setNewRouteName(e.target.value)}
                 placeholder="New area (e.g. Edappally)..."
-                className="w-full bg-[#181924] border border-white/[0.1] rounded-xl px-2.5 py-1.5 text-white placeholder:text-zinc-600 text-xs focus:outline-none focus:border-[#D4F638]"
+                className="w-full bg-white dark:bg-[#181924] border border-black/[0.1] dark:border-white/[0.1] rounded-xl px-2.5 py-1.5 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 text-xs focus:outline-none focus:border-[#D4F638] shadow-sm"
               />
             </form>
           )}
 
-          {/* List of Corridors with Counts (Matching Image 1: "Premier League 15", "LaLiga 17") */}
+          {/* List of Corridors with Counts */}
           <div className="space-y-1">
             <button
               onClick={() => onSelectRegion("all")}
               className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-medium transition-all ${
                 selectedRegionId === "all"
-                  ? "bg-[#181924] text-white font-bold border border-white/[0.08]"
-                  : "text-zinc-400 hover:text-white hover:bg-white/[0.03]"
+                  ? "bg-white dark:bg-[#181924] text-zinc-950 dark:text-white font-bold border border-black/[0.08] dark:border-white/[0.08] shadow-sm"
+                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.03]"
               }`}
             >
               <span className="truncate">All Areas</span>
-              <span className="font-mono text-[11px] text-zinc-500">
+              <span className="font-mono text-[11px] text-zinc-400 dark:text-zinc-500">
                 {totalShopsCount}
               </span>
             </button>
@@ -117,14 +124,14 @@ export const CdnxRouteSidebar: React.FC<CdnxRouteSidebarProps> = ({
                   onClick={() => onSelectRegion(reg.id)}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-medium transition-all ${
                     isSelected
-                      ? "bg-[#181924] text-white font-bold border border-white/[0.08]"
-                      : "text-zinc-400 hover:text-white hover:bg-white/[0.03]"
+                      ? "bg-white dark:bg-[#181924] text-zinc-950 dark:text-white font-bold border border-black/[0.08] dark:border-white/[0.08] shadow-sm"
+                      : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.03]"
                   }`}
                 >
                   <span className="truncate">{reg.name}</span>
                   <span
                     className={`font-mono text-[11px] ${
-                      isSelected ? "text-[#D4F638] font-bold" : "text-zinc-500"
+                      isSelected ? "text-indigo-600 dark:text-[#D4F638] font-bold" : "text-zinc-400 dark:text-zinc-500"
                     }`}
                   >
                     {count}
@@ -137,7 +144,7 @@ export const CdnxRouteSidebar: React.FC<CdnxRouteSidebarProps> = ({
 
         {/* Sub-Filters / Run Status */}
         <div>
-          <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-zinc-400 px-2 block mb-2">
+          <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 px-2 block mb-2">
             Status Filters
           </span>
           <div className="space-y-1">
@@ -149,21 +156,36 @@ export const CdnxRouteSidebar: React.FC<CdnxRouteSidebarProps> = ({
             ].map((f) => {
               const Icon = f.icon;
               const isSelected = activeSubFilter === f.id;
+              const count = filterCounts ? filterCounts[f.id as keyof typeof filterCounts] : undefined;
+
               return (
                 <button
                   key={f.id}
                   onClick={() => onSubFilterChange(f.id as any)}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all ${
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition-all ${
                     isSelected
-                      ? "bg-[#1E1B38] text-white font-bold border border-purple-500/30"
-                      : "text-zinc-400 hover:text-white hover:bg-white/[0.03]"
+                      ? "bg-purple-100 dark:bg-[#1E1B38] text-purple-950 dark:text-white font-bold border border-purple-500/30 shadow-sm"
+                      : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.03]"
                   }`}
                 >
-                  <Icon
-                    size={14}
-                    className={isSelected ? "text-[#D4F638]" : "text-zinc-500"}
-                  />
-                  <span>{f.label}</span>
+                  <div className="flex items-center gap-2.5 truncate">
+                    <Icon
+                      size={14}
+                      className={isSelected ? "text-purple-600 dark:text-[#D4F638]" : "text-zinc-400 dark:text-zinc-500"}
+                    />
+                    <span className="truncate">{f.label}</span>
+                  </div>
+                  {count !== undefined && (
+                    <span
+                      className={`font-mono text-[11px] px-1.5 py-0.5 rounded-full ${
+                        isSelected
+                          ? "bg-purple-200 dark:bg-purple-900/40 text-purple-900 dark:text-[#D4F638] font-bold"
+                          : "text-zinc-400 dark:text-zinc-500"
+                      }`}
+                    >
+                      {count}
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -172,12 +194,12 @@ export const CdnxRouteSidebar: React.FC<CdnxRouteSidebarProps> = ({
       </div>
 
       {/* Footer Info */}
-      <div className="p-3 bg-[#13141C] border border-white/[0.06] rounded-2xl">
-        <div className="flex items-center justify-between text-[11px] font-mono text-zinc-400">
+      <div className="p-3 bg-white dark:bg-[#13141C] border border-black/[0.06] dark:border-white/[0.06] rounded-2xl shadow-sm">
+        <div className="flex items-center justify-between text-[11px] font-mono text-zinc-600 dark:text-zinc-400">
           <span>Supplier Mode</span>
           <span className="w-2 h-2 rounded-full bg-[#22C55E]" />
         </div>
-        <p className="text-[10px] text-zinc-500 mt-1">
+        <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1">
           Dexie offline storage active. Updates save in real time.
         </p>
       </div>

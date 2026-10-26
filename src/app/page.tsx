@@ -32,21 +32,37 @@ export default function SupplierDashboardPage() {
   // Add Shop Modal State
   const [isAddShopModalOpen, setIsAddShopModalOpen] = useState(false);
 
-  // Initial Data Load & Auto-seed Fort Kochi
+  // Initial Data Load & Auto-migration
   useEffect(() => {
     async function initData() {
-      const count = await db.shops.count();
-      if (count === 0) {
+      let count = await db.shops.count();
+      let allRegs = await db.regions.orderBy("sort_order").toArray();
+
+      // Ensure Fort Kochi exists or re-seed if database is empty/outdated
+      const hasFortKochi = allRegs.some(
+        (r) => r.id === "reg-fortkochi" || r.name.toLowerCase().includes("fort kochi")
+      );
+
+      if (count === 0 || !hasFortKochi) {
         await seedDemoData();
+        allRegs = await db.regions.orderBy("sort_order").toArray();
       }
-      const [allRegs, shops] = await Promise.all([
-        db.regions.orderBy("sort_order").toArray(),
-        db.shops.filter((s) => !s.is_archived).toArray(),
-      ]);
+
+      const shops = await db.shops.filter((s) => !s.is_archived).toArray();
       setRegions(allRegs);
       setAllDbShops(shops);
 
-      // Default to Fort Kochi if present
+      // Restore today's completed deliveries from offline db
+      const todayDateStr = formatDateOnly(new Date());
+      const deliveries = await db.deliveries.toArray();
+      const completedToday = new Set(
+        deliveries
+          .filter((d) => d.delivered_at && d.delivered_at.startsWith(todayDateStr))
+          .map((d) => d.shop_id)
+      );
+      setCompletedShopIds(completedToday);
+
+      // Default to Fort Kochi
       const fk = allRegs.find((r) => r.name.toLowerCase().includes("fort kochi") || r.id === "reg-fortkochi");
       if (fk) {
         setSelectedRouteId(fk.id);
@@ -64,6 +80,15 @@ export default function SupplierDashboardPage() {
     ]);
     setRegions(allRegs);
     setAllDbShops(shops);
+
+    const todayDateStr = formatDateOnly(new Date());
+    const deliveries = await db.deliveries.toArray();
+    const completedToday = new Set(
+      deliveries
+        .filter((d) => d.delivered_at && d.delivered_at.startsWith(todayDateStr))
+        .map((d) => d.shop_id)
+    );
+    setCompletedShopIds(completedToday);
   };
 
   // Route Name
@@ -74,7 +99,7 @@ export default function SupplierDashboardPage() {
 
   const activeRouteName = activeRouteObj ? activeRouteObj.name : "Fort Kochi";
 
-  // Filter all shops by selected route
+  // Filter all shops by selected route and search query
   const shopsInCurrentRoute = useMemo(() => {
     let list = allDbShops;
     if (selectedRouteId !== "all") {
@@ -92,38 +117,14 @@ export default function SupplierDashboardPage() {
     return list;
   }, [allDbShops, selectedRouteId, searchQuery]);
 
-  // Today items filtered by selected route and sub-filter
-  const filteredTodayItems = useMemo(() => {
-    if (!todayItems) return [];
-    let list = todayItems;
-
-    // Filter by route
-    if (selectedRouteId !== "all") {
-      list = list.filter((i) => i.shop.region_id === selectedRouteId);
+  // Map of TodayShopItems for fast enrichment
+  const todayItemMap = useMemo(() => {
+    const map = new Map<string, TodayShopItem>();
+    for (const item of todayItems || []) {
+      map.set(item.shop.id, item);
     }
-
-    // Filter by search query
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase().trim();
-      list = list.filter(
-        (i) =>
-          i.shop.name.toLowerCase().includes(q) ||
-          (i.shop.contact && i.shop.contact.includes(q)) ||
-          (i.shop.notes && i.shop.notes.toLowerCase().includes(q))
-      );
-    }
-
-    // Filter by sub-filter
-    if (activeSubFilter === "reminders") {
-      list = list.filter((i) => i.hasReminderToday);
-    } else if (activeSubFilter === "completed") {
-      list = list.filter((i) => completedShopIds.has(i.shop.id));
-    } else if (activeSubFilter === "dues") {
-      list = list.filter((i) => (i.shop.balance_due || 0) > 0);
-    }
-
-    return list;
-  }, [todayItems, selectedRouteId, searchQuery, activeSubFilter, completedShopIds]);
+    return map;
+  }, [todayItems]);
 
   // Shop Counts per Route
   const routeShopCounts = useMemo(() => {
@@ -141,10 +142,65 @@ export default function SupplierDashboardPage() {
     return shopsInCurrentRoute.reduce((sum, s) => sum + (s.balance_due || 0), 0);
   }, [shopsInCurrentRoute]);
 
+  // Dynamic filter counts for status filter buttons in sidebar
+  const filterCounts = useMemo(() => {
+    const current = shopsInCurrentRoute;
+    const dueCount = current.filter(
+      (s) => !completedShopIds.has(s.id) && (todayItemMap.has(s.id) || s.is_urgent)
+    ).length;
+    const remindersCount = current.filter(
+      (s) => Boolean((s as any).reminder_date || (s as any).reminder_note)
+    ).length;
+    const duesCount = current.filter((s) => (s.balance_due || 0) > 0).length;
+    const completedCount = current.filter((s) => completedShopIds.has(s.id)).length;
+
+    return {
+      all: dueCount > 0 ? dueCount : current.length,
+      reminders: remindersCount,
+      dues: duesCount,
+      completed: completedCount,
+    };
+  }, [shopsInCurrentRoute, todayItemMap, completedShopIds]);
+
+  // Final display list matching the selected sub-filter and segment
+  const displayList = useMemo(() => {
+    let list = shopsInCurrentRoute;
+
+    if (activeSubFilter === "reminders") {
+      // 1. Scheduled Reminders: Show ALL stores with a reminder date or note
+      list = list.filter(
+        (s) => Boolean((s as any).reminder_date || (s as any).reminder_note)
+      );
+    } else if (activeSubFilter === "dues") {
+      // 2. Pending Dues: Show ALL stores with outstanding khata balance > 0
+      list = list.filter((s) => (s.balance_due || 0) > 0);
+    } else if (activeSubFilter === "completed") {
+      // 3. Completed Stops: Show stores completed today
+      list = list.filter((s) => completedShopIds.has(s.id));
+    } else {
+      // 4. "Scheduled Today" (activeSubFilter === "all"):
+      if (activeSegment === "due") {
+        const dueOnly = list.filter(
+          (s) => !completedShopIds.has(s.id) && (todayItemMap.has(s.id) || s.is_urgent)
+        );
+        list = dueOnly.length > 0 ? dueOnly : list.filter((s) => !completedShopIds.has(s.id));
+      } else if (activeSegment === "completed") {
+        list = list.filter((s) => completedShopIds.has(s.id));
+      }
+      // If activeSegment === "all", list remains all shops on beat
+    }
+
+    return list.map((s) => ({
+      shop: s,
+      todayItem: todayItemMap.get(s.id),
+      isCompleted: completedShopIds.has(s.id),
+    }));
+  }, [shopsInCurrentRoute, activeSubFilter, activeSegment, completedShopIds, todayItemMap]);
+
   // Urgent count
   const urgentCount = useMemo(() => {
-    return filteredTodayItems.filter((i) => i.isUrgent).length;
-  }, [filteredTodayItems]);
+    return shopsInCurrentRoute.filter((s) => s.is_urgent).length;
+  }, [shopsInCurrentRoute]);
 
   // Open Walk-to-Car Slip for a shop
   const handleSelectShopForLog = async (shop: LocalShop) => {
@@ -165,13 +221,13 @@ export default function SupplierDashboardPage() {
   // Next shop in sequence
   const nextShopInSequence = useMemo(() => {
     if (!slipShop) return null;
-    const pending = filteredTodayItems.filter((i) => !completedShopIds.has(i.shop.id));
-    const currentIndex = pending.findIndex((i) => i.shop.id === slipShop.id);
+    const pending = displayList.filter((entry) => !entry.isCompleted);
+    const currentIndex = pending.findIndex((entry) => entry.shop.id === slipShop.id);
     if (currentIndex >= 0 && currentIndex + 1 < pending.length) {
       return pending[currentIndex + 1].shop;
     }
     return null;
-  }, [slipShop, filteredTodayItems, completedShopIds]);
+  }, [slipShop, displayList]);
 
   // Quick 1-tap Deliver action
   const handleQuickDeliver = async (item: TodayShopItem) => {
@@ -210,14 +266,20 @@ export default function SupplierDashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0C0D12] text-white flex flex-col font-sans selection:bg-[#D4F638] selection:text-[#0A0D02]">
+    <div className="min-h-screen bg-[#F4F5F8] dark:bg-[#0C0D12] text-zinc-950 dark:text-white flex flex-col font-sans selection:bg-[#D4F638] selection:text-[#0A0D02] transition-colors duration-200">
       {/* 1. CDNX Top Navigation Bar */}
       <CdnxTopNav
         activeTab={activeTab}
         onTabChange={(tab) => {
           setActiveTab(tab);
-          if (tab === "today") setActiveSegment("due");
-          if (tab === "all_shops") setActiveSegment("all");
+          if (tab === "today") {
+            setActiveSubFilter("all");
+            setActiveSegment("due");
+          }
+          if (tab === "all_shops") {
+            setActiveSubFilter("all");
+            setActiveSegment("all");
+          }
         }}
         activeRouteName={activeRouteName}
         totalDue={routeTotalDue}
@@ -227,20 +289,27 @@ export default function SupplierDashboardPage() {
         urgentCount={urgentCount}
       />
 
-      {/* 2. Main 3-Column CDNX Workspace Layout (Matching Images 1 & 2) */}
+      {/* 2. Main 3-Column CDNX Workspace Layout */}
       <div className="flex-1 flex max-w-7xl w-full mx-auto">
-        {/* Left Sidebar: Routes & Corridor list with counts */}
+        {/* Left Sidebar: Routes & Status Filters with live counts */}
         <CdnxRouteSidebar
           regions={regions}
           selectedRegionId={selectedRouteId}
           onSelectRegion={(id) => {
             setSelectedRouteId(id);
             setActiveSubFilter("all");
+            setActiveSegment("due");
           }}
           routeShopCounts={routeShopCounts}
           activeSubFilter={activeSubFilter}
-          onSubFilterChange={setActiveSubFilter}
+          onSubFilterChange={(filter) => {
+            setActiveSubFilter(filter);
+            if (filter === "completed") {
+              setActiveSegment("completed");
+            }
+          }}
           totalShopsCount={allDbShops.length}
+          filterCounts={filterCounts}
         />
 
         {/* Center Main Stage */}
@@ -255,7 +324,7 @@ export default function SupplierDashboardPage() {
           ) : (
             <CdnxCenterStage
               routeName={activeRouteName}
-              shopsDue={filteredTodayItems}
+              displayList={displayList}
               allShopsInRoute={shopsInCurrentRoute}
               completedShopIds={completedShopIds}
               onSelectShopForLog={handleSelectShopForLog}
@@ -264,8 +333,15 @@ export default function SupplierDashboardPage() {
               onOpenLedger={() => setActiveTab("ledger")}
               selectedShopId={slipShop?.id}
               activeSegment={activeSegment}
-              onSegmentChange={setActiveSegment}
-              onFilterRemindersOnly={() => setActiveSubFilter("reminders")}
+              onSegmentChange={(seg) => {
+                setActiveSegment(seg);
+                setActiveSubFilter("all");
+              }}
+              activeSubFilter={activeSubFilter}
+              onSubFilterChange={setActiveSubFilter}
+              pendingDueCount={filterCounts.dues}
+              totalDueAmount={routeTotalDue}
+              remindersCount={filterCounts.reminders}
             />
           )}
         </main>
@@ -283,15 +359,15 @@ export default function SupplierDashboardPage() {
               nextShopName={nextShopInSequence?.name}
             />
           ) : (
-            <div className="h-full bg-[#13141C] border-l border-white/[0.08] p-6 flex flex-col items-center justify-center text-center space-y-4">
-              <div className="w-16 h-16 rounded-full bg-[#181924] border border-white/[0.06] flex items-center justify-center text-zinc-500">
+            <div className="h-full bg-white dark:bg-[#13141C] border-l border-black/[0.08] dark:border-white/[0.08] p-6 flex flex-col items-center justify-center text-center space-y-4 transition-colors">
+              <div className="w-16 h-16 rounded-full bg-zinc-100 dark:bg-[#181924] border border-black/[0.06] dark:border-white/[0.06] flex items-center justify-center text-zinc-500">
                 <span className="text-2xl font-mono text-[#D4F638]">🚚</span>
               </div>
-              <h4 className="text-base font-bold text-white tracking-tight">
+              <h4 className="text-base font-bold text-zinc-950 dark:text-white tracking-tight">
                 Walk-to-Car Quick Logger
               </h4>
-              <p className="text-xs text-zinc-400 max-w-xs leading-relaxed">
-                Tap <span className="text-[#D4F638] font-bold">"Log Visit &amp; Set Reminder"</span> on any store while walking back to your vehicle to record crates, dues, and scheduled reminders.
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-xs leading-relaxed">
+                Tap <span className="text-emerald-600 dark:text-[#D4F638] font-bold">"Log Visit &amp; Set Reminder"</span> on any store while walking back to your vehicle to record crates, dues, and scheduled reminders.
               </p>
             </div>
           )}

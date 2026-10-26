@@ -13,6 +13,14 @@ export async function seedDemoData() {
   yesterday.setDate(yesterday.getDate() - 1);
   const yesterdayStr = formatDateOnly(yesterday);
 
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowStr = formatDateOnly(tomorrow);
+
+  const inTwoDays = new Date(now);
+  inTwoDays.setDate(inTwoDays.getDate() + 2);
+  const inTwoDaysStr = formatDateOnly(inTwoDays);
+
   const threeDaysAgo = new Date(now);
   threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
   const threeDaysAgoStr = formatDateOnly(threeDaysAgo);
@@ -151,8 +159,8 @@ export async function seedDemoData() {
     sort_order: 3,
     balance_due: 0,
     is_archived: false,
-    reminder_date: null,
-    reminder_note: null,
+    reminder_date: tomorrowStr,
+    reminder_note: "Bring 3 cases Parle-G before 9 AM school rush",
     created_at: now.toISOString(),
     updated_at: now.toISOString(),
   };
@@ -171,8 +179,8 @@ export async function seedDemoData() {
     sort_order: 4,
     balance_due: 2100.0,
     is_archived: false,
-    reminder_date: null,
-    reminder_note: null,
+    reminder_date: inTwoDaysStr,
+    reminder_note: "Check Frooti crates and settle weekly bill",
     created_at: now.toISOString(),
     updated_at: now.toISOString(),
   };
@@ -325,4 +333,21 @@ export async function seedDemoData() {
       created_at: now.toISOString(),
     },
   ]);
+
+  // Seed 1 completed delivery for today so "Completed Stops" has verified data
+  await db.deliveries.put({
+    id: "del-seed-completed-1",
+    client_id: "del-seed-completed-1",
+    organisation_id: demoOrgId,
+    shop_id: s5.id,
+    product_id: p2.id,
+    qty: 3,
+    delivered_at: now.toISOString(),
+    created_at: now.toISOString(),
+    delivered_by: "demo-supplier",
+    notes: "Regular morning replenishment",
+    stock_feedback: "fine",
+    skip_reason: null,
+    synced: true,
+  });
 }

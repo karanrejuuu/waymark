@@ -4,15 +4,18 @@ import React, { useState } from "react";
 import {
   IndianRupee,
   Search,
-  ArrowUpRight,
+  Plus,
   ArrowDownLeft,
-  Calendar,
+  ArrowUpRight,
   CheckCircle2,
-  Clock,
+  AlertCircle,
+  Truck,
+  Phone,
   Store,
-  Filter,
+  Clock,
 } from "lucide-react";
 import { LocalShop } from "@/lib/db/dexie";
+import { db } from "@/lib/db/dexie";
 import { recordPayment } from "@/lib/actions/paymentActions";
 
 interface CdnxLedgerViewProps {
@@ -34,59 +37,67 @@ export const CdnxLedgerView: React.FC<CdnxLedgerViewProps> = ({
   const [quickAmount, setQuickAmount] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Total outstanding dues
   const totalDues = shops.reduce((sum, s) => sum + (s.balance_due || 0), 0);
   const shopsWithDues = shops.filter((s) => (s.balance_due || 0) > 0);
 
-  const filteredShops = shops.filter((s) => {
-    const matchesSearch =
-      s.name.toLowerCase().includes(search.toLowerCase()) ||
-      (s.contact && s.contact.includes(search)) ||
-      (s.notes && s.notes.toLowerCase().includes(search.toLowerCase()));
-
-    if (!matchesSearch) return false;
-    if (filterType === "dues_only") return (s.balance_due || 0) > 0;
-    if (filterType === "cleared") return (s.balance_due || 0) <= 0;
-    return true;
-  });
+  // Filtered shops
+  const filteredShops = shops
+    .filter((s) => {
+      if (filterType === "dues_only") return (s.balance_due || 0) > 0;
+      if (filterType === "cleared") return (s.balance_due || 0) <= 0;
+      return true;
+    })
+    .filter((s) => {
+      if (!search.trim()) return true;
+      const q = search.toLowerCase();
+      return (
+        s.name.toLowerCase().includes(q) ||
+        (s.contact && s.contact.includes(q)) ||
+        (s.notes && s.notes.toLowerCase().includes(q))
+      );
+    })
+    .sort((a, b) => (b.balance_due || 0) - (a.balance_due || 0));
 
   const handleQuickPaymentSubmit = async () => {
     if (!selectedShop || !quickAmount) return;
-    const num = parseFloat(quickAmount);
-    if (isNaN(num) || num <= 0) return;
+    const amount = parseFloat(quickAmount);
+    if (isNaN(amount) || amount <= 0) return;
 
     setIsSubmitting(true);
     try {
       await recordPayment({
         shopId: selectedShop.id,
-        amount: num,
+        amount,
         paymentMode: "cash",
-        notes: "Direct ledger collection",
+        collectedBy: "demo-supplier",
+        notes: `Quick khata collection in ${routeName}`,
       });
       setSelectedShop(null);
       setQuickAmount("");
       onRefresh();
     } catch (err) {
-      console.error(err);
-      alert("Error recording payment");
+      console.error("Payment recording failed:", err);
+      alert("Failed to record payment. Please retry.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in">
-      {/* Title (Matching Image 2: "Your wallet" -> "Your ledger") */}
+    <div className="space-y-6 animate-in fade-in pb-16 text-zinc-950 dark:text-white transition-colors duration-200">
+      {/* Header */}
       <div>
-        <h1 className="text-3xl font-extrabold text-white tracking-tight">
-          Your <span className="text-zinc-500 font-normal">ledger</span>
+        <h1 className="text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          Your <span className="text-zinc-500 dark:text-zinc-500 font-normal">ledger</span>
         </h1>
-        <p className="text-xs text-zinc-400 mt-1">
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
           {routeName} Corridor · {shopsWithDues.length} stores with pending credit balances
         </p>
       </div>
 
-      {/* Main Indigo Gradient Balance Card (Matching Image 2 CDNX Wallet Card) */}
-      <div className="rounded-3xl p-6 bg-gradient-to-r from-[#1C1938] via-[#16172B] to-[#10111F] border border-purple-500/20 shadow-2xl relative overflow-hidden">
+      {/* Main Indigo Gradient Balance Card */}
+      <div className="rounded-3xl p-6 bg-gradient-to-r from-[#1C1938] via-[#16172B] to-[#10111F] border border-purple-500/20 shadow-2xl relative overflow-hidden text-white">
         <div className="absolute top-0 right-0 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="flex items-center justify-between mb-4">
@@ -145,20 +156,20 @@ export const CdnxLedgerView: React.FC<CdnxLedgerViewProps> = ({
 
       {/* Quick Collection Modal / Drawer if shop is selected */}
       {selectedShop && (
-        <div className="p-5 rounded-3xl bg-[#161722] border border-[#D4F638]/40 shadow-xl space-y-4 animate-in fade-in">
+        <div className="p-5 rounded-3xl bg-zinc-50 dark:bg-[#161722] border border-purple-500/40 dark:border-[#D4F638]/40 shadow-xl space-y-4 animate-in fade-in">
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#D4F638]">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-purple-700 dark:text-[#D4F638]">
                 Log Payment On The Go
               </span>
-              <h4 className="text-base font-bold text-white mt-0.5">{selectedShop.name}</h4>
-              <p className="text-xs text-zinc-400">
+              <h4 className="text-base font-bold text-zinc-950 dark:text-white mt-0.5">{selectedShop.name}</h4>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
                 Outstanding: ₹{selectedShop.balance_due.toLocaleString("en-IN")}
               </p>
             </div>
             <button
               onClick={() => setSelectedShop(null)}
-              className="text-zinc-400 hover:text-white text-xs font-mono"
+              className="text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-white text-xs font-mono"
             >
               Cancel
             </button>
@@ -171,7 +182,7 @@ export const CdnxLedgerView: React.FC<CdnxLedgerViewProps> = ({
                 key={idx}
                 type="button"
                 onClick={() => setQuickAmount(amt)}
-                className="py-2 px-2 bg-[#232532] hover:bg-[#2C2E3E] text-white font-mono font-bold rounded-xl border border-white/[0.06] text-center transition-all active:scale-95 text-xs"
+                className="py-2 px-2 bg-white dark:bg-[#232532] hover:bg-zinc-100 dark:hover:bg-[#2C2E3E] text-zinc-900 dark:text-white font-mono font-bold rounded-xl border border-black/[0.08] dark:border-white/[0.06] text-center transition-all active:scale-95 text-xs shadow-sm"
               >
                 {idx === 3 ? `Full ₹${amt}` : `+ ₹${amt}`}
               </button>
@@ -179,14 +190,14 @@ export const CdnxLedgerView: React.FC<CdnxLedgerViewProps> = ({
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="flex-1 flex items-center bg-[#13141C] border border-white/[0.1] rounded-xl px-3 py-2">
+            <div className="flex-1 flex items-center bg-white dark:bg-[#13141C] border border-black/[0.1] dark:border-white/[0.1] rounded-xl px-3 py-2 shadow-sm">
               <span className="text-zinc-500 font-mono mr-1">₹</span>
               <input
                 type="number"
                 value={quickAmount}
                 onChange={(e) => setQuickAmount(e.target.value)}
                 placeholder="Amount collected"
-                className="w-full bg-transparent text-white font-mono font-bold focus:outline-none text-sm"
+                className="w-full bg-transparent text-zinc-950 dark:text-white font-mono font-bold focus:outline-none text-sm"
               />
             </div>
             <button
@@ -205,19 +216,19 @@ export const CdnxLedgerView: React.FC<CdnxLedgerViewProps> = ({
       <div className="space-y-4">
         {/* Filter & Search Bar */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-          <div className="flex items-center bg-[#13141C] border border-white/[0.08] rounded-2xl px-3 py-2 flex-1 max-w-sm">
-            <Search size={15} className="text-zinc-500 mr-2" />
+          <div className="flex items-center bg-white dark:bg-[#13141C] border border-black/[0.08] dark:border-white/[0.08] rounded-2xl px-3 py-2 flex-1 max-w-sm shadow-sm">
+            <Search size={15} className="text-zinc-400 dark:text-zinc-500 mr-2" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search store name, contact..."
-              className="w-full bg-transparent text-white placeholder:text-zinc-600 focus:outline-none text-xs"
+              className="w-full bg-transparent text-zinc-950 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none text-xs"
             />
           </div>
 
           {/* Segmented Filter Pills */}
-          <div className="flex items-center gap-1.5 p-1 bg-[#13141C] border border-white/[0.08] rounded-2xl">
+          <div className="flex items-center gap-1.5 p-1 bg-zinc-100 dark:bg-[#13141C] border border-black/[0.06] dark:border-white/[0.08] rounded-2xl text-xs">
             {[
               { id: "dues_only", label: "Pending Dues" },
               { id: "cleared", label: "Cleared" },
@@ -230,8 +241,8 @@ export const CdnxLedgerView: React.FC<CdnxLedgerViewProps> = ({
                   onClick={() => setFilterType(tab.id as any)}
                   className={`px-3.5 py-1.5 rounded-xl font-mono text-xs font-bold transition-all ${
                     isSelected
-                      ? "bg-[#D4F638] text-[#0A0D02]"
-                      : "text-zinc-400 hover:text-white"
+                      ? "bg-[#D4F638] text-[#0A0D02] shadow-sm"
+                      : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white"
                   }`}
                 >
                   {tab.label}
@@ -244,52 +255,54 @@ export const CdnxLedgerView: React.FC<CdnxLedgerViewProps> = ({
         {/* Store Rows */}
         <div className="space-y-2.5">
           {filteredShops.length === 0 ? (
-            <div className="p-8 text-center bg-[#13141C] border border-white/[0.06] rounded-3xl text-zinc-500 text-xs font-mono">
+            <div className="p-8 text-center bg-white dark:bg-[#13141C] border border-black/[0.06] dark:border-white/[0.06] rounded-3xl text-zinc-500 text-xs font-mono shadow-sm">
               No matching stores in this ledger view.
             </div>
           ) : (
             filteredShops.map((shop) => (
               <div
                 key={shop.id}
-                className="p-4 bg-[#13141C] hover:bg-[#161724] border border-white/[0.06] rounded-2xl flex items-center justify-between gap-4 transition-all"
+                className="p-4 bg-white dark:bg-[#13141C] hover:bg-zinc-50 dark:hover:bg-[#161724] border border-black/[0.06] dark:border-white/[0.06] rounded-2xl flex items-center justify-between gap-4 transition-all shadow-sm"
               >
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <h4 className="font-bold text-white text-sm truncate">{shop.name}</h4>
+                    <h4 className="font-bold text-zinc-950 dark:text-white text-sm truncate">{shop.name}</h4>
                     {shop.is_urgent && (
-                      <span className="px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-400 font-mono text-[10px] font-bold">
+                      <span className="px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-600 dark:text-rose-400 font-mono text-[10px] font-bold">
                         Urgent
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-zinc-400 truncate mt-0.5">
-                    {shop.notes || "Main road counter"} · {shop.contact || "No phone"}
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 truncate mt-0.5">
+                    {shop.notes || "Main counter"} · {shop.contact || "No contact"}
                   </p>
                 </div>
 
                 <div className="flex items-center gap-3 flex-shrink-0">
                   <div className="text-right">
-                    <div
-                      className={`font-mono font-bold text-sm ${
-                        (shop.balance_due || 0) > 0 ? "text-amber-400" : "text-emerald-400"
-                      }`}
-                    >
+                    <div className="font-mono font-bold text-sm text-zinc-950 dark:text-white">
                       ₹{(shop.balance_due || 0).toLocaleString("en-IN")}
                     </div>
                     <span className="text-[10px] font-mono text-zinc-500">
-                      {(shop.balance_due || 0) > 0 ? "Outstanding" : "Settled"}
+                      {(shop.balance_due || 0) > 0 ? "Pending Due" : "Settled"}
                     </span>
                   </div>
 
-                  <button
-                    onClick={() => {
-                      setSelectedShop(shop);
-                      setQuickAmount(String(shop.balance_due || 500));
-                    }}
-                    className="py-1.5 px-3 bg-[#232532] hover:bg-[#2D2F40] text-[#D4F638] border border-white/[0.08] font-mono font-bold text-xs rounded-xl transition-all active:scale-95"
-                  >
-                    Collect
-                  </button>
+                  {(shop.balance_due || 0) > 0 ? (
+                    <button
+                      onClick={() => {
+                        setSelectedShop(shop);
+                        setQuickAmount(String(shop.balance_due));
+                      }}
+                      className="px-3 py-1.5 bg-zinc-100 hover:bg-[#D4F638] dark:bg-[#1E202E] dark:hover:bg-[#D4F638] text-zinc-800 dark:text-zinc-300 hover:text-[#0A0D02] dark:hover:text-[#0A0D02] border border-black/[0.08] dark:border-white/[0.08] rounded-xl text-xs font-mono font-bold transition-all"
+                    >
+                      Clear
+                    </button>
+                  ) : (
+                    <span className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                      <CheckCircle2 size={16} />
+                    </span>
+                  )}
                 </div>
               </div>
             ))
