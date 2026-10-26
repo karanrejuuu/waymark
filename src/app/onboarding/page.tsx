@@ -2,918 +2,760 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import dynamic from "next/dynamic";
-import { db } from "@/lib/db/dexie";
-import { enqueueWrite } from "@/lib/db/sync";
-import { seedDemoData } from "@/lib/db/seedDemoData";
-import { ShopImportHub } from "@/components/onboarding/ShopImportHub";
 import {
   Package,
-  Layers,
-  TrendingDown,
-  Store,
-  CreditCard,
-  Building2,
-  Trophy,
+  Compass,
+  Calendar,
+  Users,
+  CheckCircle2,
   ArrowRight,
   ArrowLeft,
-  Check,
-  CheckCircle2,
+  Plus,
+  Trash2,
   Sparkles,
-  Volume2,
-  VolumeX,
-  MapPin,
+  ShieldCheck,
+  Sun,
+  Moon,
   Truck,
-  IndianRupee,
-  FileSpreadsheet,
+  Building2,
+  Store,
+  Layers,
+  Clock,
 } from "lucide-react";
+import { db, LocalRegion, LocalProduct } from "@/lib/db/dexie";
+import { enqueueWrite } from "@/lib/db/sync";
+import { seedDemoData } from "@/lib/db/seedDemoData";
 import { useAuth } from "@/context/AuthContext";
+import { useTheme } from "@/context/ThemeContext";
 
-const ShopMap = dynamic(() => import("@/components/shop/ShopMap"), {
-  ssr: false,
-  loading: () => (
-    <div className="h-56 bg-[#1E293B] rounded-xl border border-white/[0.08] flex items-center justify-center text-xs text-zinc-500 font-mono">
-      Loading interactive godown map...
-    </div>
-  ),
-});
+interface ConfiguredRoute {
+  id: string;
+  name: string;
+  activeDays: number[]; // 0 = Sun, 1 = Mon, 2 = Tue, 3 = Wed, 4 = Thu, 5 = Fri, 6 = Sat
+}
+
+interface ConfiguredProduct {
+  id: string;
+  name: string;
+  unit: string;
+  defaultQty: number;
+  intervalDays: number;
+}
+
+const DAYS_OF_WEEK = [
+  { day: 0, label: "Sun" },
+  { day: 1, label: "Mon" },
+  { day: 2, label: "Tue" },
+  { day: 3, label: "Wed" },
+  { day: 4, label: "Thu" },
+  { day: 5, label: "Fri" },
+  { day: 6, label: "Sat" },
+];
 
 export default function OnboardingExperiencePage() {
   const router = useRouter();
-  const { user } = useAuth();
-  const [currentStep, setCurrentStep] = useState<number>(1);
-  const totalSteps = 7;
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const { user, setOnboardingCompleted } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
-  // Audio synthesizer for Duolingo-style feedback
-  const playTactileSound = (type: "tap" | "step" | "victory") => {
-    if (!soundEnabled || typeof window === "undefined") return;
+  const [currentStep, setCurrentStep] = useState<number>(1);
+  const totalSteps = 5;
+
+  // ── Step 1: Products ──
+  const [products, setProducts] = useState<ConfiguredProduct[]>([
+    { id: "p-parle", name: "Parle-G Glucose 100g", unit: "Case (24 pkts)", defaultQty: 3, intervalDays: 5 },
+    { id: "p-frooti", name: "Frooti Mango 200ml", unit: "Crate (30 tetra)", defaultQty: 2, intervalDays: 7 },
+    { id: "p-maggi", name: "Maggi 2-Minute Noodles", unit: "Box (48 pkts)", defaultQty: 3, intervalDays: 6 },
+    { id: "p-tea", name: "Tata Tea Gold 250g", unit: "Pack (12 boxes)", defaultQty: 2, intervalDays: 10 },
+  ]);
+  const [newProductName, setNewProductName] = useState("");
+  const [newProductUnit, setNewProductUnit] = useState("Crates");
+  const [newProductInterval, setNewProductInterval] = useState(7);
+
+  // ── Step 2 & 3: Corridors & Schedules ──
+  const [routes, setRoutes] = useState<ConfiguredRoute[]>([
+    { id: "reg-fortkochi", name: "Fort Kochi Beat", activeDays: [1, 3, 5] }, // Mon, Wed, Fri
+    { id: "reg-mattancherry", name: "Mattancherry Beat", activeDays: [2, 4, 6] }, // Tue, Thu, Sat
+    { id: "reg-marinedrive", name: "Marine Drive Beat", activeDays: [1, 4] }, // Mon, Thu
+  ]);
+  const [newRouteName, setNewRouteName] = useState("");
+
+  // ── Step 4: Workers & Roles ──
+  const [workerCount, setWorkerCount] = useState<string>("3-5");
+  const [selectedRole, setSelectedRole] = useState<"admin" | "backoffice" | "driver">("admin");
+
+  // ── Step 5: Launch Mode ──
+  const [launchMode, setLaunchMode] = useState<"clean" | "sample">("clean");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Audio tactile sounds
+  const playTactile = (type: "tap" | "success") => {
+    if (typeof window === "undefined") return;
     try {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
       if (!AudioCtx) return;
       const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
 
       if (type === "tap") {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
         osc.type = "sine";
-        osc.frequency.setValueAtTime(580, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.08);
-        gain.gain.setValueAtTime(0.08, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+        osc.frequency.setValueAtTime(600, ctx.currentTime);
+        gain.gain.setValueAtTime(0.06, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
         osc.start();
-        osc.stop(ctx.currentTime + 0.08);
-      } else if (type === "step") {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
+        osc.stop(ctx.currentTime + 0.05);
+      } else {
         osc.type = "triangle";
         osc.frequency.setValueAtTime(520, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(780, ctx.currentTime + 0.12);
-        gain.gain.setValueAtTime(0.12, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
         osc.start();
-        osc.stop(ctx.currentTime + 0.12);
-      } else if (type === "victory") {
-        const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6 arpeggio
-        notes.forEach((freq, idx) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.type = "sine";
-          osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.08);
-          gain.gain.setValueAtTime(0.15, ctx.currentTime + idx * 0.08);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.08 + 0.3);
-          osc.start(ctx.currentTime + idx * 0.08);
-          osc.stop(ctx.currentTime + idx * 0.08 + 0.3);
-        });
+        osc.stop(ctx.currentTime + 0.1);
       }
     } catch {}
   };
 
-  // ── USER CHOICES & STATE ──
-  // Step 1: Categories
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([
-    "Biscuits, Bakery & Rusks",
-    "Cold Drinks & Juices",
-  ]);
+  // Add Product
+  const handleAddProduct = () => {
+    if (!newProductName.trim()) return;
+    playTactile("tap");
+    const newP: ConfiguredProduct = {
+      id: `p-${Date.now()}`,
+      name: newProductName.trim(),
+      unit: newProductUnit,
+      defaultQty: 2,
+      intervalDays: newProductInterval,
+    };
+    setProducts([...products, newP]);
+    setNewProductName("");
+  };
 
-  // Step 2: Current Dispatch Method
-  const [currentMethod, setCurrentMethod] = useState<string>("paper_registers");
-
-  // Step 3: Biggest Leak to Eliminate
-  const [primaryLeak, setPrimaryLeak] = useState<string>("uncollected_dues");
-
-  // Step 4: Scale & Retailer Footprint
-  const [scaleCount, setScaleCount] = useState<string>("scale_50_150");
-
-  // Step 5: Doorstep Payment Terms
-  const [paymentTerms, setPaymentTerms] = useState<string[]>([
-    "Cash on Delivery (COD)",
-    "Bill-to-Bill Clearance",
-  ]);
-
-  // Step 6: Agency Setup & Fleet
-  const [agencyName, setAgencyName] = useState("Apex FMCG Distributors");
-  const [operatorName, setOwnerName] = useState("");
-  const [primaryRoute, setPrimaryRoute] = useState("Main Mandi Beat");
-  const [vehicleType, setVehicleType] = useState("Tata Ace (Chhota Hathi)");
-  const [lat, setLat] = useState<number>(19.076);
-  const [lng, setLng] = useState<number>(72.8777);
-
-  // Step 7: Launch Mode
-  const [launchMode, setLaunchMode] = useState<"sample" | "import">("sample");
-  const [isLaunching, setIsLaunching] = useState(false);
-
-  useEffect(() => {
-    if (user?.user_metadata?.name) {
-      setOwnerName(user.user_metadata.name);
-    }
-    if (user?.user_metadata?.business_name) {
-      setAgencyName(user.user_metadata.business_name);
-    }
-  }, [user]);
-
-  const toggleCategory = (cat: string) => {
-    playTactileSound("tap");
-    if (selectedCategories.includes(cat)) {
-      if (selectedCategories.length > 1) {
-        setSelectedCategories(selectedCategories.filter((c) => c !== cat));
-      }
-    } else {
-      setSelectedCategories([...selectedCategories, cat]);
+  const handleRemoveProduct = (id: string) => {
+    playTactile("tap");
+    if (products.length > 1) {
+      setProducts(products.filter((p) => p.id !== id));
     }
   };
 
-  const togglePaymentTerm = (term: string) => {
-    playTactileSound("tap");
-    if (paymentTerms.includes(term)) {
-      if (paymentTerms.length > 1) {
-        setPaymentTerms(paymentTerms.filter((t) => t !== term));
-      }
-    } else {
-      setPaymentTerms([...paymentTerms, term]);
+  // Add Route
+  const handleAddRoute = () => {
+    if (!newRouteName.trim()) return;
+    playTactile("tap");
+    const newR: ConfiguredRoute = {
+      id: `reg-${Date.now()}`,
+      name: newRouteName.trim(),
+      activeDays: [1, 3, 5],
+    };
+    setRoutes([...routes, newR]);
+    setNewRouteName("");
+  };
+
+  const handleRemoveRoute = (id: string) => {
+    playTactile("tap");
+    if (routes.length > 1) {
+      setRoutes(routes.filter((r) => r.id !== id));
     }
   };
 
-  const handleNextStep = () => {
-    playTactileSound("step");
-    if (currentStep === 6) {
-      playTactileSound("victory");
-    }
-    setCurrentStep((prev) => Math.min(totalSteps, prev + 1));
+  // Toggle Day on Route
+  const toggleRouteDay = (routeId: string, dayNum: number) => {
+    playTactile("tap");
+    setRoutes((prev) =>
+      prev.map((r) => {
+        if (r.id !== routeId) return r;
+        const exists = r.activeDays.includes(dayNum);
+        const updated = exists
+          ? r.activeDays.filter((d) => d !== dayNum)
+          : [...r.activeDays, dayNum].sort((a, b) => a - b);
+        return { ...r, activeDays: updated };
+      })
+    );
   };
 
-  const handlePrevStep = () => {
-    playTactileSound("tap");
-    setCurrentStep((prev) => Math.max(1, prev - 1));
-  };
+  // Complete and save to Dexie database
+  const handleCompleteOnboarding = async (chosenLaunchMode: "clean" | "sample") => {
+    setIsSubmitting(true);
+    playTactile("success");
 
-  // Launch handler: persist choices to Dexie and transition to Cockpit
-  const handleCompleteOnboarding = async (mode: "sample" | "import") => {
-    setIsLaunching(true);
-    const orgId = "org-waymark-demo";
+    const orgId = "org-waymark-primary";
     const nowIso = new Date().toISOString();
 
     try {
-      // 1. Save organisation
-      await enqueueWrite("organisations", "upsert", {
+      // 1. Save or update Organisation
+      await db.organisations.put({
         id: orgId,
-        name: agencyName.trim() || "FMCG Distributors",
+        name: user?.user_metadata?.business_name || "Apex FMCG Distributors",
         currency: "INR",
         created_at: nowIso,
       });
 
-      // 2. Save central godown
-      await enqueueWrite("godowns", "upsert", {
-        id: "godown-1",
+      // 2. Save configured Regions with active_days
+      const regionRecords: LocalRegion[] = routes.map((r, idx) => ({
+        id: r.id,
         organisation_id: orgId,
-        owner_id: "demo-user",
-        lat,
-        lng,
-        vehicle_mileage_kmpl: 20.0,
-        petrol_price_per_l: 104.5,
+        owner_id: user?.id || "demo-user",
+        name: r.name,
+        sort_order: idx + 1,
+        active_days: r.activeDays,
         created_at: nowIso,
-      });
+      }));
+      await db.regions.bulkPut(regionRecords);
 
-      // 3. Save primary region
-      await enqueueWrite("regions", "upsert", {
-        id: "reg-primary",
+      // 3. Save configured Products
+      const productRecords: LocalProduct[] = products.map((p) => ({
+        id: p.id,
         organisation_id: orgId,
-        owner_id: "demo-user",
-        name: primaryRoute.trim() || "Main Route Beat",
-        sort_order: 1,
+        owner_id: user?.id || "demo-user",
+        name: p.name,
+        default_interval: p.intervalDays,
         created_at: nowIso,
-      });
+      }));
+      await db.products.bulkPut(productRecords);
 
-      // 4. Save representative products based on chosen categories
-      const demoProducts = [
-        { name: "Parle-G 100g (Case of 24)", interval: 5 },
-        { name: "Frooti Mango 200ml (Crate of 30)", interval: 7 },
-        { name: "Maggi 2-Minute (Box of 48)", interval: 6 },
-        { name: "Tata Tea Gold 250g (Pack of 12)", interval: 10 },
-      ];
-      for (let i = 0; i < demoProducts.length; i++) {
-        await enqueueWrite("products", "upsert", {
-          id: `p-${i + 1}`,
-          organisation_id: orgId,
-          owner_id: "demo-user",
-          name: demoProducts[i].name,
-          default_interval: demoProducts[i].interval,
+      // 4. Update Profile
+      const userRole: "owner" | "staff" | "delivery" =
+        selectedRole === "driver" ? "delivery" : selectedRole === "backoffice" ? "staff" : "owner";
+
+      if (user?.id) {
+        await db.profiles.put({
+          id: user.id,
+          name: user.user_metadata?.name || "Proprietor",
+          email: user.email || "",
+          phone: null,
+          role: userRole,
+          push_subscription: null,
+          onboarding_completed: true,
+          business_name: user.user_metadata?.business_name || "Apex FMCG Distributors",
           created_at: nowIso,
         });
       }
 
-      // 5. If user chose Sample Route, pre-seed sample kiranas!
-      if (mode === "sample") {
+      // 5. If user chose Sample data, seed sample kiranas
+      if (chosenLaunchMode === "sample") {
         await seedDemoData();
       }
 
+      // Mark onboarding completed in AuthContext & localStorage
+      await setOnboardingCompleted(true);
+
       router.push("/");
     } catch (err) {
-      console.error("Failed to complete onboarding:", err);
-      setIsLaunching(false);
+      console.error("Failed to save onboarding configuration:", err);
+      setIsSubmitting(false);
     }
   };
 
-  const stepTitles = [
-    "Product Categories",
-    "Current Routine",
-    "The #1 Leak",
-    "Market Scale",
-    "Payment Terms",
-    "Agency Fleet & Godown",
-    "Launch Cockpit",
-  ];
+  // Fast skip directly to cockpit
+  const handleSkip = async () => {
+    await handleCompleteOnboarding("clean");
+  };
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-zinc-100 py-8 px-4 flex flex-col justify-between">
-      <div className="max-w-2xl mx-auto w-full">
-        {/* Top Header & Gamified Progress Indicator */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2.5">
-              <span className="w-8 h-8 rounded-xl bg-[#2563EB] text-white flex items-center justify-center font-bold text-sm font-mono shadow-sm">
-                W
-              </span>
-              <div>
-                <span className="font-bold text-sm tracking-tight text-white block">
-                  Waymark Onboarding
-                </span>
-                <span className="text-xs font-mono text-zinc-400">
-                  Level {currentStep} of {totalSteps}: {stepTitles[currentStep - 1]}
-                </span>
-              </div>
-            </div>
+    <div className="min-h-screen bg-[#F4F5F8] dark:bg-[#0C0D12] text-zinc-950 dark:text-white flex flex-col font-sans selection:bg-[#D4F638] selection:text-[#0A0D02] transition-colors duration-200">
+      {/* Top Header */}
+      <header className="px-4 sm:px-8 py-4 flex items-center justify-between border-b border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#0C0D12]/80 backdrop-blur-md sticky top-0 z-40">
+        <div className="flex items-center gap-3">
+          <span className="text-lg font-black tracking-tight text-zinc-950 dark:text-white font-sans">
+            WAYMARK
+          </span>
+          <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-zinc-100 dark:bg-[#181924] border border-black/[0.06] dark:border-white/[0.06] text-zinc-500">
+            Agency Setup Wizard
+          </span>
+        </div>
 
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setSoundEnabled(!soundEnabled)}
-                title={soundEnabled ? "Mute audio cues" : "Enable tactile audio cues"}
-                className="p-1.5 rounded-lg text-zinc-400 hover:text-white bg-[#1E293B] border border-white/[0.06] transition-colors"
-              >
-                {soundEnabled ? <Volume2 size={14} className="text-[#3B82F6]" /> : <VolumeX size={14} />}
-              </button>
-              <button
-                type="button"
-                onClick={() => handleCompleteOnboarding("sample")}
-                className="text-xs font-mono text-zinc-400 hover:text-[#3B82F6] px-2 py-1 rounded transition-colors"
-              >
-                Skip to Day 1 →
-              </button>
-            </div>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label="Toggle Theme"
+            className="w-9 h-9 rounded-full bg-zinc-100 dark:bg-[#181924] hover:bg-zinc-200 dark:hover:bg-[#202230] border border-black/[0.08] dark:border-white/[0.08] flex items-center justify-center text-zinc-700 dark:text-zinc-300 transition-all"
+          >
+            {theme === "dark" ? <Sun size={15} className="text-[#D4F638]" /> : <Moon size={15} className="text-indigo-600" />}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleSkip}
+            className="text-xs font-mono font-bold text-zinc-500 hover:text-zinc-950 dark:hover:text-white px-3 py-1.5 rounded-full hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-all"
+          >
+            Skip to Cockpit &rarr;
+          </button>
+        </div>
+      </header>
+
+      {/* Progress Bar */}
+      <div className="w-full bg-zinc-200 dark:bg-[#181924] h-1.5">
+        <div
+          className="bg-[#D4F638] h-1.5 transition-all duration-300"
+          style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+        />
+      </div>
+
+      {/* Main Wizard Area */}
+      <main className="flex-1 max-w-3xl w-full mx-auto p-4 sm:p-8 space-y-8">
+        {/* Step Indicator Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-1 rounded-full bg-purple-100 dark:bg-purple-950/40 border border-purple-300 dark:border-purple-500/30 font-mono text-[11px] font-bold text-purple-900 dark:text-[#D4F638]">
+              STEP {currentStep} OF {totalSteps}
+            </span>
+            <span className="text-xs text-zinc-400 font-mono">
+              {currentStep === 1 && "Product Catalog & Crate Units"}
+              {currentStep === 2 && "Delivery Corridors & Trading Beats"}
+              {currentStep === 3 && "Beat Schedule (Days Clicker)"}
+              {currentStep === 4 && "Fleet Size & Team Roles"}
+              {currentStep === 5 && "Launch Mode Decision"}
+            </span>
           </div>
 
-          {/* Duolingo Progress Bar */}
-          <div className="w-full h-2 bg-[#1E293B] rounded-full overflow-hidden border border-white/[0.04]">
-            <div
-              className="h-full bg-[#2563EB] transition-all duration-300 ease-out"
-              style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-            />
+          <div className="text-xs font-mono text-zinc-500">
+            {Math.round((currentStep / totalSteps) * 100)}% Complete
           </div>
         </div>
 
-        {/* ── QUESTION CONTAINER ── */}
-        <div className="space-y-6">
-          {/* STEP 1: FMCG Product Categories */}
-          {currentStep === 1 && (
-            <div className="space-y-6">
-              <div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#2563EB]/15 border border-[#3B82F6]/30 text-[#3B82F6] text-xs font-mono font-bold uppercase tracking-wider mb-2">
-                  <Sparkles size={11} />
-                  <span>Category Intelligence</span>
-                </div>
-                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-                  What product lines does your agency distribute?
-                </h2>
-                <p className="text-xs text-zinc-400 mt-1">
-                  Waymark calculates replenishment tempos and shelf out-of-stock risk based on your categories.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {[
-                  {
-                    name: "Biscuits, Bakery & Rusks",
-                    desc: "Parle, Britannia, Sunfeast · 4 to 6 day velocity",
-                  },
-                  {
-                    name: "Cold Drinks & Juices",
-                    desc: "Frooti, Maaza, Coke, Packaged Water · 3 to 5 day velocity",
-                  },
-                  {
-                    name: "Packaged Groceries & Spices",
-                    desc: "Fortune, Aashirvaad, Tata Salt, Spices · 7 to 10 day cycle",
-                  },
-                  {
-                    name: "Snacks, Namkeen & Confectionery",
-                    desc: "Balaji, Kurkure, Cadbury, Mints · 5 to 7 day cycle",
-                  },
-                  {
-                    name: "Soaps, Detergents & Personal Care",
-                    desc: "Lifebuoy, Wheel, Surf, Colgate · 10 to 14 day cycle",
-                  },
-                  {
-                    name: "Dairy, Butter & Milk Pouches",
-                    desc: "Amul, Mother Dairy, Ghee · Daily to 2-day cycle",
-                  },
-                ].map((cat) => {
-                  const isSelected = selectedCategories.includes(cat.name);
-                  return (
-                    <button
-                      key={cat.name}
-                      type="button"
-                      onClick={() => toggleCategory(cat.name)}
-                      className={`p-3.5 rounded-xl border text-left transition-all flex items-start justify-between gap-2.5 ${
-                        isSelected
-                          ? "bg-[#1E293B] border-[#2563EB] ring-1 ring-[#2563EB]"
-                          : "bg-[#1E293B]/40 border-white/[0.06] hover:border-white/[0.15]"
-                      }`}
-                    >
-                      <div>
-                        <div className="font-semibold text-xs text-zinc-100">{cat.name}</div>
-                        <div className="text-xs font-mono text-zinc-400 mt-0.5">{cat.desc}</div>
-                      </div>
-                      <div
-                        className={`w-5 h-5 rounded-full shrink-0 flex items-center justify-center border ${
-                          isSelected
-                            ? "bg-[#2563EB] text-white border-[#2563EB]"
-                            : "border-white/[0.1] bg-[#111827]"
-                        }`}
-                      >
-                        {isSelected && <Check size={12} strokeWidth={3} />}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Duolingo-style insight box */}
-              <div className="p-3.5 rounded-xl bg-[#1E293B] border border-white/[0.06] text-xs text-zinc-300 font-mono flex items-start gap-2.5">
-                <span className="text-[#3B82F6] font-bold shrink-0">Distributor Insight:</span>
-                <span>
-                  High turnover goods (biscuits & drinks) lose 18% volume when reorder calls depend on storekeeper memory. Waymark auto-schedules repeat drops before counters run dry.
-                </span>
-              </div>
+        {/* ── STEP 1: Product Catalog & Crates ── */}
+        {currentStep === 1 && (
+          <div className="space-y-6 animate-in fade-in">
+            <div className="space-y-2">
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                What products do your tempos supply?
+              </h2>
+              <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                Wholesale distribution relies on crate and case packaging. Set up your main products, packaging units, and standard replenishment turnaround cycle.
+              </p>
             </div>
-          )}
 
-          {/* STEP 2: Current Dispatch Routine */}
-          {currentStep === 2 && (
-            <div className="space-y-6">
-              <div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#2563EB]/15 border border-[#3B82F6]/30 text-[#3B82F6] text-xs font-mono font-bold uppercase tracking-wider mb-2">
-                  <Layers size={11} />
-                  <span>Routine Diagnostics</span>
-                </div>
-                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-                  How do your delivery boys track daily store stops right now?
-                </h2>
-                <p className="text-xs text-zinc-400 mt-1">
-                  Pick the method closest to your current daily operations.
-                </p>
-              </div>
-
-              <div className="space-y-2.5">
-                {[
-                  {
-                    id: "paper_registers",
-                    title: "Paper Registers & Hand-written Khata Diaries",
-                    subtitle: "I write shop orders in books; drivers tick off stops by hand",
-                    insight: "81% of wholesale agencies lose track of khata credit when paper diaries get damaged or lost. Waymark digitizes this completely offline.",
-                  },
-                  {
-                    id: "whatsapp_calls",
-                    title: "WhatsApp Messages & Phone Calls Mid-Morning",
-                    subtitle: "Retailers message me; I phone drivers to change tempo route on the road",
-                    insight: "WhatsApp messages lack stop sequencing. Delivery drivers zigzag across market streets, wasting fuel and arriving after shops shut.",
-                  },
-                  {
-                    id: "driver_memory",
-                    title: "Driver Habit & Memory",
-                    subtitle: "Driver knows the bazaar counters and stops wherever he feels is needed",
-                    insight: "When your driver falls sick or quits, your route knowledge vanishes. Waymark keeps route sequencing in your agency's permanent database.",
-                  },
-                  {
-                    id: "printed_tally",
-                    title: "Printed Excel / Tally Spreadsheets",
-                    subtitle: "Billing operator prints invoice sheets each morning",
-                    insight: "Static paper bills cannot handle doorstep returns, partial cash collection, or urgent restocking calls. Waymark handles live adjustments.",
-                  },
-                ].map((item) => {
-                  const isSelected = currentMethod === item.id;
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => {
-                        playTactileSound("tap");
-                        setCurrentMethod(item.id);
-                      }}
-                      className={`w-full p-4 rounded-xl border text-left transition-all flex items-start justify-between gap-3 ${
-                        isSelected
-                          ? "bg-[#1E293B] border-[#2563EB] ring-1 ring-[#2563EB]"
-                          : "bg-[#1E293B]/40 border-white/[0.06] hover:border-white/[0.15]"
-                      }`}
-                    >
-                      <div className="min-w-0">
-                        <div className="font-semibold text-xs sm:text-sm text-zinc-100">{item.title}</div>
-                        <div className="text-xs text-zinc-400 mt-0.5">{item.subtitle}</div>
-                        {isSelected && (
-                          <div className="mt-2 text-xs font-mono text-[#3B82F6] bg-[#2563EB]/15 p-2 rounded-lg border border-[#3B82F6]/25">
-                            {item.insight}
-                          </div>
-                        )}
-                      </div>
-                      <div
-                        className={`w-5 h-5 rounded-full shrink-0 flex items-center justify-center border mt-0.5 ${
-                          isSelected
-                            ? "bg-[#2563EB] text-white border-[#2563EB]"
-                            : "border-white/[0.1] bg-[#111827]"
-                        }`}
-                      >
-                        {isSelected && <Check size={12} strokeWidth={3} />}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* STEP 3: The #1 Operational Leak */}
-          {currentStep === 3 && (
-            <div className="space-y-6">
-              <div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#2563EB]/15 border border-[#3B82F6]/30 text-[#3B82F6] text-xs font-mono font-bold uppercase tracking-wider mb-2">
-                  <TrendingDown size={11} />
-                  <span>Cost Elimination</span>
-                </div>
-                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-                  What is the #1 leak you want to eliminate first?
-                </h2>
-                <p className="text-xs text-zinc-400 mt-1">
-                  Waymark will calibrate its home cockpit specifically around this priority.
-                </p>
-              </div>
-
-              <div className="space-y-2.5">
-                {[
-                  {
-                    id: "uncollected_dues",
-                    title: "Uncollected Khata Dues & Delayed Shop Cash",
-                    desc: "Retailers take fresh stock without settling previous invoices, tying up working capital.",
-                    solution: "Waymark Solution: Doorstep credit balance displayed before driver unloads single crate.",
-                  },
-                  {
-                    id: "shelf_dominance",
-                    title: "Competitors Stealing Your Counter Facing When Late",
-                    desc: "If our tempo arrives after 11 AM, competitor brand salesmen fill the empty rack space.",
-                    solution: "Waymark Solution: Automated tempo dispatch ensures early morning drops before rivals pitch.",
-                  },
-                  {
-                    id: "lifo_unloading",
-                    title: "Tempos Loaded in Wrong Sequence (Wasting 45+ Mins Daily)",
-                    desc: "Driver unpacks 30 crates in a crowded bazaar lane to find one box of biscuits.",
-                    solution: "Waymark Solution: Strict LIFO loading order places Stop #1 right at the tempo back door.",
-                  },
-                  {
-                    id: "missed_cycles",
-                    title: "Forgotten Reorders & Out-of-Stock Kirana Shelves",
-                    desc: "Storekeeper runs dry before we remember to visit, losing weekend sales.",
-                    solution: "Waymark Solution: Self-adjusting restock cycles recalculate automatically upon delivery.",
-                  },
-                ].map((leak) => {
-                  const isSelected = primaryLeak === leak.id;
-                  return (
-                    <button
-                      key={leak.id}
-                      type="button"
-                      onClick={() => {
-                        playTactileSound("tap");
-                        setPrimaryLeak(leak.id);
-                      }}
-                      className={`w-full p-4 rounded-xl border text-left transition-all flex items-start justify-between gap-3 ${
-                        isSelected
-                          ? "bg-[#1E293B] border-[#2563EB] ring-1 ring-[#2563EB]"
-                          : "bg-[#1E293B]/40 border-white/[0.06] hover:border-white/[0.15]"
-                      }`}
-                    >
-                      <div className="min-w-0">
-                        <div className="font-semibold text-xs sm:text-sm text-zinc-100">{leak.title}</div>
-                        <div className="text-xs text-zinc-400 mt-0.5">{leak.desc}</div>
-                        {isSelected && (
-                          <div className="mt-2 text-xs font-mono text-[#3B82F6] bg-[#2563EB]/15 p-2 rounded-lg border border-[#3B82F6]/25">
-                            {leak.solution}
-                          </div>
-                        )}
-                      </div>
-                      <div
-                        className={`w-5 h-5 rounded-full shrink-0 flex items-center justify-center border mt-0.5 ${
-                          isSelected
-                            ? "bg-[#2563EB] text-white border-[#2563EB]"
-                            : "border-white/[0.1] bg-[#111827]"
-                        }`}
-                      >
-                        {isSelected && <Check size={12} strokeWidth={3} />}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* STEP 4: Market Scale & Counter Footprint */}
-          {currentStep === 4 && (
-            <div className="space-y-6">
-              <div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#2563EB]/15 border border-[#3B82F6]/30 text-[#3B82F6] text-xs font-mono font-bold uppercase tracking-wider mb-2">
-                  <Store size={11} />
-                  <span>Market Footprint</span>
-                </div>
-                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-                  How many retail counters do you service?
-                </h2>
-                <p className="text-xs text-zinc-400 mt-1">
-                  Kirana stores, supermarkets, tea stalls, and baniya counters across your territory.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {[
-                  {
-                    id: "scale_15_50",
-                    range: "15 to 50 Retailers",
-                    desc: "Single tempo or bike round in compact neighborhood",
-                  },
-                  {
-                    id: "scale_50_150",
-                    range: "50 to 150 Retailers",
-                    desc: "Standard wholesale distribution circuit with weekly beats",
-                  },
-                  {
-                    id: "scale_150_350",
-                    range: "150 to 350 Retailers",
-                    desc: "Multi-tempo agency with dedicated sector routes",
-                  },
-                  {
-                    id: "scale_350_plus",
-                    range: "350+ Retailers",
-                    desc: "High volume regional wholesale depot servicing full mandi",
-                  },
-                ].map((scale) => {
-                  const isSelected = scaleCount === scale.id;
-                  return (
-                    <button
-                      key={scale.id}
-                      type="button"
-                      onClick={() => {
-                        playTactileSound("tap");
-                        setScaleCount(scale.id);
-                      }}
-                      className={`p-4 rounded-xl border text-left transition-all ${
-                        isSelected
-                          ? "bg-[#1E293B] border-[#2563EB] ring-1 ring-[#2563EB]"
-                          : "bg-[#1E293B]/40 border-white/[0.06] hover:border-white/[0.15]"
-                      }`}
-                    >
-                      <div className="font-bold text-sm text-zinc-100 mb-1">{scale.range}</div>
-                      <div className="text-xs text-zinc-400">{scale.desc}</div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-[#1E293B] border border-white/[0.06] text-xs text-zinc-300 font-mono">
-                Waymark is tested and benchmarked with sub-100ms offline query speeds across 500+ shops and 10,000 ledger entries.
-              </div>
-            </div>
-          )}
-
-          {/* STEP 5: Payment Terms & Settlement */}
-          {currentStep === 5 && (
-            <div className="space-y-6">
-              <div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#2563EB]/15 border border-[#3B82F6]/30 text-[#3B82F6] text-xs font-mono font-bold uppercase tracking-wider mb-2">
-                  <CreditCard size={11} />
-                  <span>Settlement Terms</span>
-                </div>
-                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-                  How do retail storekeepers settle payments?
-                </h2>
-                <p className="text-xs text-zinc-400 mt-1">
-                  Select all payment protocols you accept on delivery rounds.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {[
-                  {
-                    term: "Cash on Delivery (COD)",
-                    desc: "Physical banknotes collected at tempo rear door",
-                  },
-                  {
-                    term: "Bill-to-Bill Clearance",
-                    desc: "Storekeeper clears previous invoice upon receiving fresh drop",
-                  },
-                  {
-                    term: "Khata Credit Ledger (7-15 Days)",
-                    desc: "Running credit balance with periodic reconciliation",
-                  },
-                  {
-                    term: "Mobile UPI QR Code",
-                    desc: "Instant scan-and-pay via Google Pay / PhonePe / Paytm",
-                  },
-                ].map((item) => {
-                  const isSelected = paymentTerms.includes(item.term);
-                  return (
-                    <button
-                      key={item.term}
-                      type="button"
-                      onClick={() => togglePaymentTerm(item.term)}
-                      className={`p-3.5 rounded-xl border text-left transition-all flex items-start justify-between gap-2.5 ${
-                        isSelected
-                          ? "bg-[#1E293B] border-[#2563EB] ring-1 ring-[#2563EB]"
-                          : "bg-[#1E293B]/40 border-white/[0.06] hover:border-white/[0.15]"
-                      }`}
-                    >
-                      <div>
-                        <div className="font-semibold text-xs text-zinc-100">{item.term}</div>
-                        <div className="text-xs font-mono text-zinc-400 mt-0.5">{item.desc}</div>
-                      </div>
-                      <div
-                        className={`w-5 h-5 rounded-full shrink-0 flex items-center justify-center border ${
-                          isSelected
-                            ? "bg-[#2563EB] text-white border-[#2563EB]"
-                            : "border-white/[0.1] bg-[#111827]"
-                        }`}
-                      >
-                        {isSelected && <Check size={12} strokeWidth={3} />}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-[#1E293B] border border-white/[0.06] text-xs text-zinc-300 font-mono">
-                Drivers can toggle between Cash, UPI QR, or Khata credit at any doorstep in 1 tap.
-              </div>
-            </div>
-          )}
-
-          {/* STEP 6: Agency Setup & Fleet */}
-          {currentStep === 6 && (
-            <div className="space-y-5">
-              <div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#2563EB]/15 border border-[#3B82F6]/30 text-[#3B82F6] text-xs font-mono font-bold uppercase tracking-wider mb-2">
-                  <Building2 size={11} />
-                  <span>Agency Identity</span>
-                </div>
-                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-                  Set up your agency identity and warehouse
-                </h2>
-                <p className="text-xs text-zinc-400 mt-1">
-                  Used on digital challans and route optimization.
-                </p>
-              </div>
-
-              <div className="space-y-4 pt-1">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-300 mb-1.5">
-                      Agency / Business Name *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Apex FMCG Agency"
-                      value={agencyName}
-                      onChange={(e) => setAgencyName(e.target.value)}
-                      className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-white/[0.1] bg-[#1E293B] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#2563EB]"
-                    />
+            {/* Configured Products List */}
+            <div className="space-y-2.5">
+              {products.map((p) => (
+                <div
+                  key={p.id}
+                  className="p-4 bg-white dark:bg-[#13141C] border border-black/[0.08] dark:border-white/[0.08] rounded-2xl flex items-center justify-between gap-3 shadow-sm"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-[#181924] flex items-center justify-center text-zinc-600 dark:text-[#D4F638]">
+                      <Package size={17} />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm text-zinc-950 dark:text-white">{p.name}</h4>
+                      <p className="text-xs text-zinc-500 font-mono">
+                        {p.unit} · Every {p.intervalDays} days standard
+                      </p>
+                    </div>
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-300 mb-1.5">
-                      Owner / Operator Name
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Rajesh Sharma"
-                      value={operatorName}
-                      onChange={(e) => setOwnerName(e.target.value)}
-                      className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-white/[0.1] bg-[#1E293B] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#2563EB]"
-                    />
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveProduct(p.id)}
+                    className="p-2 text-zinc-400 hover:text-rose-600 transition-colors"
+                  >
+                    <Trash2 size={15} />
+                  </button>
                 </div>
+              ))}
+            </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-300 mb-1.5">
-                      First Route / Sector Name
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Main Mandi Beat"
-                      value={primaryRoute}
-                      onChange={(e) => setPrimaryRoute(e.target.value)}
-                      className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-white/[0.1] bg-[#1E293B] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#2563EB]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-300 mb-1.5">
-                      Delivery Vehicle Model
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Tata Ace (Chhota Hathi)"
-                      value={vehicleType}
-                      onChange={(e) => setVehicleType(e.target.value)}
-                      className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-white/[0.1] bg-[#1E293B] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-[#2563EB]"
-                    />
-                  </div>
-                </div>
-
-                {/* Warehouse Map Pin */}
-                <div>
-                  <label className="block text-xs font-medium text-zinc-300 mb-1.5">
-                    Central Godown Pin (Where daily routes start & return)
-                  </label>
-                  <ShopMap
-                    lat={lat}
-                    lng={lng}
-                    editable={true}
-                    height="200px"
-                    placeholder="Search godown address or landmark..."
-                    onLocationChange={(nLat, nLng) => {
-                      setLat(nLat);
-                      setLng(nLng);
-                    }}
+            {/* Quick Add Product Form */}
+            <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-[#161722] border border-black/[0.06] dark:border-white/[0.06] space-y-3">
+              <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-zinc-500">
+                + Add Another Wholesale Product
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <input
+                  type="text"
+                  value={newProductName}
+                  onChange={(e) => setNewProductName(e.target.value)}
+                  placeholder="Product name (e.g. Britannia 50-50)"
+                  className="sm:col-span-1 bg-white dark:bg-[#13141C] border border-black/[0.1] dark:border-white/[0.1] rounded-xl px-3 py-2 text-xs text-zinc-950 dark:text-white placeholder:text-zinc-400 focus:outline-none"
+                />
+                <input
+                  type="text"
+                  value={newProductUnit}
+                  onChange={(e) => setNewProductUnit(e.target.value)}
+                  placeholder="Unit (e.g. Case of 24)"
+                  className="bg-white dark:bg-[#13141C] border border-black/[0.1] dark:border-white/[0.1] rounded-xl px-3 py-2 text-xs text-zinc-950 dark:text-white placeholder:text-zinc-400 focus:outline-none"
+                />
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    min={1}
+                    value={newProductInterval}
+                    onChange={(e) => setNewProductInterval(parseInt(e.target.value) || 7)}
+                    placeholder="Days (e.g. 7)"
+                    className="w-20 bg-white dark:bg-[#13141C] border border-black/[0.1] dark:border-white/[0.1] rounded-xl px-3 py-2 text-xs font-mono text-center text-zinc-950 dark:text-white focus:outline-none"
                   />
+                  <button
+                    type="button"
+                    onClick={handleAddProduct}
+                    className="flex-1 py-2 bg-[#D4F638] text-[#0A0D02] font-mono font-bold text-xs rounded-xl shadow-sm hover:bg-[#C2E426] transition-all"
+                  >
+                    Add Item
+                  </button>
                 </div>
               </div>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* STEP 7: Duolingo Victory Milestone & Launch Mode */}
-          {currentStep === 7 && (
-            <div className="space-y-6">
-              <div className="text-center py-2">
-                <div className="w-14 h-14 rounded-2xl bg-[#2563EB] text-white flex items-center justify-center mx-auto mb-3 shadow-md">
-                  <Trophy size={28} />
+        {/* ── STEP 2: Delivery Corridors / Territory Beats ── */}
+        {currentStep === 2 && (
+          <div className="space-y-6 animate-in fade-in">
+            <div className="space-y-2">
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                Define your delivery corridors
+              </h2>
+              <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                Rather than dealing with GPS navigation glitches in market alleys, Waymark groups your shops into named territory corridors.
+              </p>
+            </div>
+
+            {/* Corridors List */}
+            <div className="space-y-2.5">
+              {routes.map((r) => (
+                <div
+                  key={r.id}
+                  className="p-4 bg-white dark:bg-[#13141C] border border-black/[0.08] dark:border-white/[0.08] rounded-2xl flex items-center justify-between gap-3 shadow-sm"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-[#D4F638] flex items-center justify-center">
+                      <Compass size={17} />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm text-zinc-950 dark:text-white">{r.name}</h4>
+                      <p className="text-xs text-zinc-500 font-mono">
+                        Active beat area
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveRoute(r.id)}
+                    className="p-2 text-zinc-400 hover:text-rose-600 transition-colors"
+                  >
+                    <Trash2 size={15} />
+                  </button>
                 </div>
-                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-                  Wholesale Dispatch Line Calibrated!
-                </h2>
-                <p className="text-xs text-zinc-400 mt-1 max-w-md mx-auto">
-                  Your offline-first route engine is calibrated for {agencyName}.
-                </p>
+              ))}
+            </div>
+
+            {/* Quick Add Corridor Form */}
+            <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-[#161722] border border-black/[0.06] dark:border-white/[0.06] space-y-3">
+              <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-zinc-500">
+                + Add Another Delivery Beat / Area
+              </span>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newRouteName}
+                  onChange={(e) => setNewRouteName(e.target.value)}
+                  placeholder="New corridor (e.g. Edappally Beat, Broadway Market)"
+                  className="flex-1 bg-white dark:bg-[#13141C] border border-black/[0.1] dark:border-white/[0.1] rounded-xl px-3.5 py-2.5 text-xs text-zinc-950 dark:text-white placeholder:text-zinc-400 focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddRoute}
+                  className="px-5 py-2.5 bg-[#D4F638] text-[#0A0D02] font-mono font-bold text-xs rounded-xl shadow-sm hover:bg-[#C2E426] transition-all"
+                >
+                  Add Beat
+                </button>
               </div>
+            </div>
+          </div>
+        )}
 
-              {/* Personalized Profile Card */}
-              <div className="p-4 rounded-xl bg-[#1E293B] border border-[#3B82F6]/35 space-y-2.5 text-xs font-mono">
-                <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
-                  <span className="text-zinc-400">Agency:</span>
-                  <span className="font-bold text-white">{agencyName}</span>
+        {/* ── STEP 3: Beat Schedule (Sun to Sat Visual Clicker) ── */}
+        {currentStep === 3 && (
+          <div className="space-y-6 animate-in fade-in">
+            <div className="space-y-2">
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                Which days do you service each route?
+              </h2>
+              <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                Click Sunday through Saturday to set the delivery beat schedule. When your drivers open the app on that day, this route automatically loads on Home!
+              </p>
+            </div>
+
+            {/* Day Clickers for Each Route */}
+            <div className="space-y-4">
+              {routes.map((r) => (
+                <div
+                  key={r.id}
+                  className="p-5 bg-white dark:bg-[#13141C] border border-black/[0.08] dark:border-white/[0.08] rounded-2xl space-y-3 shadow-sm"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#D4F638]" />
+                      <h4 className="font-bold text-base text-zinc-950 dark:text-white">
+                        {r.name}
+                      </h4>
+                    </div>
+                    <span className="text-[11px] font-mono text-zinc-500">
+                      {r.activeDays.length} day{r.activeDays.length === 1 ? "" : "s"} selected
+                    </span>
+                  </div>
+
+                  {/* Visual 7-day pill strip */}
+                  <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
+                    {DAYS_OF_WEEK.map((d) => {
+                      const isSelected = r.activeDays.includes(d.day);
+                      return (
+                        <button
+                          key={d.day}
+                          type="button"
+                          onClick={() => toggleRouteDay(r.id, d.day)}
+                          className={`py-2.5 text-center font-mono text-xs font-bold rounded-xl border transition-all ${
+                            isSelected
+                              ? "bg-[#D4F638] text-[#0A0D02] border-[#D4F638] shadow-sm scale-[1.02]"
+                              : "bg-zinc-50 dark:bg-[#181924] text-zinc-600 dark:text-zinc-400 border-black/[0.06] dark:border-white/[0.06] hover:bg-zinc-100 dark:hover:bg-[#202230]"
+                          }`}
+                        >
+                          {d.label}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
-                  <span className="text-zinc-400">Primary Beat:</span>
-                  <span className="font-bold text-[#3B82F6]">{primaryRoute}</span>
+              ))}
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-500/30 flex items-center gap-3 text-xs">
+              <Calendar size={16} className="text-purple-700 dark:text-[#D4F638] flex-shrink-0" />
+              <p className="text-purple-950 dark:text-zinc-300">
+                Today is{" "}
+                <strong className="text-purple-900 dark:text-white font-mono">
+                  {new Date().toLocaleDateString("en-IN", { weekday: "long" })}
+                </strong>
+                . Stores on beats scheduled for today will automatically appear on your main screen.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* ── STEP 4: Fleet & Team Roles ── */}
+        {currentStep === 4 && (
+          <div className="space-y-6 animate-in fade-in">
+            <div className="space-y-2">
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                How many workers are on your wholesale beat?
+              </h2>
+              <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                Future-proof your agency. Administrators have superuser access to manage all routes, dues, and deliveries.
+              </p>
+            </div>
+
+            {/* Fleet Size Grid */}
+            <div>
+              <label className="block text-[11px] font-mono uppercase tracking-wider text-zinc-500 mb-2 font-bold">
+                Fleet / Workforce Scale
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                {[
+                  { id: "1-2", label: "1–2 Workers", desc: "Proprietor + Driver" },
+                  { id: "3-5", label: "3–5 Workers", desc: "Growing agency" },
+                  { id: "6-15", label: "6–15 Workers", desc: "Multiple beats" },
+                  { id: "15+", label: "15+ Fleet", desc: "Regional distributor" },
+                ].map((s) => {
+                  const isSelected = workerCount === s.id;
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => setWorkerCount(s.id)}
+                      className={`p-3 rounded-2xl border text-left transition-all ${
+                        isSelected
+                          ? "bg-purple-50 dark:bg-[#1E1B38] border-purple-500/50 dark:border-[#D4F638] shadow-sm"
+                          : "bg-white dark:bg-[#13141C] border-black/[0.08] dark:border-white/[0.06] text-zinc-600 dark:text-zinc-400"
+                      }`}
+                    >
+                      <div className={`font-bold font-mono text-xs ${isSelected ? "text-purple-900 dark:text-[#D4F638]" : "text-zinc-950 dark:text-white"}`}>
+                        {s.label}
+                      </div>
+                      <p className="text-[10px] text-zinc-500 mt-0.5">{s.desc}</p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Roles Breakdown Cards */}
+            <div className="space-y-3 pt-2">
+              <label className="block text-[11px] font-mono uppercase tracking-wider text-zinc-500 font-bold">
+                Role Permissions Architecture
+              </label>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div
+                  onClick={() => setSelectedRole("admin")}
+                  className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                    selectedRole === "admin"
+                      ? "bg-purple-50 dark:bg-[#1E1B38] border-purple-500/50 dark:border-[#D4F638] shadow-sm"
+                      : "bg-white dark:bg-[#13141C] border-black/[0.08] dark:border-white/[0.06]"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-bold text-sm text-zinc-950 dark:text-white">Admin / Owner</span>
+                    <span className="w-2 h-2 rounded-full bg-[#D4F638]" />
+                  </div>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                    Full superuser access. Can manage routes, adjust dues, export ledger, and log field deliveries anytime.
+                  </p>
                 </div>
-                <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
-                  <span className="text-zinc-400">Active Categories:</span>
-                  <span className="text-zinc-200 truncate max-w-[240px]">
-                    {selectedCategories.join(", ")}
+
+                <div
+                  onClick={() => setSelectedRole("backoffice")}
+                  className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                    selectedRole === "backoffice"
+                      ? "bg-purple-50 dark:bg-[#1E1B38] border-purple-500/50 dark:border-[#D4F638] shadow-sm"
+                      : "bg-white dark:bg-[#13141C] border-black/[0.08] dark:border-white/[0.06]"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-bold text-sm text-zinc-950 dark:text-white">Backoffice</span>
+                  </div>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                    Warehouse officer. Manages invoices, godown stock replenishment, and payment reconciliations.
+                  </p>
+                </div>
+
+                <div
+                  onClick={() => setSelectedRole("driver")}
+                  className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                    selectedRole === "driver"
+                      ? "bg-purple-50 dark:bg-[#1E1B38] border-purple-500/50 dark:border-[#D4F638] shadow-sm"
+                      : "bg-white dark:bg-[#13141C] border-black/[0.08] dark:border-white/[0.06]"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-bold text-sm text-zinc-950 dark:text-white">Supplier / Driver</span>
+                  </div>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                    Field delivery supplier. Focuses exclusively on the 10-second Walk-to-Car logger while dropping crates.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── STEP 5: Launch Mode ── */}
+        {currentStep === 5 && (
+          <div className="space-y-6 animate-in fade-in">
+            <div className="space-y-2">
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                Ready to launch your wholesale cockpit
+              </h2>
+              <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                Choose how you want to start. For your first real client, choose Clean Slate so zero mock data touches your database.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div
+                onClick={() => setLaunchMode("clean")}
+                className={`p-6 rounded-3xl border cursor-pointer transition-all space-y-3 ${
+                  launchMode === "clean"
+                    ? "bg-purple-50 dark:bg-[#1E1B38] border-2 border-purple-600 dark:border-[#D4F638] shadow-lg"
+                    : "bg-white dark:bg-[#13141C] border-black/[0.08] dark:border-white/[0.08]"
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-base text-zinc-950 dark:text-white">
+                    Clean Slate (Client Ready)
+                  </span>
+                  <span className="text-xs font-mono font-bold text-emerald-600 dark:text-[#D4F638]">
+                    RECOMMENDED
                   </span>
                 </div>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                  Start with a 100% clean database containing only your configured routes and products. No mock stores. Ready to add your client&apos;s real 50 shops.
+                </p>
+              </div>
+
+              <div
+                onClick={() => setLaunchMode("sample")}
+                className={`p-6 rounded-3xl border cursor-pointer transition-all space-y-3 ${
+                  launchMode === "sample"
+                    ? "bg-purple-50 dark:bg-[#1E1B38] border-2 border-purple-600 dark:border-[#D4F638] shadow-lg"
+                    : "bg-white dark:bg-[#13141C] border-black/[0.08] dark:border-white/[0.08]"
+                }`}
+              >
                 <div className="flex items-center justify-between">
-                  <span className="text-zinc-400">Target Priority:</span>
-                  <span className="text-[#4ADE80]">LIFO Tempo Packing & Cash Recovery</span>
+                  <span className="font-bold text-base text-zinc-950 dark:text-white">
+                    Load Sample Sandbox
+                  </span>
+                  <span className="text-xs font-mono text-zinc-400">DEMO ONLY</span>
                 </div>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                  Pre-populates 7 sample stores in Fort Kochi and Mattancherry with sample dues and reminder dates for immediate demonstration.
+                </p>
               </div>
-
-              {/* Launch Choices */}
-              <div className="space-y-3">
-                <div className="text-xs font-bold text-zinc-300">
-                  How would you like to enter Day 1?
-                </div>
-
-                <button
-                  type="button"
-                  disabled={isLaunching}
-                  onClick={() => handleCompleteOnboarding("sample")}
-                  className="w-full p-4 rounded-xl border border-[#2563EB] bg-[#1E293B] hover:bg-[#222228] text-left transition-all flex items-center justify-between gap-3 ring-1 ring-[#2563EB] shadow-float active:scale-[0.99]"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#2563EB] text-white flex items-center justify-center font-bold shrink-0">
-                      <Sparkles size={20} />
-                    </div>
-                    <div>
-                      <div className="font-bold text-sm text-white flex items-center gap-2">
-                        <span>Launch with 4 Sample Kiranas</span>
-                        <span className="text-xs uppercase font-mono px-2 py-0.5 rounded-full bg-[#2563EB] text-white">
-                          Recommended
-                        </span>
-                      </div>
-                      <div className="text-xs text-zinc-400 mt-0.5">
-                        Gupta Kirana, Laxmi Supermarket, Anand Tea Depot with realistic dues & LIFO crates.
-                      </div>
-                    </div>
-                  </div>
-                  <ArrowRight size={18} className="text-[#3B82F6] shrink-0" />
-                </button>
-
-                <button
-                  type="button"
-                  disabled={isLaunching}
-                  onClick={() => setLaunchMode("import")}
-                  className="w-full p-4 rounded-xl border border-white/[0.08] bg-[#1E293B]/40 hover:bg-[#1E293B] text-left transition-all flex items-center justify-between gap-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#111827] text-zinc-300 border border-white/[0.08] flex items-center justify-center font-bold shrink-0">
-                      <FileSpreadsheet size={18} />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-sm text-zinc-200">
-                        Import My Own Retailer List
-                      </div>
-                      <div className="text-xs text-zinc-400 mt-0.5">
-                        Paste rows from Excel, CSV, or enter shops via rapid table.
-                      </div>
-                    </div>
-                  </div>
-                  <ArrowRight size={16} className="text-zinc-500 shrink-0" />
-                </button>
-              </div>
-
-              {/* In case user chose import list */}
-              {launchMode === "import" && (
-                <div className="pt-4 border-t border-white/[0.08]">
-                  <ShopImportHub
-                    defaultRegion={primaryRoute}
-                    organisationId="org-waymark-demo"
-                    onComplete={() => router.push("/")}
-                  />
-                </div>
-              )}
             </div>
+
+            <div className="p-4 rounded-2xl bg-zinc-100 dark:bg-[#161722] border border-black/[0.06] dark:border-white/[0.06] space-y-2 text-xs">
+              <div className="flex items-center gap-2 font-mono text-zinc-700 dark:text-zinc-300 font-bold">
+                <ShieldCheck size={16} className="text-emerald-600 dark:text-[#D4F638]" />
+                <span>Zero Data Loss Protection Active</span>
+              </div>
+              <p className="text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                All records are written directly to your browser&apos;s persistent IndexedDB storage engine. Automatic backup snapshots are generated locally to safeguard your agency data.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Wizard Navigation Footer */}
+        <div className="pt-6 border-t border-black/[0.08] dark:border-white/[0.08] flex items-center justify-between">
+          {currentStep > 1 ? (
+            <button
+              type="button"
+              onClick={() => {
+                playTactile("tap");
+                setCurrentStep((prev) => Math.max(1, prev - 1));
+              }}
+              className="px-4 py-2.5 rounded-xl border border-black/[0.1] dark:border-white/[0.1] text-zinc-700 dark:text-zinc-300 font-mono text-xs font-bold hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-all flex items-center gap-2"
+            >
+              <ArrowLeft size={15} />
+              <span>Back</span>
+            </button>
+          ) : (
+            <div />
           )}
 
-          {/* ── BOTTOM NAVIGATION CONTROLS ── */}
-          {currentStep < 7 && (
-            <div className="pt-6 mt-6 border-t border-white/[0.08] flex items-center justify-between">
-              {currentStep > 1 ? (
-                <button
-                  type="button"
-                  onClick={handlePrevStep}
-                  className="px-4 py-2 rounded-xl border border-white/[0.08] text-xs font-medium text-zinc-400 hover:text-white flex items-center gap-1.5 transition-colors"
-                >
-                  <ArrowLeft size={13} />
-                  <span>Back</span>
-                </button>
+          {currentStep < totalSteps ? (
+            <button
+              type="button"
+              onClick={() => {
+                playTactile("tap");
+                setCurrentStep((prev) => Math.min(totalSteps, prev + 1));
+              }}
+              className="px-6 py-3 bg-[#D4F638] hover:bg-[#C2E426] text-[#0A0D02] rounded-2xl font-bold font-mono text-xs flex items-center gap-2 shadow-lg transition-all active:scale-95"
+            >
+              <span>Next: {currentStep === 1 ? "Routes" : currentStep === 2 ? "Schedule" : currentStep === 3 ? "Fleet & Roles" : "Launch"}</span>
+              <ArrowRight size={15} strokeWidth={2.5} />
+            </button>
+          ) : (
+            <button
+              type="button"
+              disabled={isSubmitting}
+              onClick={() => handleCompleteOnboarding(launchMode)}
+              className="px-8 py-3.5 bg-[#D4F638] hover:bg-[#C2E426] text-[#0A0D02] rounded-2xl font-bold font-sans text-sm flex items-center gap-2 shadow-xl transition-all active:scale-95 disabled:opacity-50"
+            >
+              {isSubmitting ? (
+                <span>Launching Cockpit...</span>
               ) : (
-                <div />
+                <>
+                  <span>Complete Setup &amp; Launch Cockpit</span>
+                  <ArrowRight size={17} strokeWidth={2.5} />
+                </>
               )}
-
-              <button
-                type="button"
-                onClick={handleNextStep}
-                className="px-6 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-xs transition-colors flex items-center gap-1.5 shadow-sm active:scale-95"
-              >
-                <span>Continue</span>
-                <ArrowRight size={13} />
-              </button>
-            </div>
+            </button>
           )}
         </div>
-      </div>
+      </main>
     </div>
   );
 }

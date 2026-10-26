@@ -7,6 +7,7 @@ import { drainQueue } from "@/lib/db/sync";
 import { formatDateOnly } from "@/lib/scheduling";
 import { markDelivered } from "@/lib/actions/markDelivered";
 import { seedDemoData } from "@/lib/db/seedDemoData";
+import { createDatabaseBackup } from "@/lib/db/backup";
 import { CdnxTopNav } from "@/components/cdnx/CdnxTopNav";
 import { CdnxRouteSidebar } from "@/components/cdnx/CdnxRouteSidebar";
 import { CdnxCenterStage } from "@/components/cdnx/CdnxCenterStage";
@@ -32,23 +33,12 @@ export default function SupplierDashboardPage() {
   // Add Shop Modal State
   const [isAddShopModalOpen, setIsAddShopModalOpen] = useState(false);
 
-  // Initial Data Load & Auto-migration
+  // Initial Data Load & Client Territory Beat Resolution
   useEffect(() => {
     async function initData() {
-      let count = await db.shops.count();
       let allRegs = await db.regions.orderBy("sort_order").toArray();
-
-      // Ensure Fort Kochi exists or re-seed if database is empty/outdated
-      const hasFortKochi = allRegs.some(
-        (r) => r.id === "reg-fortkochi" || r.name.toLowerCase().includes("fort kochi")
-      );
-
-      if (count === 0 || !hasFortKochi) {
-        await seedDemoData();
-        allRegs = await db.regions.orderBy("sort_order").toArray();
-      }
-
       const shops = await db.shops.filter((s) => !s.is_archived).toArray();
+
       setRegions(allRegs);
       setAllDbShops(shops);
 
@@ -62,16 +52,31 @@ export default function SupplierDashboardPage() {
       );
       setCompletedShopIds(completedToday);
 
-      // Default to Fort Kochi
-      const fk = allRegs.find((r) => r.name.toLowerCase().includes("fort kochi") || r.id === "reg-fortkochi");
-      if (fk) {
-        setSelectedRouteId(fk.id);
+      // Auto-select corridor matching today's scheduled day of the week (Sun=0, Mon=1, etc.)
+      const currentDayOfWeek = new Date().getDay();
+      const scheduledTodayRoute = allRegs.find((r) => r.active_days?.includes(currentDayOfWeek));
+
+      if (scheduledTodayRoute) {
+        setSelectedRouteId(scheduledTodayRoute.id);
       } else if (allRegs.length > 0) {
         setSelectedRouteId(allRegs[0].id);
+      } else {
+        setSelectedRouteId("all");
       }
+
+      // Automated Local Audit Snapshot (Zero Data Loss Protection)
+      try {
+        const backup = await createDatabaseBackup();
+        localStorage.setItem("waymark_audit_snapshot", JSON.stringify(backup));
+      } catch {}
     }
     initData();
   }, [todayItems]);
+
+  const handleLoadDemoData = async () => {
+    await seedDemoData();
+    await refreshData();
+  };
 
   const refreshData = async () => {
     const [allRegs, shops] = await Promise.all([
@@ -342,6 +347,7 @@ export default function SupplierDashboardPage() {
               pendingDueCount={filterCounts.dues}
               totalDueAmount={routeTotalDue}
               remindersCount={filterCounts.reminders}
+              onLoadDemoData={handleLoadDemoData}
             />
           )}
         </main>

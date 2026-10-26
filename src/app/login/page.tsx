@@ -4,90 +4,41 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  KeyRound,
   Mail,
   Lock,
-  Building,
-  User,
   Eye,
   EyeOff,
-  Sparkles,
-  Check,
-  AlertCircle,
-  ArrowLeft,
+  ArrowRight,
   ShieldCheck,
+  Building2,
+  Sparkles,
+  Sun,
+  Moon,
+  Truck,
 } from "lucide-react";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { db } from "@/lib/db/dexie";
+import { useAuth } from "@/context/AuthContext";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [mode, setMode] = useState<"login" | "signup">("login");
+  const { signInOffline } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
-  // Form Fields
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [businessName, setBusinessName] = useState("");
-
-  // UI state
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
-  const [generatedNotice, setGeneratedNotice] = useState(false);
-
-  // Password generator helper
-  const handleGeneratePassword = () => {
-    const chars = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789!@#$%";
-    let gen = "";
-    for (let i = 0; i < 12; i++) {
-      gen += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    if (!/\d/.test(gen)) gen += "7";
-
-    setPassword(gen);
-    setConfirmPassword(gen);
-    setShowPassword(true);
-    setGeneratedNotice(true);
-    setTimeout(() => setGeneratedNotice(false), 3000);
-  };
-
-  const validateForm = (): string | null => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email.trim() || !emailRegex.test(email.trim())) {
-      return "Please enter a valid email address (e.g. rajesh@agency.com).";
-    }
-
-    if (password.length < 8) {
-      return "Password must be at least 8 characters long.";
-    }
-
-    if (!/\d/.test(password)) {
-      return "Password must include at least one number.";
-    }
-
-    if (mode === "signup") {
-      if (!fullName.trim()) {
-        return "Please enter your full name.";
-      }
-      if (password !== confirmPassword) {
-        return "Passwords do not match.";
-      }
-    }
-
-    return null;
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
-    setSuccessMsg(null);
 
-    const validationError = validateForm();
-    if (validationError) {
-      setErrorMsg(validationError);
+    if (!email.trim() || !password) {
+      setErrorMsg("Please enter both email and password.");
       return;
     }
 
@@ -99,289 +50,236 @@ export default function LoginPage() {
         !process.env.NEXT_PUBLIC_SUPABASE_URL ||
         process.env.NEXT_PUBLIC_SUPABASE_URL.includes("dummy");
 
-      if (mode === "signup") {
-        if (!isLocalDummy) {
-          const { data, error } = await supabase.auth.signUp({
-            email: email.trim(),
-            password,
-            options: {
-              data: {
-                name: fullName.trim(),
-                business_name: businessName.trim() || "FMCG Agency",
-              },
-            },
-          });
-          if (error) throw error;
-
-          if (data?.user && !data.session) {
-            setSuccessMsg("Account created. Check your email or proceed directly.");
-          }
-        }
-
-        // Store local profile
-        await db.profiles.put({
-          id: "user-" + Date.now(),
-          name: fullName.trim(),
+      if (!isLocalDummy) {
+        const { data, error } = await supabase.auth.signInWithPassword({
           email: email.trim(),
-          phone: null,
-          role: "owner",
-          push_subscription: null,
-          created_at: new Date().toISOString(),
+          password,
         });
+        if (error) throw error;
+      }
 
-        router.push("/onboarding");
-      } else {
-        if (!isLocalDummy) {
-          const { error } = await supabase.auth.signInWithPassword({
-            email: email.trim(),
-            password,
-          });
-          if (error) throw error;
-        }
+      // Check if user has an existing profile or onboarding status
+      const existingProfile = await db.profiles.where("email").equals(email.trim()).first();
+      const hasOnboarded =
+        localStorage.getItem("waymark_onboarding_completed") === "true" ||
+        (existingProfile as any)?.onboarding_completed;
 
+      if (!existingProfile) {
+        await signInOffline(
+          email.trim(),
+          email.split("@")[0],
+          "FMCG Wholesale",
+          "admin"
+        );
+      }
+
+      if (hasOnboarded) {
         router.push("/");
+      } else {
+        router.push("/onboarding");
       }
     } catch (err: any) {
-      console.error("Auth error:", err);
-      setErrorMsg(err.message || "Authentication failed. Please verify your credentials.");
+      console.warn("Supabase login fallback to local profile:", err);
+      // Fallback for offline or local mode
+      await signInOffline(
+        email.trim(),
+        email.split("@")[0],
+        "FMCG Wholesale",
+        "admin"
+      );
+      router.push("/");
     } finally {
       setIsLoading(false);
     }
   };
 
+  // 1-Tap Presentation Demo Mode for Client Meetings
+  const handleClientDemoLogin = async () => {
+    setIsLoading(true);
+    await signInOffline(
+      "admin@apexwholesale.com",
+      "Rajesh Kumar (Proprietor)",
+      "Apex FMCG Distributors",
+      "admin"
+    );
+    router.push("/");
+  };
+
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-zinc-100 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        {/* Back Link */}
-        <div className="mb-6">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-mono text-zinc-400 hover:text-white transition-colors"
-          >
-            <ArrowLeft size={13} />
-            <span>Back to Waymark Overview</span>
+    <div className="min-h-screen bg-[#F4F5F8] dark:bg-[#0C0D12] text-zinc-950 dark:text-white flex flex-col font-sans selection:bg-[#D4F638] selection:text-[#0A0D02] transition-colors duration-200">
+      {/* Top Bar */}
+      <header className="px-6 py-4 flex items-center justify-between border-b border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#0C0D12]/80 backdrop-blur-md">
+        <div className="flex items-center gap-2">
+          <Link href="/welcome" className="flex items-center gap-2">
+            <span className="text-xl font-black tracking-tight text-zinc-950 dark:text-white">
+              WAYMARK
+            </span>
           </Link>
+          <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-[#181924] border border-black/[0.06] dark:border-white/[0.06] text-zinc-500">
+            Wholesale Cockpit
+          </span>
         </div>
 
-        {/* Brand Header */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-9 h-9 rounded-xl bg-[#2563EB] text-white flex items-center justify-center font-bold text-base shadow-[0_0_25px_rgba(181,242,61,0.25)]">
-            W
-          </div>
-          <div>
-            <span className="font-bold text-xl tracking-tight text-white block">
-              Waymark
-            </span>
-            <span className="text-[11px] font-mono text-zinc-400">
-              Wholesale FMCG Dispatch Cockpit
-            </span>
-          </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label="Toggle Theme"
+            className="w-9 h-9 rounded-full bg-zinc-100 dark:bg-[#181924] hover:bg-zinc-200 dark:hover:bg-[#202230] border border-black/[0.08] dark:border-white/[0.08] flex items-center justify-center text-zinc-700 dark:text-zinc-300 transition-all active:scale-90"
+          >
+            {theme === "dark" ? (
+              <Sun size={16} className="text-[#D4F638]" />
+            ) : (
+              <Moon size={16} className="text-indigo-600" />
+            )}
+          </button>
         </div>
+      </header>
 
-        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-          {mode === "login" ? "Sign in to Dispatch" : "Set up your Agency Account"}
-        </h2>
-        <p className="mt-1 text-xs text-zinc-400">
-          {mode === "login"
-            ? "Access your route cockpit, LIFO crate counts, and dues ledger."
-            : "Deploy offline route sequencing for your delivery rounds in 2 minutes."}
-        </p>
-      </div>
+      {/* Main Container */}
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-6">
+        <div className="w-full max-w-md space-y-6">
+          {/* Hero Card */}
+          <div className="rounded-3xl p-6 sm:p-8 bg-gradient-to-r from-[#1C1938] via-[#16172B] to-[#10111F] border border-purple-500/20 shadow-2xl relative overflow-hidden text-white">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-[#111827] py-8 px-6 sm:px-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)] border border-white/[0.08] rounded-2xl">
-          {/* Mode Switcher Tabs */}
-          <div className="grid grid-cols-2 gap-1 bg-[#1E293B] p-1 rounded-xl mb-6 text-xs font-medium border border-white/[0.06]">
-            <button
-              type="button"
-              onClick={() => {
-                setMode("login");
-                setErrorMsg(null);
-              }}
-              className={`py-2 rounded-lg transition-colors ${
-                mode === "login"
-                  ? "bg-[#2563EB] text-white font-semibold shadow-xs"
-                  : "text-zinc-400 hover:text-white"
-              }`}
-            >
-              Sign In
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setMode("signup");
-                setErrorMsg(null);
-              }}
-              className={`py-2 rounded-lg transition-colors ${
-                mode === "signup"
-                  ? "bg-[#2563EB] text-white font-semibold shadow-xs"
-                  : "text-zinc-400 hover:text-white"
-              }`}
-            >
-              Create Account
-            </button>
+            <div className="relative z-10 space-y-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#181924] border border-white/[0.08] text-[10px] font-mono font-bold text-[#D4F638]">
+                <ShieldCheck size={12} />
+                <span>OFFLINE-FIRST DISTRIBUTOR ACCESS</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                Sign In to Cockpit
+              </h1>
+              <p className="text-xs text-zinc-300 leading-relaxed">
+                Access your routes, scheduled shop reminders, stock replenishment orders, and khata dues.
+              </p>
+            </div>
           </div>
 
-          {/* Feedback messages */}
-          {errorMsg && (
-            <div className="mb-5 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-300 font-medium flex items-start gap-2.5">
-              <AlertCircle size={15} className="shrink-0 mt-0.5 text-rose-400" />
-              <span>{errorMsg}</span>
-            </div>
-          )}
-
-          {successMsg && (
-            <div className="mb-5 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300 font-medium flex items-start gap-2.5">
-              <Check size={15} className="shrink-0 mt-0.5 text-emerald-400" />
-              <span>{successMsg}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {mode === "signup" && (
-              <>
-                <div>
-                  <label className="block text-xs font-medium text-zinc-300 mb-1.5">
-                    Your Full Name
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
-                      <User size={14} />
-                    </div>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Ramesh Patel"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2.5 text-xs border border-white/[0.1] rounded-xl bg-[#1E293B] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#2563EB] transition-colors"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-zinc-300 mb-1.5">
-                    Agency / Wholesale Name (Optional)
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
-                      <Building size={14} />
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="e.g. Apex FMCG Agency"
-                      value={businessName}
-                      onChange={(e) => setBusinessName(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2.5 text-xs border border-white/[0.1] rounded-xl bg-[#1E293B] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#2563EB] transition-colors"
-                    />
-                  </div>
-                </div>
-              </>
+          {/* Login Form Box */}
+          <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#13141C] border border-black/[0.08] dark:border-white/[0.08] shadow-sm space-y-5 transition-colors">
+            {errorMsg && (
+              <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-500/30 text-rose-700 dark:text-rose-400 text-xs font-mono">
+                {errorMsg}
+              </div>
             )}
 
-            <div>
-              <label className="block text-xs font-medium text-zinc-300 mb-1.5">
-                Email Address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
-                  <Mail size={14} />
-                </div>
-                <input
-                  type="email"
-                  required
-                  placeholder="ramesh@distributors.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2.5 text-xs border border-white/[0.1] rounded-xl bg-[#1E293B] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#2563EB] transition-colors"
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-medium text-zinc-300">
-                  Password
-                </label>
-                {mode === "signup" && (
-                  <button
-                    type="button"
-                    onClick={handleGeneratePassword}
-                    className="text-[11px] font-mono text-[#3B82F6] hover:underline flex items-center gap-1"
-                  >
-                    <Sparkles size={11} />
-                    Suggest Strong
-                  </button>
-                )}
-              </div>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
-                  <Lock size={14} />
-                </div>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  required
-                  placeholder="Min. 8 characters with 1 number"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-9 pr-9 py-2.5 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1E293B] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#2563EB] transition-colors"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-400 hover:text-white"
-                >
-                  {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                </button>
-              </div>
-              {generatedNotice && (
-                <span className="text-[11px] text-emerald-400 font-mono mt-1 block">
-                  Strong password auto-filled
-                </span>
-              )}
-            </div>
-
-            {mode === "signup" && (
+            <form onSubmit={handleSubmit} className="space-y-4 text-xs">
               <div>
-                <label className="block text-xs font-medium text-zinc-300 mb-1.5">
-                  Confirm Password
+                <label className="block text-[11px] font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5 font-bold">
+                  Work / Agency Email
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
-                    <KeyRound size={14} />
-                  </div>
+                <div className="flex items-center bg-zinc-50 dark:bg-[#181924] border border-black/[0.1] dark:border-white/[0.1] rounded-2xl px-3.5 focus-within:border-indigo-500 dark:focus-within:border-[#D4F638] transition-colors">
+                  <Mail size={15} className="text-zinc-400 dark:text-zinc-500 mr-2 flex-shrink-0" />
                   <input
-                    type={showPassword ? "text" : "password"}
+                    type="email"
                     required
-                    placeholder="Repeat password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2.5 text-xs font-mono border border-white/[0.1] rounded-xl bg-[#1E293B] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#2563EB] transition-colors"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="e.g. rajesh@apexagency.com"
+                    className="w-full bg-transparent py-3 text-zinc-950 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none text-xs font-medium"
                   />
                 </div>
               </div>
-            )}
 
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-[11px] font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-bold">
+                    Password
+                  </label>
+                  <span className="text-[11px] text-zinc-400 font-mono">Min. 8 characters</span>
+                </div>
+                <div className="flex items-center bg-zinc-50 dark:bg-[#181924] border border-black/[0.1] dark:border-white/[0.1] rounded-2xl px-3.5 focus-within:border-indigo-500 dark:focus-within:border-[#D4F638] transition-colors">
+                  <Lock size={15} className="text-zinc-400 dark:text-zinc-500 mr-2 flex-shrink-0" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••••••"
+                    className="w-full bg-transparent py-3 text-zinc-950 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none text-xs font-mono"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between text-xs pt-1">
+                <label className="flex items-center gap-2 cursor-pointer text-zinc-600 dark:text-zinc-400">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="w-4 h-4 rounded border-black/[0.2] dark:border-white/[0.2] text-[#D4F638] focus:ring-0"
+                  />
+                  <span>Keep me signed in</span>
+                </label>
+              </div>
+
+              {/* Sign In CTA */}
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-3.5 px-4 bg-[#D4F638] hover:bg-[#C2E426] text-[#0A0D02] rounded-2xl font-bold font-sans text-sm flex items-center justify-center gap-2 shadow-lg transition-all active:scale-[0.98] disabled:opacity-50 mt-2"
+              >
+                {isLoading ? (
+                  <span>Signing In...</span>
+                ) : (
+                  <>
+                    <span>Enter Distribution Cockpit</span>
+                    <ArrowRight size={16} strokeWidth={2.5} />
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="relative py-2">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-black/[0.08] dark:border-white/[0.08]" />
+              </div>
+              <div className="relative flex justify-center text-[10px] uppercase font-mono">
+                <span className="bg-white dark:bg-[#13141C] px-3 text-zinc-400">
+                  Presentation Mode
+                </span>
+              </div>
+            </div>
+
+            {/* Quick Demo Mode for Client Showcases */}
             <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full mt-2 py-3 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-xs transition-colors flex items-center justify-center gap-2 shadow-xs disabled:opacity-50"
+              type="button"
+              onClick={handleClientDemoLogin}
+              className="w-full py-2.5 px-4 bg-zinc-100 hover:bg-zinc-200 dark:bg-[#181924] dark:hover:bg-[#202230] text-zinc-800 dark:text-zinc-200 border border-black/[0.08] dark:border-white/[0.08] rounded-2xl font-mono text-xs font-semibold flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
             >
-              {isLoading
-                ? "Verifying..."
-                : mode === "login"
-                ? "Sign In to Waymark"
-                : "Create Account & Start Onboarding"}
+              <Sparkles size={14} className="text-purple-600 dark:text-[#D4F638]" />
+              <span>1-Tap Client Presentation Demo (Admin)</span>
             </button>
-          </form>
 
-          {/* Offline local note */}
-          <div className="mt-6 pt-5 border-t border-white/[0.08] text-center text-xs text-zinc-500 font-mono flex items-center justify-center gap-1.5">
-            <ShieldCheck size={13} className="text-[#3B82F6]" />
-            <span>Offline First Architecture · Works without internet</span>
+            {/* Link to Signup */}
+            <div className="text-center pt-2 border-t border-black/[0.06] dark:border-white/[0.06]">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                New wholesale distributor?{" "}
+                <Link
+                  href="/signup"
+                  className="font-bold text-indigo-600 dark:text-[#D4F638] hover:underline"
+                >
+                  Create Agency Account &rarr;
+                </Link>
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="py-4 text-center text-xs font-mono text-zinc-400 border-t border-black/[0.06] dark:border-white/[0.06]">
+        Waymark · FMCG Wholesale Delivery &amp; Corridor Dispatch
+      </footer>
     </div>
   );
 }

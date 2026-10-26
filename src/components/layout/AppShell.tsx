@@ -14,7 +14,9 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
   const isStandalonePage =
     pathname === "/" ||
     pathname === "/welcome" ||
-    pathname === "/login";
+    pathname === "/login" ||
+    pathname === "/signup" ||
+    pathname === "/onboarding";
 
   useEffect(() => {
     // 1. Request persistent storage from browser to prevent automatic cache/IndexedDB eviction

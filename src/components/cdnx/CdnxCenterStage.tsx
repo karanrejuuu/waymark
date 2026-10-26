@@ -39,6 +39,7 @@ interface CdnxCenterStageProps {
   pendingDueCount: number;
   totalDueAmount: number;
   remindersCount: number;
+  onLoadDemoData?: () => void;
 }
 
 export const CdnxCenterStage: React.FC<CdnxCenterStageProps> = ({
@@ -58,6 +59,7 @@ export const CdnxCenterStage: React.FC<CdnxCenterStageProps> = ({
   pendingDueCount,
   totalDueAmount,
   remindersCount,
+  onLoadDemoData,
 }) => {
   const todayStr = formatDateOnly(new Date());
   const pendingCount = allShopsInRoute.filter((s) => !completedShopIds.has(s.id)).length;
@@ -256,14 +258,36 @@ export const CdnxCenterStage: React.FC<CdnxCenterStageProps> = ({
                 ? `0 stops recorded on this corridor today. Tap '✓ Quick Deliver' or 'Log Visit' on any shop to record a completed stop.`
                 : `Zero pending deliveries remaining for ${routeName} today. You can log additional shops or review the ledger.`}
             </p>
-            {activeSubFilter !== "all" && (
-              <button
-                type="button"
-                onClick={() => onSubFilterChange("all")}
-                className="mt-2 px-4 py-2 bg-[#D4F638] text-[#0A0D02] rounded-full text-xs font-mono font-bold hover:bg-[#C2E426] transition-all shadow-sm"
-              >
-                Return to Today's Run
-              </button>
+            {allShopsInRoute.length === 0 ? (
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">
+                <button
+                  type="button"
+                  onClick={onOpenAddShop}
+                  className="px-5 py-2.5 bg-[#D4F638] hover:bg-[#C2E426] text-[#0A0D02] rounded-full text-xs font-mono font-bold shadow-md transition-all active:scale-95 flex items-center gap-1.5"
+                >
+                  <Plus size={15} strokeWidth={3} />
+                  <span>Add First Store on Beat</span>
+                </button>
+                {onLoadDemoData && (
+                  <button
+                    type="button"
+                    onClick={onLoadDemoData}
+                    className="px-4 py-2.5 bg-zinc-100 hover:bg-zinc-200 dark:bg-[#181924] dark:hover:bg-[#202230] text-zinc-800 dark:text-zinc-200 border border-black/[0.08] dark:border-white/[0.08] rounded-full text-xs font-mono font-semibold transition-all"
+                  >
+                    <span>Load Sample Stores (Demo)</span>
+                  </button>
+                )}
+              </div>
+            ) : (
+              activeSubFilter !== "all" && (
+                <button
+                  type="button"
+                  onClick={() => onSubFilterChange("all")}
+                  className="mt-2 px-4 py-2 bg-[#D4F638] text-[#0A0D02] rounded-full text-xs font-mono font-bold hover:bg-[#C2E426] transition-all shadow-sm"
+                >
+                  Return to Today's Run
+                </button>
+              )
             )}
           </div>
         ) : (

@@ -10,10 +10,18 @@ export interface SyncQueueItem {
 }
 
 export interface LocalOrganisation extends Tables<"organisations"> {}
-export interface LocalOrganisationMember extends Tables<"organisation_members"> {}
-export interface LocalProfile extends Tables<"profiles"> {}
+export interface LocalOrganisationMember extends Tables<"organisation_members"> {
+  name?: string;
+  phone?: string;
+}
+export interface LocalProfile extends Tables<"profiles"> {
+  onboarding_completed?: boolean;
+  business_name?: string;
+}
 export interface LocalGodown extends Tables<"godowns"> {}
-export interface LocalRegion extends Tables<"regions"> {}
+export interface LocalRegion extends Tables<"regions"> {
+  active_days?: number[]; // [0 = Sun, 1 = Mon, 2 = Tue, 3 = Wed, 4 = Thu, 5 = Fri, 6 = Sat]
+}
 export interface LocalShop extends Tables<"shops"> {
   reminder_date?: string | null;
   reminder_note?: string | null;
