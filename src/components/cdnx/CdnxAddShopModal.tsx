@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { X, Plus, Store, MapPin, Phone, Package, IndianRupee } from "lucide-react";
 import { db, LocalRegion, LocalShop } from "@/lib/db/dexie";
 import { enqueueWrite } from "@/lib/db/sync";
@@ -23,13 +23,42 @@ export const CdnxAddShopModal: React.FC<CdnxAddShopModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
+  // Deduplicate and filter to only active delivery routes (exclude turned-off routes with 0 active days)
+  const activeRegions = useMemo(() => {
+    const seen = new Set<string>();
+    return regions.filter((r) => {
+      // Exclude if explicitly turned off (empty active_days array)
+      if (Array.isArray(r.active_days) && r.active_days.length === 0) {
+        return false;
+      }
+      const norm = r.name.toLowerCase().replace(/[\s-_]/g, "").replace(/beat$/i, "");
+      if (seen.has(norm)) {
+        return false;
+      }
+      seen.add(norm);
+      return true;
+    });
+  }, [regions]);
+
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [contact, setContact] = useState("");
-  const [selectedRegionId, setSelectedRegionId] = useState(defaultRegionId || regions[0]?.id || "");
+  const [selectedRegionId, setSelectedRegionId] = useState(
+    defaultRegionId && activeRegions.some((r) => r.id === defaultRegionId)
+      ? defaultRegionId
+      : activeRegions[0]?.id || ""
+  );
   const [initialCrates, setInitialCrates] = useState("2");
   const [initialDue, setInitialDue] = useState("0");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (defaultRegionId && activeRegions.some((r) => r.id === defaultRegionId)) {
+      setSelectedRegionId(defaultRegionId);
+    } else if (activeRegions.length > 0 && !activeRegions.some((r) => r.id === selectedRegionId)) {
+      setSelectedRegionId(activeRegions[0].id);
+    }
+  }, [defaultRegionId, activeRegions, selectedRegionId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -130,7 +159,7 @@ export const CdnxAddShopModal: React.FC<CdnxAddShopModalProps> = ({
               onChange={(e) => setSelectedRegionId(e.target.value)}
               className="w-full bg-zinc-50 dark:bg-[#1A1B24] border border-black/[0.1] dark:border-white/[0.1] rounded-xl px-3 py-2.5 text-zinc-900 dark:text-white font-medium focus:outline-none focus:border-indigo-500 dark:focus:border-[#D4F638]"
             >
-              {regions.map((r) => (
+              {activeRegions.map((r) => (
                 <option key={r.id} value={r.id} className="bg-white dark:bg-[#13141C] text-zinc-900 dark:text-white">
                   {r.name}
                 </option>

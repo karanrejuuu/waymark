@@ -148,8 +148,8 @@ export default function SignupPage() {
 
             <div className="relative z-10 space-y-2">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#181924] border border-white/[0.08] text-[10px] font-mono font-bold text-[#D4F638]">
-                <ShieldCheck size={12} />
-                <span>ZERO DATA LOSS GUARANTEED</span>
+                <Building2 size={12} />
+                <span>WHOLESALE AGENCY SETUP</span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
                 Create Agency Account

@@ -36,7 +36,41 @@ export default function SupplierDashboardPage() {
   // Initial Data Load & Client Territory Beat Resolution
   useEffect(() => {
     async function initData() {
-      let allRegs = await db.regions.orderBy("sort_order").toArray();
+      // 1. Sanitize & clean up regions from Dexie (remove duplicates and turned-off beats)
+      let rawRegs = await db.regions.orderBy("sort_order").toArray();
+      const normMap = new Map<string, LocalRegion>();
+      const regionsToDelete: string[] = [];
+
+      for (const reg of rawRegs) {
+        // Exclude if turned off (active_days explicitly set to empty array)
+        if (Array.isArray(reg.active_days) && reg.active_days.length === 0) {
+          regionsToDelete.push(reg.id);
+          continue;
+        }
+
+        const norm = reg.name.toLowerCase().replace(/[\s-_]/g, "").replace(/beat$/i, "");
+        if (normMap.has(norm)) {
+          const existing = normMap.get(norm)!;
+          const existingHasDays = Array.isArray(existing.active_days) && existing.active_days.length > 0;
+          const currentHasDays = Array.isArray(reg.active_days) && reg.active_days.length > 0;
+
+          if (!existingHasDays && currentHasDays) {
+            regionsToDelete.push(existing.id);
+            normMap.set(norm, reg);
+          } else {
+            regionsToDelete.push(reg.id);
+          }
+        } else {
+          normMap.set(norm, reg);
+        }
+      }
+
+      if (regionsToDelete.length > 0) {
+        await db.regions.bulkDelete(regionsToDelete);
+        rawRegs = await db.regions.orderBy("sort_order").toArray();
+      }
+
+      const allRegs = rawRegs.filter((r) => !Array.isArray(r.active_days) || r.active_days.length > 0);
       const shops = await db.shops.filter((s) => !s.is_archived).toArray();
 
       setRegions(allRegs);
@@ -79,10 +113,11 @@ export default function SupplierDashboardPage() {
   };
 
   const refreshData = async () => {
-    const [allRegs, shops] = await Promise.all([
+    const [rawRegs, shops] = await Promise.all([
       db.regions.orderBy("sort_order").toArray(),
       db.shops.filter((s) => !s.is_archived).toArray(),
     ]);
+    const allRegs = rawRegs.filter((r) => !Array.isArray(r.active_days) || r.active_days.length > 0);
     setRegions(allRegs);
     setAllDbShops(shops);
 

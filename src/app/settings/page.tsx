@@ -154,16 +154,16 @@ export default function SettingsPage() {
             <div className="flex items-center gap-2">
               <ShieldCheck size={18} className="text-[#3B82F6]" />
               <span className="font-bold text-sm text-[#F8FAFC]">
-                Data Durability & Offline Protection
+                Database Backup & Storage
               </span>
             </div>
             <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-[#22C55E]/15 text-[#22C55E] border border-[#22C55E]/30 font-bold">
-              {storageStatus?.persisted ? "Persisted (Immune to Eviction)" : "IndexedDB Active"}
+              {storageStatus?.persisted ? "Storage Active" : "IndexedDB Ready"}
             </span>
           </div>
 
           <p className="text-xs text-[#94A3B8] mb-4 leading-relaxed">
-            Your shops, replenishment cadences, and cash tallies are stored in browser IndexedDB and guaranteed against automatic mobile disk cleaning. You can export a snapshot backup at any time.
+            Your shops, replenishment cadences, and ledger balances are stored securely in local browser storage for offline operation. You can export a snapshot backup at any time.
           </p>
 
           {backupNotice && (

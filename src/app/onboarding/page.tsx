@@ -194,7 +194,13 @@ export default function OnboardingExperiencePage() {
       });
 
       // 2. Save configured Regions with active_days
-      const regionRecords: LocalRegion[] = routes.map((r, idx) => ({
+      // Only keep routes that have at least 1 active day scheduled
+      const activeRoutes = routes.filter((r) => r.activeDays && r.activeDays.length > 0);
+
+      // Clean out obsolete/deleted regions from Dexie
+      await db.regions.clear();
+
+      const regionRecords: LocalRegion[] = activeRoutes.map((r, idx) => ({
         id: r.id,
         organisation_id: orgId,
         owner_id: user?.id || "demo-user",
@@ -667,7 +673,7 @@ export default function OnboardingExperiencePage() {
                 Ready to launch your wholesale cockpit
               </h2>
               <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                Choose how you want to start. For your first real client, choose Clean Slate so zero mock data touches your database.
+                Choose how you want to initialize your workspace.
               </p>
             </div>
 
@@ -682,14 +688,14 @@ export default function OnboardingExperiencePage() {
               >
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-base text-zinc-950 dark:text-white">
-                    Clean Slate (Client Ready)
+                    Empty Workspace
                   </span>
                   <span className="text-xs font-mono font-bold text-emerald-600 dark:text-[#D4F638]">
                     RECOMMENDED
                   </span>
                 </div>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                  Start with a 100% clean database containing only your configured routes and products. No mock stores. Ready to add your client&apos;s real 50 shops.
+                  Start fresh with your configured delivery beats and products, ready to register your stores on the road.
                 </p>
               </div>
 
@@ -703,24 +709,14 @@ export default function OnboardingExperiencePage() {
               >
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-base text-zinc-950 dark:text-white">
-                    Load Sample Sandbox
+                    Preview with Sample Stores
                   </span>
-                  <span className="text-xs font-mono text-zinc-400">DEMO ONLY</span>
+                  <span className="text-xs font-mono text-zinc-400">PREVIEW</span>
                 </div>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                  Pre-populates 7 sample stores in Fort Kochi and Mattancherry with sample dues and reminder dates for immediate demonstration.
+                  Loads sample stores in Fort Kochi and Mattancherry to explore the field workflow.
                 </p>
               </div>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-zinc-100 dark:bg-[#161722] border border-black/[0.06] dark:border-white/[0.06] space-y-2 text-xs">
-              <div className="flex items-center gap-2 font-mono text-zinc-700 dark:text-zinc-300 font-bold">
-                <ShieldCheck size={16} className="text-emerald-600 dark:text-[#D4F638]" />
-                <span>Zero Data Loss Protection Active</span>
-              </div>
-              <p className="text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                All records are written directly to your browser&apos;s persistent IndexedDB storage engine. Automatic backup snapshots are generated locally to safeguard your agency data.
-              </p>
             </div>
           </div>
         )}
