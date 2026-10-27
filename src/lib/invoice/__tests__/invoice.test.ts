@@ -79,10 +79,28 @@ describe("Invoice Generator & Number to Words", () => {
       taxAmountInWords: "INR Two Hundred Twenty Eight and Fifty Eight paise Only",
     };
 
-    const { doc, blob, dataUrl } = await generateInvoicePdf(sampleInvoice);
+    const { doc, blob, dataUrl, arrayBuffer } = await generateInvoicePdf(sampleInvoice);
 
     expect(doc.getNumberOfPages()).toBe(2);
     expect(blob.size).toBeGreaterThan(1000);
     expect(dataUrl.startsWith("data:application/pdf")).toBe(true);
+
+    // Save sample mock PDF to public/ and brain artifact directory
+    const fs = await import("fs");
+    const path = await import("path");
+    const buffer = Buffer.from(arrayBuffer);
+
+    const publicPath = path.resolve(process.cwd(), "public/mock-tax-invoice-sample.pdf");
+    fs.writeFileSync(publicPath, buffer);
+
+    const brainPath = "/Users/karanreju/.gemini/antigravity/brain/e2c7e027-6e9a-4690-8813-d420c9201c5d/mock-tax-invoice-sample.pdf";
+    try {
+      fs.writeFileSync(brainPath, buffer);
+    } catch {}
+
+    // Save Page 2 isolated PDF so quicklook can render Page 2 thumbnail
+    const docForP2 = await generateInvoicePdf(sampleInvoice);
+    docForP2.doc.deletePage(1);
+    fs.writeFileSync("/private/tmp/mock-p2.pdf", Buffer.from(docForP2.doc.output("arraybuffer")));
   });
 });
