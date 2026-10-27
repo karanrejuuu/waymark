@@ -1,7 +1,18 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
-import { X, Plus, Store, MapPin, Phone, Package, IndianRupee } from "lucide-react";
+import {
+  X,
+  Plus,
+  Store,
+  MapPin,
+  Phone,
+  Package,
+  IndianRupee,
+  Mail,
+  MessageSquare,
+  FileText,
+} from "lucide-react";
 import { db, LocalRegion, LocalShop } from "@/lib/db/dexie";
 import { enqueueWrite } from "@/lib/db/sync";
 import { formatDateOnly } from "@/lib/scheduling";
@@ -43,6 +54,11 @@ export const CdnxAddShopModal: React.FC<CdnxAddShopModalProps> = ({
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [contact, setContact] = useState("");
+  const [email, setEmail] = useState("");
+  const [whatsappNumber, setWhatsappNumber] = useState("");
+  const [gstin, setGstin] = useState("");
+  const [stateName, setStateName] = useState("Kerala");
+  const [stateCode, setStateCode] = useState("32");
   const [selectedRegionId, setSelectedRegionId] = useState(
     defaultRegionId && activeRegions.some((r) => r.id === defaultRegionId)
       ? defaultRegionId
@@ -79,6 +95,12 @@ export const CdnxAddShopModal: React.FC<CdnxAddShopModalProps> = ({
         name: name.trim(),
         contact: contact.trim() || null,
         notes: address.trim() || null,
+        email: email.trim() || null,
+        whatsapp_number: whatsappNumber.trim() || contact.trim() || null,
+        gstin: gstin.trim() || null,
+        billing_address: address.trim() || null,
+        state_name: stateName.trim() || "Kerala",
+        state_code: stateCode.trim() || "32",
         lat: null,
         lng: null,
         is_urgent: false,
@@ -125,9 +147,9 @@ export const CdnxAddShopModal: React.FC<CdnxAddShopModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
-      <div className="w-full max-w-md bg-white dark:bg-[#13141C] border border-black/[0.1] dark:border-white/[0.1] rounded-3xl p-6 shadow-2xl relative text-zinc-950 dark:text-white space-y-5 transition-colors">
+      <div className="w-full max-w-md bg-white dark:bg-[#13141C] border border-black/[0.1] dark:border-white/[0.1] rounded-3xl p-6 shadow-2xl relative text-zinc-950 dark:text-white space-y-4 max-h-[90vh] flex flex-col transition-colors">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-black/[0.08] dark:border-white/[0.08] pb-4">
+        <div className="flex items-center justify-between border-b border-black/[0.08] dark:border-white/[0.08] pb-3 flex-shrink-0">
           <div>
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#D4F638]" />
@@ -136,7 +158,7 @@ export const CdnxAddShopModal: React.FC<CdnxAddShopModalProps> = ({
               </span>
             </div>
             <h3 className="text-lg font-bold text-zinc-950 dark:text-white tracking-tight mt-0.5">
-              Quick Add Store
+              Quick Add Store &amp; Billing
             </h3>
           </div>
           <button
@@ -147,17 +169,17 @@ export const CdnxAddShopModal: React.FC<CdnxAddShopModalProps> = ({
           </button>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+        {/* Scrollable Form Body */}
+        <form onSubmit={handleSubmit} className="space-y-3.5 text-xs overflow-y-auto pr-1 flex-1">
           {/* Active Route Selection */}
           <div>
-            <label className="block text-[11px] font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5 font-bold">
-              Delivery Route / Area
+            <label className="block text-[11px] font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1 font-bold">
+              Delivery Route / Beat Area
             </label>
             <select
               value={selectedRegionId}
               onChange={(e) => setSelectedRegionId(e.target.value)}
-              className="w-full bg-zinc-50 dark:bg-[#1A1B24] border border-black/[0.1] dark:border-white/[0.1] rounded-xl px-3 py-2.5 text-zinc-900 dark:text-white font-medium focus:outline-none focus:border-indigo-500 dark:focus:border-[#D4F638]"
+              className="w-full bg-zinc-50 dark:bg-[#1A1B24] border border-black/[0.1] dark:border-white/[0.1] rounded-xl px-3 py-2 text-zinc-900 dark:text-white font-medium focus:outline-none focus:border-indigo-500 dark:focus:border-[#D4F638]"
             >
               {activeRegions.map((r) => (
                 <option key={r.id} value={r.id} className="bg-white dark:bg-[#13141C] text-zinc-900 dark:text-white">
@@ -169,65 +191,118 @@ export const CdnxAddShopModal: React.FC<CdnxAddShopModalProps> = ({
 
           {/* Shop Name */}
           <div>
-            <label className="block text-[11px] font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5 font-bold">
-              Shop Name *
+            <label className="block text-[11px] font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1 font-bold">
+              Shop Name (Buyer / Bill to) *
             </label>
             <div className="flex items-center bg-zinc-50 dark:bg-[#1A1B24] border border-black/[0.1] dark:border-white/[0.1] rounded-xl px-3">
-              <Store size={15} className="text-zinc-400 dark:text-zinc-500 mr-2" />
+              <Store size={15} className="text-zinc-400 dark:text-zinc-500 mr-2 flex-shrink-0" />
               <input
                 type="text"
                 required
                 autoFocus
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Paulson General Store"
-                className="w-full bg-transparent py-2.5 text-zinc-950 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none text-xs font-semibold"
+                placeholder="e.g. Cochin Shipyard Co-op Society"
+                className="w-full bg-transparent py-2 text-zinc-950 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none text-xs font-semibold"
               />
             </div>
           </div>
 
-          {/* Street / Landmark */}
+          {/* Street / Landmark / Billing Address */}
           <div>
-            <label className="block text-[11px] font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5 font-bold">
-              Landmark / Location
+            <label className="block text-[11px] font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1 font-bold">
+              Billing Address / Landmark
             </label>
             <div className="flex items-center bg-zinc-50 dark:bg-[#1A1B24] border border-black/[0.1] dark:border-white/[0.1] rounded-xl px-3">
-              <MapPin size={15} className="text-zinc-400 dark:text-zinc-500 mr-2" />
+              <MapPin size={15} className="text-zinc-400 dark:text-zinc-500 mr-2 flex-shrink-0" />
               <input
                 type="text"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                placeholder="e.g. Near Beach Walk, opposite Cochin Club"
-                className="w-full bg-transparent py-2.5 text-zinc-950 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none text-xs"
+                placeholder="e.g. No: E-750, Perumpadappu, Kochi-15"
+                className="w-full bg-transparent py-2 text-zinc-950 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none text-xs"
               />
             </div>
           </div>
 
-          {/* Phone / Owner */}
-          <div>
-            <label className="block text-[11px] font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5 font-bold">
-              Phone / Owner Name (Optional)
-            </label>
-            <div className="flex items-center bg-zinc-50 dark:bg-[#1A1B24] border border-black/[0.1] dark:border-white/[0.1] rounded-xl px-3">
-              <Phone size={15} className="text-zinc-400 dark:text-zinc-500 mr-2" />
-              <input
-                type="text"
-                value={contact}
-                onChange={(e) => setContact(e.target.value)}
-                placeholder="e.g. 9847012345 · Ramesh"
-                className="w-full bg-transparent py-2.5 text-zinc-950 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none text-xs"
-              />
+          {/* Email & WhatsApp Row (Required for Automated Receipt PDF) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div>
+              <label className="block text-[11px] font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1 font-bold">
+                Email for PDF Invoice
+              </label>
+              <div className="flex items-center bg-zinc-50 dark:bg-[#1A1B24] border border-black/[0.1] dark:border-white/[0.1] rounded-xl px-3">
+                <Mail size={14} className="text-zinc-400 dark:text-zinc-500 mr-2 flex-shrink-0" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="e.g. store@gmail.com"
+                  className="w-full bg-transparent py-2 text-zinc-950 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none text-xs"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1 font-bold">
+                WhatsApp Phone Number
+              </label>
+              <div className="flex items-center bg-zinc-50 dark:bg-[#1A1B24] border border-black/[0.1] dark:border-white/[0.1] rounded-xl px-3">
+                <MessageSquare size={14} className="text-emerald-500 mr-2 flex-shrink-0" />
+                <input
+                  type="tel"
+                  value={whatsappNumber}
+                  onChange={(e) => setWhatsappNumber(e.target.value)}
+                  placeholder="e.g. 9895047600"
+                  className="w-full bg-transparent py-2 text-zinc-950 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none text-xs font-mono"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* GSTIN / UIN & Phone */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div>
+              <label className="block text-[11px] font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1 font-bold">
+                Shop GSTIN / UIN (Optional)
+              </label>
+              <div className="flex items-center bg-zinc-50 dark:bg-[#1A1B24] border border-black/[0.1] dark:border-white/[0.1] rounded-xl px-3">
+                <FileText size={14} className="text-zinc-400 dark:text-zinc-500 mr-2 flex-shrink-0" />
+                <input
+                  type="text"
+                  value={gstin}
+                  onChange={(e) => setGstin(e.target.value)}
+                  placeholder="e.g. 32AADAC5517E1ZA"
+                  className="w-full bg-transparent py-2 text-zinc-950 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none text-xs uppercase font-mono"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1 font-bold">
+                Contact Person Name
+              </label>
+              <div className="flex items-center bg-zinc-50 dark:bg-[#1A1B24] border border-black/[0.1] dark:border-white/[0.1] rounded-xl px-3">
+                <Phone size={14} className="text-zinc-400 dark:text-zinc-500 mr-2 flex-shrink-0" />
+                <input
+                  type="text"
+                  value={contact}
+                  onChange={(e) => setContact(e.target.value)}
+                  placeholder="e.g. Ramesh (Manager)"
+                  className="w-full bg-transparent py-2 text-zinc-950 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none text-xs"
+                />
+              </div>
             </div>
           </div>
 
           {/* Initial Crates & Opening Balance */}
-          <div className="grid grid-cols-2 gap-3 pt-1">
+          <div className="grid grid-cols-2 gap-2.5 pt-0.5">
             <div>
               <label className="block text-[11px] font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1 font-bold">
                 Default Crates
               </label>
               <div className="flex items-center bg-zinc-50 dark:bg-[#1A1B24] border border-black/[0.1] dark:border-white/[0.1] rounded-xl px-3">
-                <Package size={14} className="text-emerald-600 dark:text-[#D4F638] mr-2" />
+                <Package size={14} className="text-emerald-600 dark:text-[#D4F638] mr-2 flex-shrink-0" />
                 <input
                   type="number"
                   min={1}
@@ -243,7 +318,7 @@ export const CdnxAddShopModal: React.FC<CdnxAddShopModalProps> = ({
                 Opening Due (₹)
               </label>
               <div className="flex items-center bg-zinc-50 dark:bg-[#1A1B24] border border-black/[0.1] dark:border-white/[0.1] rounded-xl px-3">
-                <IndianRupee size={14} className="text-amber-600 dark:text-amber-400 mr-1" />
+                <IndianRupee size={14} className="text-amber-600 dark:text-amber-400 mr-1 flex-shrink-0" />
                 <input
                   type="number"
                   min={0}
@@ -259,9 +334,9 @@ export const CdnxAddShopModal: React.FC<CdnxAddShopModalProps> = ({
           <button
             type="submit"
             disabled={isSubmitting || !name.trim()}
-            className="w-full py-3.5 bg-[#D4F638] hover:bg-[#C2E426] text-[#0A0D02] rounded-2xl font-bold font-sans text-sm flex items-center justify-center gap-2 shadow-lg transition-all active:scale-[0.98] disabled:opacity-50 mt-4"
+            className="w-full py-3 bg-[#D4F638] hover:bg-[#C2E426] text-[#0A0D02] rounded-2xl font-bold font-sans text-sm flex items-center justify-center gap-2 shadow-lg transition-all active:scale-[0.98] disabled:opacity-50 mt-2"
           >
-            <Plus size={17} strokeWidth={2.5} />
+            <Plus size={16} strokeWidth={2.5} />
             <span>{isSubmitting ? "Saving to Route..." : "Add to Route Now"}</span>
           </button>
         </form>

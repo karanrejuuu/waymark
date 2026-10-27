@@ -19,6 +19,10 @@ import {
 import { LocalShop, LocalShopProduct, LocalProduct } from "@/lib/db/dexie";
 import { recordShopVisitOutcome, VisitOutcome } from "@/lib/actions/visitActions";
 import { formatDateOnly } from "@/lib/scheduling";
+import {
+  processPaymentReceipt,
+  ProcessReceiptResult,
+} from "@/lib/invoice/processPaymentReceipt";
 
 interface CdnxWalkToCarSlipProps {
   shop: LocalShop | null;
@@ -26,6 +30,7 @@ interface CdnxWalkToCarSlipProps {
   routeName: string;
   onClose: () => void;
   onSuccess: (shopId: string, nextShopId?: string) => void;
+  onReceiptReady?: (receipt: ProcessReceiptResult) => void;
   nextShopId?: string;
   nextShopName?: string;
 }
@@ -36,6 +41,7 @@ export const CdnxWalkToCarSlip: React.FC<CdnxWalkToCarSlipProps> = ({
   routeName,
   onClose,
   onSuccess,
+  onReceiptReady,
   nextShopId,
   nextShopName,
 }) => {
@@ -142,6 +148,31 @@ export const CdnxWalkToCarSlip: React.FC<CdnxWalkToCarSlipProps> = ({
         followUpDate: calculatedReminder || undefined,
         notes: combinedNotes || undefined,
       });
+
+      // If payment was recorded (outcome === "delivered_paid" & payment > 0), generate the GST Tax Invoice
+      if (outcome === "delivered_paid" && numPayment > 0) {
+        try {
+          const itemLines = shopProducts.map((sp) => ({
+            name: sp.product?.name || "Wholesale FMCG Crate",
+            qty: cratesDelivered > 0 ? cratesDelivered : sp.shopProduct.default_qty || 1,
+            unitPrice: numPayment / (cratesDelivered > 0 ? cratesDelivered : 1),
+            unit: "crates",
+          }));
+
+          const receiptResult = await processPaymentReceipt({
+            shop,
+            amount: numPayment,
+            paymentMode,
+            items: itemLines,
+          });
+
+          if (onReceiptReady) {
+            onReceiptReady(receiptResult);
+          }
+        } catch (receiptErr) {
+          console.warn("Invoice generation warning:", receiptErr);
+        }
+      }
 
       onSuccess(shop.id, nextShopId);
     } catch (err) {

@@ -14,6 +14,8 @@ import { CdnxCenterStage } from "@/components/cdnx/CdnxCenterStage";
 import { CdnxWalkToCarSlip } from "@/components/cdnx/CdnxWalkToCarSlip";
 import { CdnxAddShopModal } from "@/components/cdnx/CdnxAddShopModal";
 import { CdnxLedgerView } from "@/components/cdnx/CdnxLedgerView";
+import { InvoiceReceiptModal } from "@/components/invoice/InvoiceReceiptModal";
+import { ProcessReceiptResult } from "@/lib/invoice/processPaymentReceipt";
 
 export default function SupplierDashboardPage() {
   const todayItems = useTodayList();
@@ -32,6 +34,9 @@ export default function SupplierDashboardPage() {
 
   // Add Shop Modal State
   const [isAddShopModalOpen, setIsAddShopModalOpen] = useState(false);
+
+  // Invoice / Payment Receipt Modal State
+  const [activeReceipt, setActiveReceipt] = useState<ProcessReceiptResult | null>(null);
 
   // Initial Data Load & Client Territory Beat Resolution
   useEffect(() => {
@@ -360,6 +365,7 @@ export default function SupplierDashboardPage() {
               routeName={activeRouteName}
               onRefresh={refreshData}
               onSelectShopForLog={handleSelectShopForLog}
+              onReceiptReady={setActiveReceipt}
             />
           ) : (
             <CdnxCenterStage
@@ -398,6 +404,7 @@ export default function SupplierDashboardPage() {
               onSuccess={handleSlipSuccess}
               nextShopId={nextShopInSequence?.id}
               nextShopName={nextShopInSequence?.name}
+              onReceiptReady={setActiveReceipt}
             />
           ) : (
             <div className="h-full bg-white dark:bg-[#13141C] border-l border-black/[0.08] dark:border-white/[0.08] p-6 flex flex-col items-center justify-center text-center space-y-4 transition-colors">
@@ -427,6 +434,7 @@ export default function SupplierDashboardPage() {
               onSuccess={handleSlipSuccess}
               nextShopId={nextShopInSequence?.id}
               nextShopName={nextShopInSequence?.name}
+              onReceiptReady={setActiveReceipt}
             />
           </div>
         </div>
@@ -442,6 +450,16 @@ export default function SupplierDashboardPage() {
           refreshData();
           handleSelectShopForLog(newShop);
         }}
+      />
+
+      {/* 2-Page GST Tax Invoice / Payment Receipt Modal */}
+      <InvoiceReceiptModal
+        isOpen={Boolean(activeReceipt)}
+        onClose={() => setActiveReceipt(null)}
+        invoice={activeReceipt?.invoice || null}
+        pdfDataUrl={activeReceipt?.pdfDataUrl}
+        whatsAppUrl={activeReceipt?.whatsAppUrl}
+        emailSent={activeReceipt?.emailSent}
       />
     </div>
   );

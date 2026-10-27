@@ -25,6 +25,60 @@ export interface LocalRegion extends Tables<"regions"> {
 export interface LocalShop extends Tables<"shops"> {
   reminder_date?: string | null;
   reminder_note?: string | null;
+  email?: string | null;
+  whatsapp_number?: string | null;
+  gstin?: string | null;
+  billing_address?: string | null;
+  state_name?: string | null;
+  state_code?: string | null;
+}
+export interface LocalCompanyProfile {
+  id: string; // "default"
+  company_name: string;
+  address_line1: string;
+  address_line2: string;
+  city_pincode: string;
+  mobile: string;
+  contact: string;
+  gstin: string;
+  state_name: string;
+  state_code: string;
+  bank_name: string;
+  account_number: string;
+  branch_ifsc: string;
+  upi_id: string;
+  smtp_host?: string;
+  smtp_port?: number;
+  smtp_user?: string;
+  smtp_pass?: string;
+  from_email?: string;
+  resend_api_key?: string;
+  updated_at: string;
+}
+export interface LocalInvoice {
+  id: string;
+  invoice_no: string;
+  shop_id: string;
+  shop_name: string;
+  delivery_id?: string | null;
+  payment_id?: string | null;
+  dated: string;
+  delivery_note?: string;
+  mode_of_payment: string;
+  subtotal: number;
+  cgst_amount: number;
+  sgst_amount: number;
+  round_off: number;
+  total_amount: number;
+  amount_in_words: string;
+  tax_amount_in_words: string;
+  items_json: string;
+  pdf_data_url?: string;
+  recipient_email?: string | null;
+  recipient_whatsapp?: string | null;
+  sent_via_email?: boolean;
+  sent_via_whatsapp?: boolean;
+  created_at: string;
 }
 export interface LocalProduct extends Tables<"products"> {}
 export interface LocalShopProduct extends Tables<"shop_products"> {}
@@ -42,6 +96,8 @@ export class WaymarkDatabase extends Dexie {
   shop_products!: EntityTable<LocalShopProduct, "id">;
   deliveries!: EntityTable<LocalDelivery, "id">;
   payments!: EntityTable<LocalPayment, "id">;
+  company_profiles!: EntityTable<LocalCompanyProfile, "id">;
+  invoices!: EntityTable<LocalInvoice, "id">;
   sync_queue!: EntityTable<SyncQueueItem, "id">;
 
   constructor() {
@@ -77,6 +133,13 @@ export class WaymarkDatabase extends Dexie {
     // Version 3: Added reminder_date to shops for supplier walk-to-car scheduled reminders
     this.version(3).stores({
       shops: "id, owner_id, organisation_id, region_id, is_urgent, is_archived, sort_order, reminder_date",
+    });
+
+    // Version 4: Tax invoices, supplier company profile, and shop GST/email/WhatsApp fields
+    this.version(4).stores({
+      shops: "id, owner_id, organisation_id, region_id, is_urgent, is_archived, sort_order, reminder_date, email, whatsapp_number, gstin",
+      company_profiles: "id",
+      invoices: "id, invoice_no, shop_id, delivery_id, payment_id, dated, created_at",
     });
   }
 }

@@ -17,12 +17,17 @@ import {
 import { LocalShop } from "@/lib/db/dexie";
 import { db } from "@/lib/db/dexie";
 import { recordPayment } from "@/lib/actions/paymentActions";
+import {
+  processPaymentReceipt,
+  ProcessReceiptResult,
+} from "@/lib/invoice/processPaymentReceipt";
 
 interface CdnxLedgerViewProps {
   shops: LocalShop[];
   routeName: string;
   onRefresh: () => void;
   onSelectShopForLog: (shop: LocalShop) => void;
+  onReceiptReady?: (result: ProcessReceiptResult) => void;
 }
 
 export const CdnxLedgerView: React.FC<CdnxLedgerViewProps> = ({
@@ -30,6 +35,7 @@ export const CdnxLedgerView: React.FC<CdnxLedgerViewProps> = ({
   routeName,
   onRefresh,
   onSelectShopForLog,
+  onReceiptReady,
 }) => {
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState<"all" | "dues_only" | "cleared">("dues_only");
@@ -73,6 +79,21 @@ export const CdnxLedgerView: React.FC<CdnxLedgerViewProps> = ({
         collectedBy: "demo-supplier",
         notes: `Quick khata collection in ${routeName}`,
       });
+
+      // Generate tax invoice receipt
+      try {
+        const receiptResult = await processPaymentReceipt({
+          shop: selectedShop,
+          amount,
+          paymentMode: "cash",
+        });
+        if (onReceiptReady) {
+          onReceiptReady(receiptResult);
+        }
+      } catch (receiptErr) {
+        console.warn("Receipt generation warning:", receiptErr);
+      }
+
       setSelectedShop(null);
       setQuickAmount("");
       onRefresh();

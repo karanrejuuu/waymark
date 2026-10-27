@@ -3,11 +3,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { Plus, Bell, RefreshCw, CheckCircle2, Download, Upload, ShieldCheck, Database, HardDrive } from "lucide-react";
-import { db, LocalGodown, LocalProduct } from "@/lib/db/dexie";
+import { Plus, Bell, RefreshCw, CheckCircle2, Download, Upload, ShieldCheck, Database, HardDrive, FileText, Building2, QrCode } from "lucide-react";
+import { db, LocalGodown, LocalProduct, LocalCompanyProfile } from "@/lib/db/dexie";
 import { enqueueWrite } from "@/lib/db/sync";
 import { checkStorageDurability, StorageStatus } from "@/lib/db/durability";
 import { downloadDatabaseBackup, restoreDatabaseBackup } from "@/lib/db/backup";
+import { getCompanyProfile, saveCompanyProfile } from "@/lib/invoice/companyProfile";
 
 const ShopMap = dynamic(() => import("@/components/shop/ShopMap"), {
   ssr: false,
@@ -24,14 +25,16 @@ export default function SettingsPage() {
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
   const [storageStatus, setStorageStatus] = useState<StorageStatus | null>(null);
   const [backupNotice, setBackupNotice] = useState<string | null>(null);
+  const [companyProfile, setCompanyProfile] = useState<LocalCompanyProfile | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     async function loadSettings() {
-      const [gdw, prods, sStatus] = await Promise.all([
+      const [gdw, prods, sStatus, cProfile] = await Promise.all([
         db.godowns.toCollection().first(),
         db.products.toArray(),
         checkStorageDurability(),
+        getCompanyProfile(),
       ]);
 
       if (gdw) {
@@ -42,6 +45,7 @@ export default function SettingsPage() {
 
       setProducts(prods);
       setStorageStatus(sStatus);
+      setCompanyProfile(cProfile);
 
       if (typeof window !== "undefined" && "Notification" in window) {
         setNotificationsEnabled(Notification.permission === "granted");
@@ -49,6 +53,14 @@ export default function SettingsPage() {
     }
     loadSettings();
   }, []);
+
+  const handleUpdateCompanyProfile = async (field: keyof LocalCompanyProfile, value: any) => {
+    if (!companyProfile) return;
+    const updated = { ...companyProfile, [field]: value };
+    setCompanyProfile(updated);
+    await saveCompanyProfile({ [field]: value });
+    flashSaved();
+  };
 
   const handleSaveVehicleSettings = async () => {
     const existing = godown || {
@@ -197,6 +209,202 @@ export default function SettingsPage() {
               onChange={handleRestoreFile}
               className="hidden"
             />
+          </div>
+        </div>
+
+        {/* SECTION: SUPPLIER BILLING & GST TAX INVOICE PROFILE */}
+        <div className="bg-[#111827] border border-white/[0.08] rounded-2xl p-5 shadow-lift">
+          <div className="flex items-center justify-between mb-3 pb-3 border-b border-white/[0.06]">
+            <div className="flex items-center gap-2">
+              <Building2 size={18} className="text-[#3B82F6]" />
+              <span className="font-bold text-sm text-[#F8FAFC]">
+                Supplier Billing &amp; GST Tax Invoice Profile
+              </span>
+            </div>
+            <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-[#2563EB]/15 text-[#3B82F6] border border-[#3B82F6]/30 font-bold">
+              2-Page GST Invoices
+            </span>
+          </div>
+
+          <p className="text-xs text-[#94A3B8] mb-4 leading-relaxed">
+            These details are printed on the 2-page GST Tax Invoice PDF header (Original for Recipient &amp; Duplicate for Transporter), Dhanlaxmi bank payment instructions, and the Scan-to-Pay UPI QR code.
+          </p>
+
+          <div className="space-y-4 text-xs">
+            {/* Row 1: Company Name & GSTIN */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[11px] font-mono text-[#94A3B8] mb-1 font-semibold uppercase">
+                  Supplier / Firm Name
+                </label>
+                <input
+                  type="text"
+                  value={companyProfile?.company_name || ""}
+                  onChange={(e) => handleUpdateCompanyProfile("company_name", e.target.value)}
+                  placeholder="KN Products"
+                  className="w-full px-3 py-2 font-mono font-bold border border-white/[0.12] rounded-xl bg-[#1E293B] text-[#F8FAFC] focus:outline-none focus:border-[#2563EB]"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-mono text-[#94A3B8] mb-1 font-semibold uppercase">
+                  GSTIN / UIN
+                </label>
+                <input
+                  type="text"
+                  value={companyProfile?.gstin || ""}
+                  onChange={(e) => handleUpdateCompanyProfile("gstin", e.target.value.toUpperCase())}
+                  placeholder="32AOJPM2028P1ZR"
+                  className="w-full px-3 py-2 font-mono font-bold uppercase border border-white/[0.12] rounded-xl bg-[#1E293B] text-[#F8FAFC] focus:outline-none focus:border-[#2563EB]"
+                />
+              </div>
+            </div>
+
+            {/* Row 2: Address Lines */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label className="block text-[11px] font-mono text-[#94A3B8] mb-1 font-semibold uppercase">
+                  Address Line 1
+                </label>
+                <input
+                  type="text"
+                  value={companyProfile?.address_line1 || ""}
+                  onChange={(e) => handleUpdateCompanyProfile("address_line1", e.target.value)}
+                  placeholder="PARK ROAD"
+                  className="w-full px-3 py-2 font-mono border border-white/[0.12] rounded-xl bg-[#1E293B] text-[#F8FAFC] focus:outline-none focus:border-[#2563EB]"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-mono text-[#94A3B8] mb-1 font-semibold uppercase">
+                  Address Line 2
+                </label>
+                <input
+                  type="text"
+                  value={companyProfile?.address_line2 || ""}
+                  onChange={(e) => handleUpdateCompanyProfile("address_line2", e.target.value)}
+                  placeholder="COVENTHA, PERUMPADAPPU"
+                  className="w-full px-3 py-2 font-mono border border-white/[0.12] rounded-xl bg-[#1E293B] text-[#F8FAFC] focus:outline-none focus:border-[#2563EB]"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-mono text-[#94A3B8] mb-1 font-semibold uppercase">
+                  City &amp; PIN Code
+                </label>
+                <input
+                  type="text"
+                  value={companyProfile?.city_pincode || ""}
+                  onChange={(e) => handleUpdateCompanyProfile("city_pincode", e.target.value)}
+                  placeholder="KOCHI -682006"
+                  className="w-full px-3 py-2 font-mono border border-white/[0.12] rounded-xl bg-[#1E293B] text-[#F8FAFC] focus:outline-none focus:border-[#2563EB]"
+                />
+              </div>
+            </div>
+
+            {/* Row 3: Contact & State */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label className="block text-[11px] font-mono text-[#94A3B8] mb-1 font-semibold uppercase">
+                  Mobile Number
+                </label>
+                <input
+                  type="tel"
+                  value={companyProfile?.mobile || ""}
+                  onChange={(e) => handleUpdateCompanyProfile("mobile", e.target.value)}
+                  placeholder="8714347600"
+                  className="w-full px-3 py-2 font-mono border border-white/[0.12] rounded-xl bg-[#1E293B] text-[#F8FAFC] focus:outline-none focus:border-[#2563EB]"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-mono text-[#94A3B8] mb-1 font-semibold uppercase">
+                  Alternate Contact
+                </label>
+                <input
+                  type="tel"
+                  value={companyProfile?.contact || ""}
+                  onChange={(e) => handleUpdateCompanyProfile("contact", e.target.value)}
+                  placeholder="9895047600"
+                  className="w-full px-3 py-2 font-mono border border-white/[0.12] rounded-xl bg-[#1E293B] text-[#F8FAFC] focus:outline-none focus:border-[#2563EB]"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-mono text-[#94A3B8] mb-1 font-semibold uppercase">
+                  State &amp; State Code
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={companyProfile?.state_name || "Kerala"}
+                    onChange={(e) => handleUpdateCompanyProfile("state_name", e.target.value)}
+                    placeholder="Kerala"
+                    className="w-2/3 px-3 py-2 font-mono border border-white/[0.12] rounded-xl bg-[#1E293B] text-[#F8FAFC] focus:outline-none focus:border-[#2563EB]"
+                  />
+                  <input
+                    type="text"
+                    value={companyProfile?.state_code || "32"}
+                    onChange={(e) => handleUpdateCompanyProfile("state_code", e.target.value)}
+                    placeholder="32"
+                    className="w-1/3 px-3 py-2 font-mono text-center font-bold border border-white/[0.12] rounded-xl bg-[#1E293B] text-[#F8FAFC] focus:outline-none focus:border-[#2563EB]"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Bank Details & QR Settlement */}
+            <div className="p-3.5 rounded-xl bg-[#1E293B]/60 border border-white/[0.08] space-y-3">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#F8FAFC]">
+                <QrCode size={14} className="text-[#D4F638]" />
+                <span>Bank Settlement &amp; UPI QR Code</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[10px] font-mono text-[#94A3B8] mb-1 uppercase">
+                    Bank Name
+                  </label>
+                  <input
+                    type="text"
+                    value={companyProfile?.bank_name || ""}
+                    onChange={(e) => handleUpdateCompanyProfile("bank_name", e.target.value)}
+                    placeholder="DHANLAXMI BANK"
+                    className="w-full px-3 py-1.5 text-xs font-mono font-bold border border-white/[0.12] rounded-lg bg-[#111827] text-[#F8FAFC]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-mono text-[#94A3B8] mb-1 uppercase">
+                    A/C No.
+                  </label>
+                  <input
+                    type="text"
+                    value={companyProfile?.account_number || ""}
+                    onChange={(e) => handleUpdateCompanyProfile("account_number", e.target.value)}
+                    placeholder="001805300007729"
+                    className="w-full px-3 py-1.5 text-xs font-mono font-bold border border-white/[0.12] rounded-lg bg-[#111827] text-[#F8FAFC]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-mono text-[#94A3B8] mb-1 uppercase">
+                    Branch &amp; IFSC
+                  </label>
+                  <input
+                    type="text"
+                    value={companyProfile?.branch_ifsc || ""}
+                    onChange={(e) => handleUpdateCompanyProfile("branch_ifsc", e.target.value)}
+                    placeholder="Palluruthy & DLXB0000018"
+                    className="w-full px-3 py-1.5 text-xs font-mono border border-white/[0.12] rounded-lg bg-[#111827] text-[#F8FAFC]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-mono text-[#94A3B8] mb-1 uppercase">
+                    UPI VPA (Generates Dynamic QR on PDF)
+                  </label>
+                  <input
+                    type="text"
+                    value={companyProfile?.upi_id || ""}
+                    onChange={(e) => handleUpdateCompanyProfile("upi_id", e.target.value)}
+                    placeholder="8714347600@upi"
+                    className="w-full px-3 py-1.5 text-xs font-mono font-bold text-[#D4F638] border border-white/[0.12] rounded-lg bg-[#111827]"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
