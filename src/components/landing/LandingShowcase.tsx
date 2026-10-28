@@ -156,7 +156,7 @@ export const LandingShowcase: React.FC = () => {
               One-Tap Scheduled Reminders
             </h3>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-              Kirana keeper says "come back in 3 days with 2 crates and collect ₹1450 cheque"? Tap "In 3 Days", write note, and the shop automatically re-appears on Home on that date.
+              Kirana keeper says &quot;come back in 3 days with 2 crates and collect ₹1450 cheque&quot;? Tap &quot;In 3 Days&quot;, write note, and the shop automatically re-appears on Home on that date.
             </p>
           </div>
 
@@ -168,7 +168,7 @@ export const LandingShowcase: React.FC = () => {
               New Shop On The Road
             </h3>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-              Spotted a new provision store on Beach Road? Tap the neon "+ Add Shop" button. Corridor is pre-selected as Fort Kochi; save once and it's permanently logged in offline database.
+              Spotted a new provision store on Beach Road? Tap the neon &quot;+ Add Shop&quot; button. Corridor is pre-selected as Fort Kochi; save once and it&apos;s permanently logged in offline database.
             </p>
           </div>
         </div>

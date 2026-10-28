@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   X,
   FileText,
@@ -31,11 +31,18 @@ export const InvoiceReceiptModal: React.FC<InvoiceReceiptModalProps> = ({
   whatsAppUrl,
   emailSent,
 }) => {
-  if (!isOpen || !invoice) return null;
-
-  const [resendEmail, setResendEmail] = useState(invoice.recipient_email || "");
+  const [resendEmail, setResendEmail] = useState(invoice?.recipient_email || "");
   const [isSending, setIsSending] = useState(false);
   const [sendSuccess, setSendSuccess] = useState(emailSent || false);
+
+  useEffect(() => {
+    if (invoice?.recipient_email) {
+      setResendEmail(invoice.recipient_email);
+    }
+    setSendSuccess(emailSent || false);
+  }, [invoice?.recipient_email, emailSent]);
+
+  if (!isOpen || !invoice) return null;
 
   const handleDownload = () => {
     if (!pdfDataUrl) return;

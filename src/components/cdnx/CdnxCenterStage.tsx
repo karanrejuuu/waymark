@@ -182,7 +182,7 @@ export const CdnxCenterStage: React.FC<CdnxCenterStageProps> = ({
             onClick={() => onSubFilterChange("all")}
             className="text-xs font-mono font-bold text-purple-700 dark:text-[#D4F638] hover:underline flex items-center gap-1"
           >
-            <span>Show Today's Run</span>
+            <span>Show Today&apos;s Run</span>
             <X size={14} />
           </button>
         </div>
@@ -285,7 +285,7 @@ export const CdnxCenterStage: React.FC<CdnxCenterStageProps> = ({
                   onClick={() => onSubFilterChange("all")}
                   className="mt-2 px-4 py-2 bg-[#D4F638] text-[#0A0D02] rounded-full text-xs font-mono font-bold hover:bg-[#C2E426] transition-all shadow-sm"
                 >
-                  Return to Today's Run
+                  Return to Today&apos;s Run
                 </button>
               )
             )}

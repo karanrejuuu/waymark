@@ -66,7 +66,7 @@ export const CdnxTopNav: React.FC<CdnxTopNavProps> = ({
               : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white"
           }`}
         >
-          Today's Run
+          Today&apos;s Run
         </button>
 
         <button

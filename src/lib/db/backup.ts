@@ -15,6 +15,8 @@ export interface WaymarkBackup {
     payments: any[];
     organisations: any[];
     profiles: any[];
+    invoices?: any[];
+    company_profiles?: any[];
   };
 }
 
@@ -29,6 +31,8 @@ export async function createDatabaseBackup(): Promise<WaymarkBackup> {
     payments,
     organisations,
     profiles,
+    invoices,
+    company_profiles,
   ] = await Promise.all([
     db.shops.toArray(),
     db.shop_products.toArray(),
@@ -39,10 +43,12 @@ export async function createDatabaseBackup(): Promise<WaymarkBackup> {
     db.payments.toArray(),
     db.organisations.toArray(),
     db.profiles.toArray(),
+    db.invoices.toArray(),
+    db.company_profiles.toArray(),
   ]);
 
   const backup: WaymarkBackup = {
-    version: 2,
+    version: 3,
     exportedAt: new Date().toISOString(),
     app: "Waymark FMCG",
     counts: {
@@ -52,6 +58,8 @@ export async function createDatabaseBackup(): Promise<WaymarkBackup> {
       products: products.length,
       deliveries: deliveries.length,
       payments: payments.length,
+      invoices: invoices.length,
+      company_profiles: company_profiles.length,
     },
     data: {
       shops,
@@ -63,6 +71,8 @@ export async function createDatabaseBackup(): Promise<WaymarkBackup> {
       payments,
       organisations,
       profiles,
+      invoices,
+      company_profiles,
     },
   };
 
@@ -109,6 +119,8 @@ export async function restoreDatabaseBackup(
         db.payments,
         db.organisations,
         db.profiles,
+        db.invoices,
+        db.company_profiles,
       ],
       async () => {
         if (data.regions?.length) await db.regions.bulkPut(data.regions);
@@ -120,6 +132,8 @@ export async function restoreDatabaseBackup(
         if (data.payments?.length) await db.payments.bulkPut(data.payments);
         if (data.organisations?.length) await db.organisations.bulkPut(data.organisations);
         if (data.profiles?.length) await db.profiles.bulkPut(data.profiles);
+        if (data.invoices?.length) await db.invoices.bulkPut(data.invoices);
+        if (data.company_profiles?.length) await db.company_profiles.bulkPut(data.company_profiles);
       }
     );
 
@@ -132,6 +146,7 @@ export async function restoreDatabaseBackup(
         products: data.products?.length || 0,
         deliveries: data.deliveries?.length || 0,
         payments: data.payments?.length || 0,
+        invoices: data.invoices?.length || 0,
       },
     };
   } catch (err: any) {

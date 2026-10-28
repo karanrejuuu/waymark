@@ -45,8 +45,6 @@ export const CdnxWalkToCarSlip: React.FC<CdnxWalkToCarSlipProps> = ({
   nextShopId,
   nextShopName,
 }) => {
-  if (!shop) return null;
-
   // Visit Status
   const [outcome, setOutcome] = useState<VisitOutcome>("delivered_paid");
 
@@ -58,7 +56,7 @@ export const CdnxWalkToCarSlip: React.FC<CdnxWalkToCarSlipProps> = ({
   const [cratesDelivered, setCratesDelivered] = useState<number>(defaultTotalCrates);
 
   // Payment
-  const existingDue = Number(shop.balance_due) || 0;
+  const existingDue = Number(shop?.balance_due) || 0;
   const [paymentAmount, setPaymentAmount] = useState<string>(
     existingDue > 0 ? String(existingDue) : "0"
   );
@@ -70,7 +68,7 @@ export const CdnxWalkToCarSlip: React.FC<CdnxWalkToCarSlipProps> = ({
   >("3days");
   const [customReminderDate, setCustomReminderDate] = useState<string>("");
   const [reminderNote, setReminderNote] = useState<string>(
-    (shop as any).reminder_note || ""
+    (shop as any)?.reminder_note || ""
   );
 
   // Quick Remark
@@ -79,12 +77,15 @@ export const CdnxWalkToCarSlip: React.FC<CdnxWalkToCarSlipProps> = ({
 
   // Reset when shop changes
   useEffect(() => {
+    if (!shop) return;
     setCratesDelivered(defaultTotalCrates);
     setPaymentAmount(existingDue > 0 ? String(existingDue) : "0");
-    setReminderNote((shop as any).reminder_note || "");
+    setReminderNote((shop as any)?.reminder_note || "");
     setOutcome("delivered_paid");
     setVisitNote("");
-  }, [shop.id]);
+  }, [shop, defaultTotalCrates, existingDue]);
+
+  if (!shop) return null;
 
   // Calculate reminder date string
   const getCalculatedReminderDate = (): string | null => {

@@ -415,7 +415,7 @@ export default function SupplierDashboardPage() {
                 Walk-to-Car Quick Logger
               </h4>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-xs leading-relaxed">
-                Tap <span className="text-emerald-600 dark:text-[#D4F638] font-bold">"Log Visit &amp; Set Reminder"</span> on any store while walking back to your vehicle to record crates, dues, and scheduled reminders.
+                Tap <span className="text-emerald-600 dark:text-[#D4F638] font-bold">&quot;Log Visit &amp; Set Reminder&quot;</span> on any store while walking back to your vehicle to record crates, dues, and scheduled reminders.
               </p>
             </div>
           )}

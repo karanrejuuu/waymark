@@ -19,17 +19,20 @@ export const DEFAULT_COMPANY_PROFILE: LocalCompanyProfile = {
 };
 
 export async function getCompanyProfile(): Promise<LocalCompanyProfile> {
+  const hasStorage = typeof window !== "undefined" && typeof localStorage !== "undefined";
   try {
     const existing = await db.company_profiles.get("default");
     if (existing) {
       return existing;
     }
     // Also check localStorage
-    const saved = localStorage.getItem("waymark_company_profile");
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      await db.company_profiles.put(parsed);
-      return parsed;
+    if (hasStorage) {
+      const saved = localStorage.getItem("waymark_company_profile");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        await db.company_profiles.put(parsed);
+        return parsed;
+      }
     }
   } catch (err) {
     console.warn("Failed to fetch company profile from Dexie:", err);
@@ -38,10 +41,12 @@ export async function getCompanyProfile(): Promise<LocalCompanyProfile> {
   // Seed default KN Products profile
   try {
     await db.company_profiles.put(DEFAULT_COMPANY_PROFILE);
-    localStorage.setItem(
-      "waymark_company_profile",
-      JSON.stringify(DEFAULT_COMPANY_PROFILE)
-    );
+    if (hasStorage) {
+      localStorage.setItem(
+        "waymark_company_profile",
+        JSON.stringify(DEFAULT_COMPANY_PROFILE)
+      );
+    }
   } catch {}
 
   return DEFAULT_COMPANY_PROFILE;
@@ -60,7 +65,9 @@ export async function saveCompanyProfile(
 
   try {
     await db.company_profiles.put(updated);
-    localStorage.setItem("waymark_company_profile", JSON.stringify(updated));
+    if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
+      localStorage.setItem("waymark_company_profile", JSON.stringify(updated));
+    }
   } catch (err) {
     console.error("Failed to save company profile:", err);
   }

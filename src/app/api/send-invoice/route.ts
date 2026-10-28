@@ -27,9 +27,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Defensive normalization
+    const safeInvoiceNo = invoiceNumber ? String(invoiceNumber) : "INV-UNKNOWN";
+    const safeShopName = shopName ? String(shopName) : "Valued Customer";
+    const safeAmount = typeof amount === "number" ? amount : Number(amount) || 0;
+    const filename = `Invoice_${safeInvoiceNo.replace(/[\/\\]/g, "_")}.pdf`;
+
     // Strip data URL prefix if present
     const base64Content = pdfBase64.replace(/^data:application\/pdf;base64,/, "");
-    const filename = `Invoice_${invoiceNumber.replace(/[\/\\]/g, "_")}.pdf`;
 
     // 1. Check if Resend API Key is provided
     const resendApiKey = smtpConfig?.resendApiKey || process.env.RESEND_API_KEY;
@@ -49,14 +54,14 @@ export async function POST(req: NextRequest) {
           body: JSON.stringify({
             from: fromEmail,
             to: recipientEmail,
-            subject: `Tax Invoice ${invoiceNumber} — ${shopName} (₹${amount.toLocaleString(
+            subject: `Tax Invoice ${safeInvoiceNo} — ${safeShopName} (₹${safeAmount.toLocaleString(
               "en-IN"
             )})`,
             html: `
               <div style="font-family: sans-serif; line-height: 1.5; color: #111;">
                 <h2>Tax Invoice & Payment Receipt</h2>
-                <p>Dear ${shopName},</p>
-                <p>Thank you for your business. Please find attached your official Tax Invoice & Receipt <strong>${invoiceNumber}</strong> for the amount of <strong>₹${amount.toLocaleString(
+                <p>Dear ${safeShopName},</p>
+                <p>Thank you for your business. Please find attached your official Tax Invoice & Receipt <strong>${safeInvoiceNo}</strong> for the amount of <strong>₹${safeAmount.toLocaleString(
               "en-IN"
             )}</strong>.</p>
                 <p>Payment has been recorded in our wholesale dispatch system.</p>
@@ -110,17 +115,17 @@ export async function POST(req: NextRequest) {
       const info = await transporter.sendMail({
         from,
         to: recipientEmail,
-        subject: `Tax Invoice ${invoiceNumber} — ${shopName} (₹${amount.toLocaleString(
+        subject: `Tax Invoice ${safeInvoiceNo} — ${safeShopName} (₹${safeAmount.toLocaleString(
           "en-IN"
         )})`,
-        text: `Dear ${shopName},\n\nPlease find attached your Tax Invoice ${invoiceNumber} for ₹${amount.toLocaleString(
+        text: `Dear ${safeShopName},\n\nPlease find attached your Tax Invoice ${safeInvoiceNo} for ₹${safeAmount.toLocaleString(
           "en-IN"
         )}.\n\nThank you for your business.`,
         html: `
           <div style="font-family: sans-serif; line-height: 1.5; color: #111;">
             <h2>Tax Invoice & Payment Receipt</h2>
-            <p>Dear ${shopName},</p>
-            <p>Please find attached your Tax Invoice & Receipt <strong>${invoiceNumber}</strong> for the amount of <strong>₹${amount.toLocaleString(
+            <p>Dear ${safeShopName},</p>
+            <p>Please find attached your Tax Invoice & Receipt <strong>${safeInvoiceNo}</strong> for the amount of <strong>₹${safeAmount.toLocaleString(
           "en-IN"
         )}</strong>.</p>
             <p>Payment has been recorded successfully.</p>

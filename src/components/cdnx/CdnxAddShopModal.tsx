@@ -32,8 +32,6 @@ export const CdnxAddShopModal: React.FC<CdnxAddShopModalProps> = ({
   defaultRegionId,
   onShopAdded,
 }) => {
-  if (!isOpen) return null;
-
   // Deduplicate and filter to only active delivery routes (exclude turned-off routes with 0 active days)
   const activeRegions = useMemo(() => {
     const seen = new Set<string>();
@@ -75,6 +73,8 @@ export const CdnxAddShopModal: React.FC<CdnxAddShopModalProps> = ({
       setSelectedRegionId(activeRegions[0].id);
     }
   }, [defaultRegionId, activeRegions, selectedRegionId]);
+
+  if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -35,7 +35,7 @@ export default function ShopDetailPage() {
   const [isEditingName, setIsEditingName] = useState(false);
   const [notes, setNotes] = useState("");
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!shopId) return;
     const currentShop = await db.shops.get(shopId);
     if (!currentShop) {
@@ -86,11 +86,11 @@ export default function ShopDetailPage() {
 
     setProductsData(tableItems);
     setLoading(false);
-  };
+  }, [shopId]);
 
   useEffect(() => {
     loadData();
-  }, [shopId]);
+  }, [loadData]);
 
   const handleNotesBlur = async () => {
     if (!shop || notes === (shop.notes || "")) return;
