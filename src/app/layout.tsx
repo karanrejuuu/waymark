@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { AppShell } from "@/components/layout/AppShell";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
@@ -54,6 +55,7 @@ export default function RootLayout({
             <AppShell>{children}</AppShell>
           </ThemeProvider>
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   );
