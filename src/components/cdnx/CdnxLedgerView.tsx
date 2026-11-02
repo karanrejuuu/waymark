@@ -21,6 +21,7 @@ import {
   processPaymentReceipt,
   ProcessReceiptResult,
 } from "@/lib/invoice/processPaymentReceipt";
+import { useAuth } from "@/context/AuthContext";
 
 interface CdnxLedgerViewProps {
   shops: LocalShop[];
@@ -39,6 +40,7 @@ export const CdnxLedgerView: React.FC<CdnxLedgerViewProps> = ({
 }) => {
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState<"all" | "dues_only" | "cleared">("dues_only");
+  const { user } = useAuth();
   const [selectedShop, setSelectedShop] = useState<LocalShop | null>(null);
   const [quickAmount, setQuickAmount] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -76,7 +78,7 @@ export const CdnxLedgerView: React.FC<CdnxLedgerViewProps> = ({
         shopId: selectedShop.id,
         amount,
         paymentMode: "cash",
-        collectedBy: "demo-supplier",
+        collectedBy: user?.user_metadata?.name || user?.email || "Supplier",
         notes: `Quick khata collection in ${routeName}`,
       });
 

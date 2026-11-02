@@ -29,10 +29,16 @@ export async function recordPayment(input: RecordPaymentInput): Promise<LocalPay
     ? crypto.randomUUID()
     : `pay-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
 
+  let orgId = shop.organisation_id;
+  if (!orgId) {
+    const org = await db.organisations.toCollection().first();
+    orgId = org?.id || "org-main";
+  }
+
   const paymentRecord: LocalPayment = {
     id: clientId,
     client_id: clientId,
-    organisation_id: shop.organisation_id || "demo-org",
+    organisation_id: orgId,
     shop_id: input.shopId,
     collected_by: input.collectedBy || null,
     amount: input.amount,

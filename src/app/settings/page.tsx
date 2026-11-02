@@ -9,6 +9,7 @@ import { enqueueWrite } from "@/lib/db/sync";
 import { checkStorageDurability, StorageStatus } from "@/lib/db/durability";
 import { downloadDatabaseBackup, restoreDatabaseBackup } from "@/lib/db/backup";
 import { getCompanyProfile, saveCompanyProfile } from "@/lib/invoice/companyProfile";
+import { useAuth } from "@/context/AuthContext";
 
 const ShopMap = dynamic(() => import("@/components/shop/ShopMap"), {
   ssr: false,
@@ -62,11 +63,18 @@ export default function SettingsPage() {
     flashSaved();
   };
 
+  const { user } = useAuth();
+
   const handleSaveVehicleSettings = async () => {
+    const profile = await db.profiles.toCollection().first();
+    const org = await db.organisations.toCollection().first();
+    const activeOrgId = org?.id || profile?.id || "org-main";
+    const activeOwnerId = user?.id || profile?.id || "owner";
+
     const existing = godown || {
       id: "godown-1",
-      owner_id: "demo-user",
-      organisation_id: "org-waymark-demo",
+      owner_id: activeOwnerId,
+      organisation_id: activeOrgId,
       lat: 19.076,
       lng: 72.8777,
       created_at: new Date().toISOString(),
@@ -84,10 +92,15 @@ export default function SettingsPage() {
   };
 
   const handleUpdateGodownCoords = async (newLat: number, newLng: number) => {
+    const profile = await db.profiles.toCollection().first();
+    const org = await db.organisations.toCollection().first();
+    const activeOrgId = org?.id || profile?.id || "org-main";
+    const activeOwnerId = user?.id || profile?.id || "owner";
+
     const existing = godown || {
       id: "godown-1",
-      owner_id: "demo-user",
-      organisation_id: "org-waymark-demo",
+      owner_id: activeOwnerId,
+      organisation_id: activeOrgId,
       vehicle_mileage_kmpl: mileage,
       petrol_price_per_l: petrolPrice,
       created_at: new Date().toISOString(),

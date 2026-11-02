@@ -164,7 +164,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       created_at: nowIso,
     };
     await db.profiles.put(profileRecord);
-    const mockUser = {
+    const localUserSession = {
       id,
       email,
       user_metadata: { name, business_name: businessName, role },
@@ -172,8 +172,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       aud: "authenticated",
       created_at: nowIso,
     } as User;
-    setUser(mockUser);
-    localStorage.setItem("waymark_user_session", JSON.stringify(mockUser));
+    setUser(localUserSession);
+    localStorage.setItem("waymark_user_session", JSON.stringify(localUserSession));
     if (completedOnboarding) {
       localStorage.setItem("waymark_onboarding_completed", "true");
       setOnboardingCompletedState(true);

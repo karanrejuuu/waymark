@@ -24,13 +24,22 @@ export interface SaveShopInput {
 
 export async function saveShop(
   input: SaveShopInput,
-  ownerId: string = "demo-user",
-  organisationId: string = "org-waymark-demo"
+  ownerId?: string,
+  organisationId?: string
 ): Promise<string> {
   const isNew = !input.id;
   const now = new Date();
   const nowIso = now.toISOString();
   const todayStr = formatDateOnly(now);
+
+  let resolvedOwnerId = ownerId;
+  let resolvedOrgId = organisationId;
+  if (!resolvedOwnerId || !resolvedOrgId) {
+    const profile = await db.profiles.toCollection().first();
+    const org = await db.organisations.toCollection().first();
+    resolvedOwnerId = resolvedOwnerId || profile?.id || "owner";
+    resolvedOrgId = resolvedOrgId || org?.id || profile?.id || "org-main";
+  }
 
   const shopId = input.id || (typeof crypto !== "undefined" && crypto.randomUUID
     ? crypto.randomUUID()
@@ -38,8 +47,8 @@ export async function saveShop(
 
   const shopRecord: LocalShop = {
     id: shopId,
-    owner_id: ownerId,
-    organisation_id: organisationId,
+    owner_id: resolvedOwnerId,
+    organisation_id: resolvedOrgId,
     region_id: input.regionId || null,
     name: input.name.trim(),
     contact: input.contact?.trim() || null,
@@ -63,7 +72,7 @@ export async function saveShop(
       shopRecord.is_urgent = existing.is_urgent;
       shopRecord.balance_due = existing.balance_due ?? 0;
       shopRecord.is_archived = existing.is_archived ?? false;
-      shopRecord.organisation_id = existing.organisation_id ?? organisationId;
+      shopRecord.organisation_id = existing.organisation_id ?? resolvedOrgId;
     }
   }
 
@@ -84,7 +93,7 @@ export async function saveShop(
 
     const spRecord: LocalShopProduct = {
       id: spId,
-      organisation_id: organisationId,
+      organisation_id: resolvedOrgId,
       shop_id: shopId,
       product_id: prodInput.productId,
       default_qty: prodInput.defaultQty || 1,

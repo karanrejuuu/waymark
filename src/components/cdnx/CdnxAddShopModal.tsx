@@ -86,11 +86,15 @@ export const CdnxAddShopModal: React.FC<CdnxAddShopModalProps> = ({
       const nowIso = now.toISOString();
       const todayStr = formatDateOnly(now);
       const newShopId = `shop-${Date.now()}`;
+      const profile = await db.profiles.toCollection().first();
+      const org = await db.organisations.toCollection().first();
+      const activeOrgId = org?.id || profile?.id || "org-main";
+      const activeOwnerId = profile?.id || "owner";
 
       const newShop: LocalShop = {
         id: newShopId,
-        organisation_id: "org-waymark-demo",
-        owner_id: "demo-user",
+        organisation_id: activeOrgId,
+        owner_id: activeOwnerId,
         region_id: selectedRegionId || null,
         name: name.trim(),
         contact: contact.trim() || null,
@@ -121,7 +125,7 @@ export const CdnxAddShopModal: React.FC<CdnxAddShopModalProps> = ({
         const defaultProd = products[0];
         const spRecord = {
           id: `sp-${Date.now()}`,
-          organisation_id: "org-waymark-demo",
+          organisation_id: activeOrgId,
           shop_id: newShopId,
           product_id: defaultProd.id,
           default_qty: parseInt(initialCrates) || 2,

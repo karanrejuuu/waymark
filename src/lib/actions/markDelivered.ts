@@ -39,7 +39,11 @@ export async function markDelivered(
 
   const now = new Date();
   const nowIso = now.toISOString();
-  const orgId = shop.organisation_id || "demo-org";
+  let orgId = shop.organisation_id;
+  if (!orgId) {
+    const org = await db.organisations.toCollection().first();
+    orgId = org?.id || "org-main";
+  }
 
   for (const item of productDeliveries) {
     // 1. Get current shop-product configuration

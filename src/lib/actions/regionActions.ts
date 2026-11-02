@@ -4,11 +4,20 @@ import { enqueueWrite } from "@/lib/db/sync";
 export async function saveRegion(
   name: string,
   id?: string,
-  ownerId: string = "demo-user",
-  organisationId: string = "org-waymark-demo"
+  ownerId?: string,
+  organisationId?: string
 ): Promise<string> {
   const isNew = !id;
   const nowIso = new Date().toISOString();
+  let resolvedOwnerId = ownerId;
+  let resolvedOrgId = organisationId;
+  if (!resolvedOwnerId || !resolvedOrgId) {
+    const profile = await db.profiles.toCollection().first();
+    const org = await db.organisations.toCollection().first();
+    resolvedOwnerId = resolvedOwnerId || profile?.id || "owner";
+    resolvedOrgId = resolvedOrgId || org?.id || profile?.id || "org-main";
+  }
+
   const regionId = id || (typeof crypto !== "undefined" && crypto.randomUUID
     ? crypto.randomUUID()
     : `reg-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`);
@@ -24,8 +33,8 @@ export async function saveRegion(
 
   const regionRecord: LocalRegion = {
     id: regionId,
-    owner_id: ownerId,
-    organisation_id: organisationId,
+    owner_id: resolvedOwnerId,
+    organisation_id: resolvedOrgId,
     name: name.trim(),
     sort_order: sortOrder,
     created_at: nowIso,
@@ -55,18 +64,27 @@ export async function reorderShops(regionId: string, orderedIds: string[]): Prom
 
 export async function saveProduct(
   data: { id?: string; name: string; default_interval: number },
-  ownerId: string = "demo-user",
-  organisationId: string = "org-waymark-demo"
+  ownerId?: string,
+  organisationId?: string
 ): Promise<string> {
   const nowIso = new Date().toISOString();
+  let resolvedOwnerId = ownerId;
+  let resolvedOrgId = organisationId;
+  if (!resolvedOwnerId || !resolvedOrgId) {
+    const profile = await db.profiles.toCollection().first();
+    const org = await db.organisations.toCollection().first();
+    resolvedOwnerId = resolvedOwnerId || profile?.id || "owner";
+    resolvedOrgId = resolvedOrgId || org?.id || profile?.id || "org-main";
+  }
+
   const prodId = data.id || (typeof crypto !== "undefined" && crypto.randomUUID
     ? crypto.randomUUID()
     : `prod-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`);
 
   const prodRecord: LocalProduct = {
     id: prodId,
-    owner_id: ownerId,
-    organisation_id: organisationId,
+    owner_id: resolvedOwnerId,
+    organisation_id: resolvedOrgId,
     name: data.name.trim(),
     default_interval: data.default_interval || 7,
     created_at: nowIso,

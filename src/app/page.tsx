@@ -6,11 +6,11 @@ import { db, LocalRegion, LocalShop, LocalShopProduct, LocalProduct } from "@/li
 import { drainQueue } from "@/lib/db/sync";
 import { formatDateOnly } from "@/lib/scheduling";
 import { markDelivered } from "@/lib/actions/markDelivered";
-import { seedDemoData } from "@/lib/db/seedDemoData";
 import { createDatabaseBackup } from "@/lib/db/backup";
+import { useAuth } from "@/context/AuthContext";
 import { CdnxTopNav } from "@/components/cdnx/CdnxTopNav";
 import { CdnxRouteSidebar } from "@/components/cdnx/CdnxRouteSidebar";
-import { CdnxCenterStage } from "@/components/cdnx/CdnxCenterStage";
+import { CdnxCenterStage, CdnxFilterType } from "@/components/cdnx/CdnxCenterStage";
 import { CdnxWalkToCarSlip } from "@/components/cdnx/CdnxWalkToCarSlip";
 import { CdnxAddShopModal } from "@/components/cdnx/CdnxAddShopModal";
 import { CdnxLedgerView } from "@/components/cdnx/CdnxLedgerView";
@@ -18,12 +18,12 @@ import { InvoiceReceiptModal } from "@/components/invoice/InvoiceReceiptModal";
 import { ProcessReceiptResult } from "@/lib/invoice/processPaymentReceipt";
 
 export default function SupplierDashboardPage() {
+  const { user } = useAuth();
   const todayItems = useTodayList();
   const [regions, setRegions] = useState<LocalRegion[]>([]);
   const [selectedRouteId, setSelectedRouteId] = useState<string>("reg-fortkochi");
   const [activeTab, setActiveTab] = useState<"today" | "all_shops" | "ledger">("today");
-  const [activeSegment, setActiveSegment] = useState<"due" | "completed" | "all">("due");
-  const [activeSubFilter, setActiveSubFilter] = useState<"all" | "reminders" | "completed" | "dues">("all");
+  const [activeFilter, setActiveFilter] = useState<CdnxFilterType>("pending");
   const [searchQuery, setSearchQuery] = useState("");
   const [completedShopIds, setCompletedShopIds] = useState<Set<string>>(new Set());
   const [allDbShops, setAllDbShops] = useState<LocalShop[]>([]);
@@ -112,11 +112,6 @@ export default function SupplierDashboardPage() {
     initData();
   }, [todayItems]);
 
-  const handleLoadDemoData = async () => {
-    await seedDemoData();
-    await refreshData();
-  };
-
   const refreshData = async () => {
     const [rawRegs, shops] = await Promise.all([
       db.regions.orderBy("sort_order").toArray(),
@@ -187,12 +182,10 @@ export default function SupplierDashboardPage() {
     return shopsInCurrentRoute.reduce((sum, s) => sum + (s.balance_due || 0), 0);
   }, [shopsInCurrentRoute]);
 
-  // Dynamic filter counts for status filter buttons in sidebar
+  // Dynamic filter counts for status filter buttons in sidebar and stage
   const filterCounts = useMemo(() => {
     const current = shopsInCurrentRoute;
-    const dueCount = current.filter(
-      (s) => !completedShopIds.has(s.id) && (todayItemMap.has(s.id) || s.is_urgent)
-    ).length;
+    const pendingCount = current.filter((s) => !completedShopIds.has(s.id)).length;
     const remindersCount = current.filter(
       (s) => Boolean((s as any).reminder_date || (s as any).reminder_note)
     ).length;
@@ -200,39 +193,24 @@ export default function SupplierDashboardPage() {
     const completedCount = current.filter((s) => completedShopIds.has(s.id)).length;
 
     return {
-      all: dueCount > 0 ? dueCount : current.length,
+      pending: pendingCount,
       reminders: remindersCount,
       dues: duesCount,
       completed: completedCount,
+      all: current.length,
     };
-  }, [shopsInCurrentRoute, todayItemMap, completedShopIds]);
+  }, [shopsInCurrentRoute, completedShopIds]);
 
-  // Final display list matching the selected sub-filter and segment
+  // Final display list matching the selected filter
   const displayList = useMemo(() => {
     let list = shopsInCurrentRoute;
 
-    if (activeSubFilter === "reminders") {
-      // 1. Scheduled Reminders: Show ALL stores with a reminder date or note
-      list = list.filter(
-        (s) => Boolean((s as any).reminder_date || (s as any).reminder_note)
-      );
-    } else if (activeSubFilter === "dues") {
-      // 2. Pending Dues: Show ALL stores with outstanding khata balance > 0
-      list = list.filter((s) => (s.balance_due || 0) > 0);
-    } else if (activeSubFilter === "completed") {
-      // 3. Completed Stops: Show stores completed today
+    if (activeFilter === "pending") {
+      list = list.filter((s) => !completedShopIds.has(s.id));
+    } else if (activeFilter === "reminders") {
+      list = list.filter((s) => Boolean((s as any).reminder_date || (s as any).reminder_note));
+    } else if (activeFilter === "completed") {
       list = list.filter((s) => completedShopIds.has(s.id));
-    } else {
-      // 4. "Scheduled Today" (activeSubFilter === "all"):
-      if (activeSegment === "due") {
-        const dueOnly = list.filter(
-          (s) => !completedShopIds.has(s.id) && (todayItemMap.has(s.id) || s.is_urgent)
-        );
-        list = dueOnly.length > 0 ? dueOnly : list.filter((s) => !completedShopIds.has(s.id));
-      } else if (activeSegment === "completed") {
-        list = list.filter((s) => completedShopIds.has(s.id));
-      }
-      // If activeSegment === "all", list remains all shops on beat
     }
 
     return list.map((s) => ({
@@ -240,7 +218,7 @@ export default function SupplierDashboardPage() {
       todayItem: todayItemMap.get(s.id),
       isCompleted: completedShopIds.has(s.id),
     }));
-  }, [shopsInCurrentRoute, activeSubFilter, activeSegment, completedShopIds, todayItemMap]);
+  }, [shopsInCurrentRoute, activeFilter, completedShopIds, todayItemMap]);
 
   // Urgent count
   const urgentCount = useMemo(() => {
@@ -283,7 +261,8 @@ export default function SupplierDashboardPage() {
         qty: p.shopProduct.default_qty || 2,
       }));
 
-      await markDelivered(item.shop.id, deliveries, "demo-supplier", {
+      const delivererName = user?.user_metadata?.name || user?.email || "Supplier";
+      await markDelivered(item.shop.id, deliveries, delivererName, {
         notes: "Quick delivered on foot",
       });
 
@@ -318,12 +297,10 @@ export default function SupplierDashboardPage() {
         onTabChange={(tab) => {
           setActiveTab(tab);
           if (tab === "today") {
-            setActiveSubFilter("all");
-            setActiveSegment("due");
+            setActiveFilter("pending");
           }
           if (tab === "all_shops") {
-            setActiveSubFilter("all");
-            setActiveSegment("all");
+            setActiveFilter("all");
           }
         }}
         activeRouteName={activeRouteName}
@@ -342,16 +319,14 @@ export default function SupplierDashboardPage() {
           selectedRegionId={selectedRouteId}
           onSelectRegion={(id) => {
             setSelectedRouteId(id);
-            setActiveSubFilter("all");
-            setActiveSegment("due");
+            setActiveFilter("pending");
           }}
           routeShopCounts={routeShopCounts}
-          activeSubFilter={activeSubFilter}
+          activeSubFilter={activeFilter === "pending" ? "all" : (activeFilter as any)}
           onSubFilterChange={(filter) => {
-            setActiveSubFilter(filter);
-            if (filter === "completed") {
-              setActiveSegment("completed");
-            }
+            if (filter === "reminders") setActiveFilter("reminders");
+            else if (filter === "completed") setActiveFilter("completed");
+            else setActiveFilter("pending");
           }}
           totalShopsCount={allDbShops.length}
           filterCounts={filterCounts}
@@ -370,6 +345,9 @@ export default function SupplierDashboardPage() {
           ) : (
             <CdnxCenterStage
               routeName={activeRouteName}
+              regions={regions}
+              selectedRouteId={selectedRouteId}
+              onSelectRoute={setSelectedRouteId}
               displayList={displayList}
               allShopsInRoute={shopsInCurrentRoute}
               completedShopIds={completedShopIds}
@@ -378,17 +356,12 @@ export default function SupplierDashboardPage() {
               onOpenAddShop={() => setIsAddShopModalOpen(true)}
               onOpenLedger={() => setActiveTab("ledger")}
               selectedShopId={slipShop?.id}
-              activeSegment={activeSegment}
-              onSegmentChange={(seg) => {
-                setActiveSegment(seg);
-                setActiveSubFilter("all");
-              }}
-              activeSubFilter={activeSubFilter}
-              onSubFilterChange={setActiveSubFilter}
-              pendingDueCount={filterCounts.dues}
+              activeFilter={activeFilter}
+              onFilterChange={setActiveFilter}
+              filterCounts={filterCounts}
               totalDueAmount={routeTotalDue}
-              remindersCount={filterCounts.reminders}
-              onLoadDemoData={handleLoadDemoData}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
             />
           )}
         </main>

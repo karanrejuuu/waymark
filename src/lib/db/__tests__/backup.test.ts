@@ -13,16 +13,28 @@ describe("Database Backup & Restore Durability", () => {
   it("exports a complete database backup with metadata and counts", async () => {
     const region: LocalRegion = {
       id: "reg-fort-kochi",
+      owner_id: "user-1",
       name: "Fort Kochi",
-      organisation_id: "org-demo",
+      organisation_id: "org-1",
+      sort_order: 1,
       created_at: new Date().toISOString(),
     };
     await db.regions.put(region);
 
     const shop: LocalShop = {
       id: "shop-1",
+      owner_id: "user-1",
+      organisation_id: "org-1",
       name: "Seagull Provisions",
       region_id: "reg-fort-kochi",
+      contact: "9847012345",
+      lat: null,
+      lng: null,
+      notes: null,
+      is_urgent: false,
+      sort_order: 1,
+      balance_due: 0,
+      is_archived: false,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };

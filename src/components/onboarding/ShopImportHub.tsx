@@ -23,7 +23,7 @@ interface ShopImportHubProps {
 export const ShopImportHub: React.FC<ShopImportHubProps> = ({
   onComplete,
   defaultRegion = "Market Route",
-  organisationId = "org-waymark-demo",
+  organisationId,
 }) => {
   const [tab, setTab] = useState<"table" | "csv" | "skip">("table");
   const [isImporting, setIsImporting] = useState(false);
@@ -60,6 +60,11 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
     let count = 0;
 
     try {
+      const profile = await db.profiles.toCollection().first();
+      const org = await db.organisations.toCollection().first();
+      const activeOrgId = organisationId || org?.id || profile?.id || "org-main";
+      const activeOwnerId = profile?.id || "owner";
+
       // Collect regions
       const regionNames = Array.from(new Set(shopList.map((s) => s.region.trim()).filter(Boolean)));
       const regionMap: Record<string, string> = {};
@@ -70,8 +75,8 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
         if (!existing) {
           const newReg = {
             id: `reg-${Date.now()}-${i}`,
-            organisation_id: organisationId,
-            owner_id: "demo-user",
+            organisation_id: activeOrgId,
+            owner_id: activeOwnerId,
             name: rName,
             sort_order: i + 1,
             created_at: now.toISOString(),
@@ -88,8 +93,8 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
       if (!defaultProd) {
         defaultProd = {
           id: `p-${Date.now()}`,
-          organisation_id: organisationId,
-          owner_id: "demo-user",
+          organisation_id: activeOrgId,
+          owner_id: activeOwnerId,
           name: "Standard FMCG Restock Assortment",
           default_interval: 7,
           created_at: now.toISOString(),
@@ -104,8 +109,8 @@ export const ShopImportHub: React.FC<ShopImportHubProps> = ({
         const shopId = `shop-${Date.now()}-${i}`;
         const shopRecord = {
           id: shopId,
-          organisation_id: organisationId,
-          owner_id: "demo-user",
+          organisation_id: activeOrgId,
+          owner_id: activeOwnerId,
           region_id: regionMap[item.region] || null,
           name: item.name.trim(),
           contact: item.contact.trim() || null,

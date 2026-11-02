@@ -25,7 +25,6 @@ import {
 } from "lucide-react";
 import { db, LocalRegion, LocalProduct } from "@/lib/db/dexie";
 import { enqueueWrite } from "@/lib/db/sync";
-import { seedDemoData } from "@/lib/db/seedDemoData";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 
@@ -83,9 +82,6 @@ export default function OnboardingExperiencePage() {
   // ── Step 4: Workers & Roles ──
   const [workerCount, setWorkerCount] = useState<string>("3-5");
   const [selectedRole, setSelectedRole] = useState<"admin" | "backoffice" | "driver">("admin");
-
-  // ── Step 5: Launch Mode ──
-  const [launchMode, setLaunchMode] = useState<"clean" | "sample">("clean");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Audio tactile sounds
@@ -177,12 +173,13 @@ export default function OnboardingExperiencePage() {
   };
 
   // Complete and save to Dexie database
-  const handleCompleteOnboarding = async (chosenLaunchMode: "clean" | "sample") => {
+  const handleCompleteOnboarding = async () => {
     setIsSubmitting(true);
     playTactile("success");
 
     const orgId = "org-waymark-primary";
     const nowIso = new Date().toISOString();
+    const effectiveOwnerId = user?.id || "proprietor";
 
     try {
       // 1. Save or update Organisation
@@ -203,7 +200,7 @@ export default function OnboardingExperiencePage() {
       const regionRecords: LocalRegion[] = activeRoutes.map((r, idx) => ({
         id: r.id,
         organisation_id: orgId,
-        owner_id: user?.id || "demo-user",
+        owner_id: effectiveOwnerId,
         name: r.name,
         sort_order: idx + 1,
         active_days: r.activeDays,
@@ -215,7 +212,7 @@ export default function OnboardingExperiencePage() {
       const productRecords: LocalProduct[] = products.map((p) => ({
         id: p.id,
         organisation_id: orgId,
-        owner_id: user?.id || "demo-user",
+        owner_id: effectiveOwnerId,
         name: p.name,
         default_interval: p.intervalDays,
         created_at: nowIso,
@@ -240,11 +237,6 @@ export default function OnboardingExperiencePage() {
         });
       }
 
-      // 5. If user chose Sample data, seed sample kiranas
-      if (chosenLaunchMode === "sample") {
-        await seedDemoData();
-      }
-
       // Mark onboarding completed in AuthContext & localStorage
       await setOnboardingCompleted(true);
 
@@ -257,7 +249,7 @@ export default function OnboardingExperiencePage() {
 
   // Fast skip directly to cockpit
   const handleSkip = async () => {
-    await handleCompleteOnboarding("clean");
+    await handleCompleteOnboarding();
   };
 
   return (
@@ -665,57 +657,60 @@ export default function OnboardingExperiencePage() {
           </div>
         )}
 
-        {/* ── STEP 5: Launch Mode ── */}
+        {/* ── STEP 5: Launch Confirmation ── */}
         {currentStep === 5 && (
           <div className="space-y-6 animate-in fade-in">
             <div className="space-y-2">
               <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-                Ready to launch your wholesale cockpit
+                Ready to launch your wholesale distribution cockpit
               </h2>
               <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                Choose how you want to initialize your workspace.
+                Review your configuration below. Your system is ready for live supplier runs with offline persistence.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div
-                onClick={() => setLaunchMode("clean")}
-                className={`p-6 rounded-3xl border cursor-pointer transition-all space-y-3 ${
-                  launchMode === "clean"
-                    ? "bg-purple-50 dark:bg-[#1E1B38] border-2 border-purple-600 dark:border-[#D4F638] shadow-lg"
-                    : "bg-white dark:bg-[#13141C] border-black/[0.08] dark:border-white/[0.08]"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-base text-zinc-950 dark:text-white">
-                    Empty Workspace
-                  </span>
-                  <span className="text-xs font-mono font-bold text-emerald-600 dark:text-[#D4F638]">
-                    RECOMMENDED
-                  </span>
+            <div className="p-6 rounded-3xl bg-white dark:bg-[#13141C] border border-black/[0.08] dark:border-white/[0.08] shadow-sm space-y-5">
+              <div className="flex items-center justify-between pb-4 border-b border-black/[0.06] dark:border-white/[0.06]">
+                <div>
+                  <span className="text-xs font-mono uppercase tracking-wider text-zinc-400">Enterprise</span>
+                  <h3 className="text-lg font-bold text-zinc-950 dark:text-white mt-0.5">
+                    {user?.user_metadata?.business_name || "Apex FMCG Distributors"}
+                  </h3>
                 </div>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                  Start fresh with your configured delivery beats and products, ready to register your stores on the road.
-                </p>
+                <span className="px-3 py-1 rounded-full bg-[#D4F638]/20 text-[#0A0D02] dark:text-[#D4F638] font-mono text-xs font-bold">
+                  {selectedRole.toUpperCase()} COCKPIT
+                </span>
               </div>
 
-              <div
-                onClick={() => setLaunchMode("sample")}
-                className={`p-6 rounded-3xl border cursor-pointer transition-all space-y-3 ${
-                  launchMode === "sample"
-                    ? "bg-purple-50 dark:bg-[#1E1B38] border-2 border-purple-600 dark:border-[#D4F638] shadow-lg"
-                    : "bg-white dark:bg-[#13141C] border-black/[0.08] dark:border-white/[0.08]"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-base text-zinc-950 dark:text-white">
-                    Preview with Sample Stores
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-[#181924] border border-black/[0.04] dark:border-white/[0.04] space-y-1">
+                  <span className="text-[11px] font-mono font-bold text-zinc-500 uppercase tracking-wide">
+                    Configured Delivery Beats
                   </span>
-                  <span className="text-xs font-mono text-zinc-400">PREVIEW</span>
+                  <p className="text-sm font-bold text-zinc-950 dark:text-white">
+                    {routes.filter((r) => r.activeDays && r.activeDays.length > 0).length} Active Corridors
+                  </p>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                    {routes.map((r) => r.name).join(" · ")}
+                  </p>
                 </div>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                  Loads sample stores in Fort Kochi and Mattancherry to explore the field workflow.
-                </p>
+
+                <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-[#181924] border border-black/[0.04] dark:border-white/[0.04] space-y-1">
+                  <span className="text-[11px] font-mono font-bold text-zinc-500 uppercase tracking-wide">
+                    Standard FMCG Catalog
+                  </span>
+                  <p className="text-sm font-bold text-zinc-950 dark:text-white">
+                    {products.length} Products Configured
+                  </p>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                    {products.map((p) => p.name).join(" · ")}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-xs font-mono text-emerald-800 dark:text-emerald-400 flex items-center gap-2.5">
+                <CheckCircle2 size={16} className="text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                <span>Zero mock data. Direct offline Dexie storage initialized with live Supabase background synchronization.</span>
               </div>
             </div>
           </div>
@@ -755,7 +750,7 @@ export default function OnboardingExperiencePage() {
             <button
               type="button"
               disabled={isSubmitting}
-              onClick={() => handleCompleteOnboarding(launchMode)}
+              onClick={() => handleCompleteOnboarding()}
               className="px-8 py-3.5 bg-[#D4F638] hover:bg-[#C2E426] text-[#0A0D02] rounded-2xl font-bold font-sans text-sm flex items-center gap-2 shadow-xl transition-all active:scale-95 disabled:opacity-50"
             >
               {isSubmitting ? (

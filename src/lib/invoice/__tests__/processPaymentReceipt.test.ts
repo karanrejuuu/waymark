@@ -38,6 +38,8 @@ describe("processPaymentReceipt & companyProfile", () => {
 
     const sampleShop: LocalShop = {
       id: "shop-fortkochi-1",
+      owner_id: "user-1",
+      organisation_id: "org-1",
       name: "Fort Kochi Mini Mart",
       region_id: "region-1",
       contact: "9876543210",
@@ -48,6 +50,12 @@ describe("processPaymentReceipt & companyProfile", () => {
       state_name: "Kerala",
       state_code: "32",
       balance_due: 0,
+      lat: null,
+      lng: null,
+      notes: null,
+      is_urgent: false,
+      is_archived: false,
+      sort_order: 1,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
@@ -87,11 +95,19 @@ describe("processPaymentReceipt & companyProfile", () => {
   it("generates 1-tap WhatsApp link when email is empty", async () => {
     const sampleShopNoEmail: LocalShop = {
       id: "shop-mattancherry-2",
+      owner_id: "user-1",
+      organisation_id: "org-1",
       name: "Jew Town Spices",
       region_id: "region-1",
       contact: "9847012345",
       whatsapp_number: "9847012345",
       balance_due: 0,
+      lat: null,
+      lng: null,
+      notes: null,
+      is_urgent: false,
+      is_archived: false,
+      sort_order: 2,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };

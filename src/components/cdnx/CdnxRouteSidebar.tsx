@@ -53,10 +53,15 @@ export const CdnxRouteSidebar: React.FC<CdnxRouteSidebarProps> = ({
     e.preventDefault();
     if (!newRouteName.trim()) return;
 
+    const profile = await db.profiles.toCollection().first();
+    const org = await db.organisations.toCollection().first();
+    const activeOrgId = org?.id || profile?.id || "org-main";
+    const activeOwnerId = profile?.id || "owner";
+
     const newRegion: LocalRegion = {
       id: `reg-${Date.now()}`,
-      organisation_id: "org-waymark-demo",
-      owner_id: "demo-user",
+      organisation_id: activeOrgId,
+      owner_id: activeOwnerId,
       name: newRouteName.trim(),
       sort_order: regions.length + 1,
       active_days: [1, 2, 3, 4, 5],
